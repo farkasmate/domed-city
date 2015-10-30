@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'dome/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "dome"
+  spec.name          = "domed-city"
   spec.version       = Dome::VERSION
   spec.authors       = ["Ben Snape"]
   spec.email         = ["ben.snape@itv.com"]
