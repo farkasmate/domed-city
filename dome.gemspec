@@ -21,8 +21,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
 
-  spec.add_dependency 'trollop'
-  spec.add_dependency 'aws-profile_parser'
-  spec.add_dependency 'aws-sdk'
-  spec.add_dependency 'colorize'
+  spec.add_dependency 'trollop', '~> 2.1'
+  spec.add_dependency 'aws-profile_parser', '~> 0.0.4'
+  spec.add_dependency 'aws-sdk', '~> 2.1'
+  spec.add_dependency 'colorize', '~> 0.7'
 end
