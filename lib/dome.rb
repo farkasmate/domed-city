@@ -1,5 +1,8 @@
-require "dome/version"
+require 'dome/version'
+require 'dome/environment'
+require 'dome/terraform'
 
-module Dome
-  # Your code goes here...
-end
+require 'aws-sdk'
+require 'colorize'
+require 'aws/profile_parser'
+require 'fileutils'
