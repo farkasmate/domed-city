@@ -6,7 +6,7 @@ module Dome
       @team           = 'deirdre'
       @tfstate_bucket = "#{@team}-tfstate-#{@environment}"
       @tfstate_s3_obj = "#{@environment}-terraform.tfstate"
-      @varfile        = "params/env.tfvars"
+      @varfile        = 'params/env.tfvars'
       @plan           = "plans/#{@account}-#{@environment}-plan.tf"
       @state_file     = "state-files/#{@environment}-terraform.tfstate"
     end
@@ -64,8 +64,8 @@ module Dome
       puts "\n'#{account}' is not a valid account.\n".colorize(:red)
       puts "Valid accounts are: #{valid_accounts}."
       puts "\nEither:"
-      puts "1. Set your .aws/config to one of the valid accounts above."
-      puts "2. Ensure you are running this from the correct directory."
+      puts '1. Set your .aws/config to one of the valid accounts above.'
+      puts '2. Ensure you are running this from the correct directory.'
       exit 1
     end
 
@@ -91,25 +91,25 @@ module Dome
 
     def apply
       command         = "terraform apply #{@plan}"
-      failure_message = "something went wrong when applying the TF plan"
+      failure_message = 'something went wrong when applying the TF plan'
       execute_command(command, failure_message)
     end
 
     def create_plan
       command         = "terraform plan -module-depth=1 -refresh=true -out=#{@plan} -var-file=#{@varfile}"
-      failure_message = "something went wrong when creating the TF plan"
+      failure_message = 'something went wrong when creating the TF plan'
       execute_command(command, failure_message)
     end
 
     def delete_terraform_directory
-      puts "Deleting older terraform module cache dir ...".colorize(:green)
+      puts 'Deleting older terraform module cache dir ...'.colorize(:green)
       terraform_directory = '.terraform'
       puts "About to delete directory: #{terraform_directory}"
-      FileUtils.rm_rf ".terraform/"
+      FileUtils.rm_rf '.terraform/'
     end
 
     def delete_plan_file
-      puts "Deleting older terraform plan ...".colorize(:green)
+      puts 'Deleting older terraform plan ...'.colorize(:green)
       puts "About to delete: #{@plan}"
       FileUtils.rm_f @plan
     end
@@ -123,13 +123,13 @@ module Dome
 
     def create_destroy_plan
       command         = "terraform plan -destroy -module-depth=1 -out=#{@plan} -var-file=#{@varfile}"
-      failure_message = "something went wrong when creating the TF plan"
+      failure_message = 'something went wrong when creating the TF plan'
       execute_command(command, failure_message)
     end
 
     def get_terraform_modules
-      command         = "terraform get -update=true"
-      failure_message = "something went wrong when pulling remote TF modules"
+      command         = 'terraform get -update=true'
+      failure_message = 'something went wrong when pulling remote TF modules'
       execute_command(command, failure_message)
     end
 
@@ -147,19 +147,19 @@ module Dome
 
     def create_bucket(name)
       begin
-        s3_client.create_bucket({ bucket: name, acl: "private" })
+        s3_client.create_bucket({ bucket: name, acl: 'private' })
       rescue Aws::S3::Errors::BucketAlreadyExists
-        fail "The S3 bucket must be globally unique. See https://docs.aws.amazon.com/AmazonS3/latest/gsg/CreatingABucket.html".colorize(:red)
+        fail 'The S3 bucket must be globally unique. See https://docs.aws.amazon.com/AmazonS3/latest/gsg/CreatingABucket.html'.colorize(:red)
       end
     end
 
     def enable_bucket_versioning(bucket_name)
-      puts "Enabling versioning on the S3 bucket - http://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html".colorize(:green)
+      puts 'Enabling versioning on the S3 bucket - http://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html'.colorize(:green)
       s3_client.put_bucket_versioning({
                                         bucket:                   bucket_name,
                                         versioning_configuration: {
-                                          mfa_delete: "Disabled",
-                                          status:     "Enabled"
+                                          mfa_delete: 'Disabled',
+                                          status: 'Enabled'
                                         },
                                       })
     end
@@ -169,7 +169,7 @@ module Dome
       s3_client.put_object({
                              bucket: bucket_name,
                              key:    key_name,
-                             body:   ""
+                             body: ''
                            })
     end
 
@@ -188,29 +188,29 @@ module Dome
     end
 
     def synchronise_s3_state
-      puts "Synchronising the remote S3 state..."
+      puts 'Synchronising the remote S3 state...'
       # not clear for me if the -state in the below command matters
-      command         = "terraform remote config"\
-            " -backend=S3"\
+      command         = 'terraform remote config'\
+            ' -backend=S3'\
             " -backend-config='bucket=#{@tfstate_bucket}' -backend-config='key=#{@tfstate_s3_obj}'"\
             " -state=#{@state_file}"
-      failure_message = "something went wrong when creating the S3 state"
+      failure_message = 'something went wrong when creating the S3 state'
       execute_command(command, failure_message)
     end
 
     def synchronise_s3_state_setup
       puts "Setting up the initial terraform S3 state in the S3 bucket: #{@tfstate_bucket.colorize(:green)} for account: #{@account.colorize(:green)} and environment: #{@environment.colorize(:green)} ..."
-      command         = "terraform remote config"\
-          " -backend=S3"\
+      command         = 'terraform remote config'\
+          ' -backend=S3'\
           " -backend-config='bucket=#{@tfstate_bucket}' -backend-config='key=#{@tfstate_s3_obj}'"
-      failure_message = "something went wrong when creating the S3 state"
+      failure_message = 'something went wrong when creating the S3 state'
       execute_command(command, failure_message)
     end
 
     def fetch_s3_state
-      command         = "terraform remote config -backend=S3"\
+      command         = 'terraform remote config -backend=S3'\
       " -backend-config='bucket=#{@tfstate_bucket}' -backend-config='key=#{@tfstate_s3_obj}'"
-      failure_message = "something went wrong when fetching the S3 state"
+      failure_message = 'something went wrong when fetching the S3 state'
       execute_command(command, failure_message)
     end
 
