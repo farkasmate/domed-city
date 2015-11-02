@@ -1,12 +1,12 @@
 module Dome
   class Environment
     def initialize
-      @environment    = Dir.pwd.split('/')[-1]
-      @account        = Dir.pwd.split('/')[-2]
-      @team           = 'deirdre'
-      @tfstate_bucket = "#{@team}-tfstate-#{@environment}"
-      @tfstate_s3_obj = "#{@environment}-terraform.tfstate"
-      @plan           = "plans/#{@account}-#{@environment}-plan.tf"
+      @environment  = Dir.pwd.split('/')[-1]
+      @account      = Dir.pwd.split('/')[-2]
+      @team         = 'deirdre'
+      @state_bucket = "#{@team}-tfstate-#{@environment}"
+      @state_file   = "#{@environment}-terraform.tfstate"
+      @plan         = "plans/#{@account}-#{@environment}-plan.tf"
     end
 
     # --------------------------------------------------------------
@@ -169,24 +169,24 @@ module Dome
       )
     end
 
-    def create_remote_state_bucket(tfstate_bucket, tfstate_s3_obj)
-      create_bucket tfstate_bucket
-      enable_bucket_versioning tfstate_bucket
-      put_empty_object_in_bucket(tfstate_bucket, tfstate_s3_obj)
+    def create_remote_state_bucket(state_bucket, state_file)
+      create_bucket state_bucket
+      enable_bucket_versioning state_bucket
+      put_empty_object_in_bucket(state_bucket, state_file)
     end
 
     def bootstrap_s3_state
-      if s3_bucket_exists?(@tfstate_bucket)
+      if s3_bucket_exists?(@state_bucket)
         synchronise_s3_state
       else
-        create_remote_state_bucket(@tfstate_bucket, @tfstate_s3_obj)
+        create_remote_state_bucket(@state_bucket, @state_file)
       end
     end
 
     def synchronise_s3_state
       puts 'Synchronising the remote S3 state...'
       command         = 'terraform remote config -backend=S3'\
-            " -backend-config='bucket=#{@tfstate_bucket}' -backend-config='key=#{@tfstate_s3_obj}'"
+            " -backend-config='bucket=#{@state_bucket}' -backend-config='key=#{@state_file}'"
       failure_message = 'Something went wrong when synchronising the S3 state.'
       execute_command(command, failure_message)
     end
