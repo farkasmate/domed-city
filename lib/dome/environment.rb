@@ -13,26 +13,22 @@ module Dome
     # Environment stuff
     # --------------------------------------------------------------
 
-    def valid_accounts
+    def accounts
       %w(deirdre-dev deirdre-prd)
     end
 
-    def valid_env_nonprod
+    def non_production_environments
       %w(infradev sit qa stg)
     end
 
-    def valid_env_prod
+    def production_environments
       %w(infraprd prd)
     end
 
     def validate_environment
-      puts "Environment: #{@environment}"
-      puts "Account: #{@account}"
-
-      invalid_account_message(account) unless valid_account? @account
-      invalid_environment_message(account, environment) unless valid_environment?(@account, @environment)
-
-      set_aws_credentials(@account)
+      invalid_account_message(@account) unless valid_account? @account
+      invalid_environment_message(@account, @environment) unless valid_environment?(@account, @environment)
+      set_aws_credentials @account
     end
 
     def set_aws_credentials(account)
@@ -47,20 +43,23 @@ module Dome
     end
 
     def valid_account?(account)
-      valid_accounts.include? account
+      puts "Account: #{account.colorize(:green)}"
+      accounts.include? account
     end
 
     def valid_environment?(account, environment)
-      if valid_accounts[valid_accounts.index(account)] == 'deirdre-dev'
-        valid_env_nonprod.include? environment
-      elsif valid_accounts[valid_accounts.index(account)] == 'deirdre-prd'
-        valid_env_prod.include? environment
+      puts "Environment: #{@environment.colorize(:green)}"
+      if account[-4..-1] == '-dev'
+        non_production_environments.include? environment
+      else
+        production_environments.include? environment
       end
     end
 
     def invalid_account_message(account)
       puts "\n'#{account}' is not a valid account.\n".colorize(:red)
-      puts "Valid accounts are: #{valid_accounts}."
+      puts "The 'account' and 'environment' values are calculated based on your current directory.\n".colorize(:red)
+      puts "Valid accounts are: #{accounts}."
       puts "\nEither:"
       puts '1. Set your .aws/config to one of the valid accounts above.'
       puts '2. Ensure you are running this from the correct directory.'
@@ -69,8 +68,14 @@ module Dome
 
     def invalid_environment_message(account, environment)
       puts "\n'#{environment}' is not a valid environment for the account: '#{account}'.\n".colorize(:red)
-      (account == 'deirdre-dev') ? env = valid_env_nonprod : env = valid_env_prod
-      puts "Valid environments are: #{env}"
+      puts "The 'account' and 'environment' values are calculated based on your current directory.\n".colorize(:red)
+
+      env = if account[-4..-1] == '-dev'
+              non_production_environments
+            else
+              production_environments
+            end
+      puts "Valid environments are: #{env}."
       exit 1
     end
 
