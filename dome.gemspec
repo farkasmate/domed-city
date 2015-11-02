@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Ben Snape']
   spec.email         = ['ben.snape@itv.com']
 
-  spec.summary       = %q{A simple Terraform API wrapper and helpers for ITV.}
+  spec.summary       = 'A simple Terraform API wrapper and helpers for ITV.'
   spec.homepage      = 'https://github.com/ITV/dome'
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }

@@ -1,27 +1,9 @@
 #!/usr/bin/env ruby
 
-require "bundler/setup"
-require "dome"
+require 'bundler/setup'
+require 'dome'
 
-#  desc "creates the S3 bucket relevant for the environment; if the S3 state exists it pulls the remote S3 state locally"
-#  task :bootstrap_s3_state do
-#
-#  desc "creates the TF plan in a local file"
-#  task :plan do
-#
-#  desc "creates the TF plan, to destroy resources, in a local file"
-#  task :plandestroy do
-#
-#  desc "applies a TF plan"
-#  task :apply do
-#
-#  desc "applies a destructive TF immediately"
-#  task :destroy do
-#
-#  desc "updates the TF binary dependencies"
-#  task :update do
-
-opts = Trollop::options do
+opts = Trollop.options do
   version Dome::VERSION
   banner <<-EOS
 Dome wraps the Terraform API and performs useful stuff.
@@ -31,11 +13,11 @@ Usage:
 where [commands] are:
 EOS
 
-  opt :plan, "Creates a Terraform plan"
-  opt :apply, "Applies a Terraform plan"
-  opt :plan_destroy, "Creates a destructive Terraform plan"
-  opt :apply_destroy, "Applies a destructive Terraform plan"
-  opt :state, "Synchronises the Terraform state"
+  opt :plan, 'Creates a Terraform plan'
+  opt :apply, 'Applies a Terraform plan'
+  opt :plan_destroy, 'Creates a destructive Terraform plan'
+  opt :apply_destroy, 'Applies a destructive Terraform plan'
+  opt :state, 'Synchronises the Terraform state'
 end
 
 if opts[:plan]
@@ -49,5 +31,5 @@ elsif opts[:state]
   @dome.validate_environment
   @dome.bootstrap_s3_state
 else
-  Trollop::educate
+  Trollop.educate
 end

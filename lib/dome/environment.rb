@@ -84,7 +84,7 @@ module Dome
       puts "current dir: #{Dir.pwd}"
       delete_terraform_directory
       delete_plan_file
-      get_terraform_modules
+      install_terraform_modules
       fetch_s3_state
       create_plan
     end
@@ -117,7 +117,7 @@ module Dome
     def plan_destroy
       delete_terraform_directory
       delete_plan_file
-      get_terraform_modules
+      install_terraform_modules
       create_destroy_plan
     end
 
@@ -127,7 +127,7 @@ module Dome
       execute_command(command, failure_message)
     end
 
-    def get_terraform_modules
+    def install_terraform_modules
       command         = 'terraform get -update=true'
       failure_message = 'something went wrong when pulling remote TF modules'
       execute_command(command, failure_message)
@@ -147,30 +147,28 @@ module Dome
 
     def create_bucket(name)
       begin
-        s3_client.create_bucket({ bucket: name, acl: 'private' })
+        s3_client.create_bucket(bucket: name, acl: 'private')
       rescue Aws::S3::Errors::BucketAlreadyExists
-        fail 'The S3 bucket must be globally unique. See https://docs.aws.amazon.com/AmazonS3/latest/gsg/CreatingABucket.html'.colorize(:red)
+        raise 'The S3 bucket must be globally unique. See https://docs.aws.amazon.com/AmazonS3/latest/gsg/CreatingABucket.html'.colorize(:red)
       end
     end
 
     def enable_bucket_versioning(bucket_name)
       puts 'Enabling versioning on the S3 bucket - http://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html'.colorize(:green)
-      s3_client.put_bucket_versioning({
-                                        bucket:                   bucket_name,
-                                        versioning_configuration: {
-                                          mfa_delete: 'Disabled',
-                                          status: 'Enabled'
-                                        },
+      s3_client.put_bucket_versioning(bucket:                   bucket_name,
+                                      versioning_configuration: {
+                                        mfa_delete: 'Disabled',
+                                        status:     'Enabled'
                                       })
     end
 
     def put_empty_object_in_bucket(bucket_name, key_name)
       puts "Putting an empty object with key: #{key_name} into bucket: #{bucket_name}".colorize(:green)
-      s3_client.put_object({
-                             bucket: bucket_name,
-                             key:    key_name,
-                             body: ''
-                           })
+      s3_client.put_object(
+        bucket: bucket_name,
+        key:    key_name,
+        body:   ''
+      )
     end
 
     def create_remote_state_bucket(tfstate_bucket, tfstate_s3_obj)
