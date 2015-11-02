@@ -31,11 +31,11 @@ Usage:
 where [commands] are:
 EOS
 
-  opt :plan, "Creates the Terraform plan in a local file"
-  opt :apply, "Applies the Terraform plan"
-  opt :destroy, "Applies a destructive Terraform plan"
-  opt :plan_destroy, "TODO"
-  opt :update, "TODO (maybe?)"
+  opt :plan, "Creates a Terraform plan"
+  opt :apply, "Applies a Terraform plan"
+  opt :plan_destroy, "Creates a destructive Terraform plan"
+  opt :apply_destroy, "Applies a destructive Terraform plan"
+  opt :state, "Synchronises the Terraform state"
 end
 
 if opts[:plan]
@@ -44,6 +44,10 @@ if opts[:plan]
   @dome.plan
 elsif opts[:apply]
   puts 'apply called'
+elsif opts[:state]
+  @dome = Dome::Environment.new
+  @dome.validate_environment
+  @dome.bootstrap_s3_state
 else
   Trollop::educate
 end
