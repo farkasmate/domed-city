@@ -5,4 +5,7 @@ require 'aws/profile_parser'
 require 'fileutils'
 
 require 'dome/version'
+require 'dome/helpers/shell'
 require 'dome/environment'
+require 'dome/state'
+require 'dome/terraform'

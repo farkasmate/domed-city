@@ -20,21 +20,21 @@ EOS
 end
 
 if opts[:plan]
-  @dome = Dome::Environment.new
+  @dome = Dome::Terraform.new
   @dome.validate_environment
   @dome.plan
 elsif opts[:apply]
-  @dome = Dome::Environment.new
+  @dome = Dome::Terraform.new
   @dome.validate_environment
   @dome.apply
 elsif opts[:plan_destroy]
-  @dome = Dome::Environment.new
+  @dome = Dome::Terraform.new
   @dome.validate_environment
   @dome.plan_destroy
 elsif opts[:state]
-  @dome = Dome::Environment.new
+  @dome = Dome::Terraform.new
   @dome.validate_environment
-  @dome.bootstrap_s3_state
+  @dome.state.s3_state
 else
   Trollop.educate
 end
