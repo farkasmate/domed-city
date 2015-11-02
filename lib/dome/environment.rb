@@ -10,6 +10,10 @@ module Dome
       @plan           = "plans/#{@account}-#{@environment}-plan.tf"
     end
 
+    # --------------------------------------------------------------
+    # Environment stuff
+    # --------------------------------------------------------------
+
     def valid_accounts
       %w(deirdre-dev deirdre-prd)
     end
@@ -26,17 +30,13 @@ module Dome
       puts "Environment: #{@environment}"
       puts "Account: #{@account}"
 
-      invalid_account_notification(account) unless is_valid_account? @account
-      invalid_environment_notification(account, environment) unless is_valid_env?(@account, @environment)
+      invalid_account_message(account) unless valid_account? @account
+      invalid_environment_message(account, environment) unless valid_environment?(@account, @environment)
 
-      set_creds(@account)
+      set_aws_credentials(@account)
     end
 
-    def cd_to_tf_dir
-      Dir.chdir(current_env_dir) if Dir.pwd != current_env_dir
-    end
-
-    def set_creds(account)
+    def set_aws_credentials(account)
       begin
         @aws_creds = AWS::ProfileParser.new.get(account)
       rescue RuntimeError
@@ -47,11 +47,11 @@ module Dome
       ENV['AWS_DEFAULT_REGION']    = @aws_creds[:region]
     end
 
-    def is_valid_account?(account)
+    def valid_account?(account)
       valid_accounts.include? account
     end
 
-    def is_valid_env?(account, environment)
+    def valid_environment?(account, environment)
       if valid_accounts[valid_accounts.index(account)] == 'deirdre-dev'
         valid_env_nonprod.include? environment
       elsif valid_accounts[valid_accounts.index(account)] == 'deirdre-prd'
@@ -59,7 +59,7 @@ module Dome
       end
     end
 
-    def invalid_account_notification(account)
+    def invalid_account_message(account)
       puts "\n'#{account}' is not a valid account.\n".colorize(:red)
       puts "Valid accounts are: #{valid_accounts}."
       puts "\nEither:"
@@ -68,12 +68,71 @@ module Dome
       exit 1
     end
 
-    def invalid_environment_notification(account, environment)
+    def invalid_environment_message(account, environment)
       puts "\n'#{environment}' is not a valid environment for the account: '#{account}'.\n".colorize(:red)
       (account == 'deirdre-dev') ? env = valid_env_nonprod : env = valid_env_prod
       puts "Valid environments are: #{env}"
       exit 1
     end
+
+    # --------------------------------------------------------------
+    # Terraform commands
+    # --------------------------------------------------------------
+
+    def plan
+      puts "current dir: #{Dir.pwd}"
+      delete_terraform_directory
+      delete_plan_file
+      get_terraform_modules
+      fetch_s3_state
+      create_plan
+    end
+
+    def apply
+      command         = "terraform apply #{@plan}"
+      failure_message = "something went wrong when applying the TF plan"
+      execute_command(command, failure_message)
+    end
+
+    def create_plan
+      command         = "terraform plan -module-depth=1 -refresh=true -out=#{@plan} -var-file=#{@varfile}"
+      failure_message = "something went wrong when creating the TF plan"
+      execute_command(command, failure_message)
+    end
+
+    def delete_terraform_directory
+      puts "Deleting older terraform module cache dir ...".colorize(:green)
+      terraform_directory = '.terraform'
+      puts "About to delete directory: #{terraform_directory}"
+      FileUtils.rm_rf ".terraform/"
+    end
+
+    def delete_plan_file
+      puts "Deleting older terraform plan ...".colorize(:green)
+      puts "About to delete: #{@plan}"
+      FileUtils.rm_f @plan
+    end
+
+    def plan_destroy
+      delete_terraform_directory
+      delete_plan_file
+      get_terraform_modules
+      create_destroy_plan
+    end
+
+    def create_destroy_plan
+      command         = "terraform plan -destroy -module-depth=1 -out=#{@plan} -var-file=#{@varfile}"
+      failure_message = "something went wrong when creating the TF plan"
+      execute_command(command, failure_message)
+    end
+
+    def get_terraform_modules
+      command         = "terraform get -update=true"
+      failure_message = "something went wrong when pulling remote TF modules"
+      execute_command(command, failure_message)
+    end
+
+    # S3 stuff
 
     def s3_bucket_exists?(tfstate_bucket)
       s3_client = Aws::S3::Client.new(@aws_creds)
@@ -113,87 +172,10 @@ module Dome
                            })
     end
 
-    def delete_terraform_directory
-      puts "Deleting older terraform module cache dir ...".colorize(:green)
-      terraform_directory = '.terraform'
-      puts "About to delete directory: #{terraform_directory}"
-      FileUtils.rm_rf ".terraform/"
-    end
-
-    def delete_plan_file
-      puts "Deleting older terraform plan ...".colorize(:green)
-      puts "About to delete: #{@plan}"
-      FileUtils.rm_f @plan
-    end
-
-    def plan
-      puts "current dir: #{Dir.pwd}"
-
-      delete_terraform_directory
-      delete_plan_file
-
-      get_terraform_modules
-      fetch_s3_state
-      create_plan
-    end
-
     def fetch_s3_state
       command         = "terraform remote config -backend=S3"\
       " -backend-config='bucket=#{@tfstate_bucket}' -backend-config='key=#{@tfstate_s3_obj}'"
       failure_message = "something went wrong when fetching the S3 state"
-      execute_command(command, failure_message)
-    end
-
-    def create_plan
-      command         = "terraform plan -module-depth=1 -refresh=true -out=#{@plan} -var-file=#{@varfile}"
-      failure_message = "something went wrong when creating the TF plan"
-      execute_command(command, failure_message)
-    end
-
-    def execute_command(command, failure_message)
-      puts "About to execute command: #{command}"
-      success = system command
-      puts failure_message unless success
-    end
-
-    def apply
-      puts "--- running task :apply".colorize(:light_cyan)
-      set_env
-      cd_to_tf_dir
-      set_env
-      cmd = "terraform apply #{PLAN}"
-      puts "\n Command to execute: #{cmd}\n\n"
-      bool = system(cmd)
-      fail "something went wrong when applying the TF plan" unless bool
-    end
-
-    def plan_destroy
-      puts "--- running task :plandestroy".colorize(:light_cyan)
-      set_env
-      Dir.chdir(CURRENT_ENV_DIR)
-      puts "purging older terraform module cache dir ...".colorize(:green)
-      purge_terraform
-      puts "purging older terraform plan ...".colorize(:green)
-      FileUtils.rm_f(PLAN)
-      puts "updating terraform external modules ...".colorize(:green)
-      Rake::Task['tf:update'].invoke
-      p PLAN
-      cmd = "terraform plan -destroy -module-depth=1 -out=#{PLAN} #{@varfile}"
-      puts "\nCommand to execute: \n #{cmd}\n\n"
-      bool = system(cmd)
-      fail "something went wrong when creating the TF plan" unless bool
-    end
-
-    def destroy
-      puts "--- running task :destroy".colorize(:light_cyan)
-      puts "here is the destroy plan that terraform will carry out"
-      plan_destroy
-      apply
-    end
-
-    def get_terraform_modules
-      command         = "terraform get -update=true"
-      failure_message = "something went wrong when pulling remote TF modules"
       execute_command(command, failure_message)
     end
 
@@ -222,6 +204,16 @@ module Dome
         bool = system(cmd)
         fail "something went wrong when creating the S3 state" unless bool
       end
+    end
+
+    # --------------------------------------------------------------
+    # Misc.
+    # --------------------------------------------------------------
+
+    def execute_command(command, failure_message)
+      puts "About to execute command: #{command}"
+      success = system command
+      puts failure_message unless success
     end
   end
 end
