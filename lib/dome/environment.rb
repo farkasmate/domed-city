@@ -134,49 +134,55 @@ module Dome
 
     # S3 stuff
 
+    def s3_client
+      @s3_client ||= Aws::S3::Client.new(@aws_creds)
+    end
+
     def s3_bucket_exists?(tfstate_bucket)
-      s3_client = Aws::S3::Client.new(@aws_creds)
-      resp      = s3_client.list_buckets
+      resp = s3_client.list_buckets
       resp.buckets.each { |bucket| return true if bucket.name == tfstate_bucket }
       false
     end
 
-    def s3_tf_create_remote_state_bucket(tfstate_bucket, tfstate_s3_obj)
-      puts "initial boostrap of the S3 bucket".colorize(:green)
-      s3_client = Aws::S3::Client.new(@aws_creds)
+    def create_bucket(name)
       begin
-        s3_client.create_bucket({
-                                  bucket: tfstate_bucket,
-                                  acl:    "private"
-                                })
-      rescue Aws::S3::Errors::BucketAlreadyExists => e
-        puts "type of exception #{e.class}".colorize(:red)
-        puts "backtrace for this exception:".colorize(:red)
-        puts e.backtrace
-        puts "\nmake sure the bucket name is unique per whole AWS S3 service, see here for docs on uniqueness https://docs.aws.amazon.com/AmazonS3/latest/gsg/CreatingABucket.html\n\n".colorize(:red)
-        exit 1
+        s3_client.create_bucket({ bucket: name, acl: "private" })
+      rescue Aws::S3::Errors::BucketAlreadyExists
+        fail "The S3 bucket must be globally unique. See https://docs.aws.amazon.com/AmazonS3/latest/gsg/CreatingABucket.html".colorize(:red)
       end
-      puts "enabling versioning on the S3 bucket - http://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html".colorize(:green)
+    end
+
+    def enable_bucket_versioning(bucket_name)
+      puts "Enabling versioning on the S3 bucket - http://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html".colorize(:green)
       s3_client.put_bucket_versioning({
-                                        bucket:                   tfstate_bucket,
+                                        bucket:                   bucket_name,
                                         versioning_configuration: {
                                           mfa_delete: "Disabled",
                                           status:     "Enabled"
                                         },
                                       })
-      puts "creating an empty S3 object".colorize(:green)
+    end
+
+    def put_empty_object_in_bucket(bucket_name, key_name)
+      puts "Putting an empty object with key: #{key_name} into bucket: #{bucket_name}".colorize(:green)
       s3_client.put_object({
-                             bucket: tfstate_bucket,
-                             key:    tfstate_s3_obj,
+                             bucket: bucket_name,
+                             key:    key_name,
                              body:   ""
                            })
+    end
+
+    def create_remote_state_bucket(tfstate_bucket, tfstate_s3_obj)
+      create_bucket tfstate_bucket
+      enable_bucket_versioning tfstate_bucket
+      put_empty_object_in_bucket(tfstate_bucket, tfstate_s3_obj)
     end
 
     def bootstrap_s3_state
       if s3_bucket_exists?(@tfstate_bucket)
         synchronise_s3_state
       else
-        s3_tf_create_remote_state_bucket(@tfstate_bucket, @tfstate_s3_obj)
+        create_remote_state_bucket(@tfstate_bucket, @tfstate_s3_obj)
       end
     end
 
