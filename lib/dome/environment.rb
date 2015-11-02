@@ -6,9 +6,7 @@ module Dome
       @team           = 'deirdre'
       @tfstate_bucket = "#{@team}-tfstate-#{@environment}"
       @tfstate_s3_obj = "#{@environment}-terraform.tfstate"
-      @varfile        = 'params/env.tfvars'
       @plan           = "plans/#{@account}-#{@environment}-plan.tf"
-      @state_file     = "state-files/#{@environment}-terraform.tfstate"
     end
 
     # --------------------------------------------------------------
@@ -85,7 +83,7 @@ module Dome
       delete_terraform_directory
       delete_plan_file
       install_terraform_modules
-      fetch_s3_state
+      synchronise_s3_state
       create_plan
     end
 
@@ -96,7 +94,7 @@ module Dome
     end
 
     def create_plan
-      command         = "terraform plan -module-depth=1 -refresh=true -out=#{@plan} -var-file=#{@varfile}"
+      command         = "terraform plan -module-depth=1 -refresh=true -out=#{@plan} -var-file=params/env.tfvars"
       failure_message = 'something went wrong when creating the TF plan'
       execute_command(command, failure_message)
     end
@@ -122,7 +120,7 @@ module Dome
     end
 
     def create_destroy_plan
-      command         = "terraform plan -destroy -module-depth=1 -out=#{@plan} -var-file=#{@varfile}"
+      command         = "terraform plan -destroy -module-depth=1 -out=#{@plan} -var-file=params/env.tfvars"
       failure_message = 'something went wrong when creating the TF plan'
       execute_command(command, failure_message)
     end
@@ -187,28 +185,9 @@ module Dome
 
     def synchronise_s3_state
       puts 'Synchronising the remote S3 state...'
-      # not clear for me if the -state in the below command matters
-      command         = 'terraform remote config'\
-            ' -backend=S3'\
-            " -backend-config='bucket=#{@tfstate_bucket}' -backend-config='key=#{@tfstate_s3_obj}'"\
-            " -state=#{@state_file}"
-      failure_message = 'something went wrong when creating the S3 state'
-      execute_command(command, failure_message)
-    end
-
-    def synchronise_s3_state_setup
-      puts "Setting up the initial terraform S3 state in the S3 bucket: #{@tfstate_bucket.colorize(:green)} for account: #{@account.colorize(:green)} and environment: #{@environment.colorize(:green)} ..."
-      command         = 'terraform remote config'\
-          ' -backend=S3'\
-          " -backend-config='bucket=#{@tfstate_bucket}' -backend-config='key=#{@tfstate_s3_obj}'"
-      failure_message = 'something went wrong when creating the S3 state'
-      execute_command(command, failure_message)
-    end
-
-    def fetch_s3_state
       command         = 'terraform remote config -backend=S3'\
-      " -backend-config='bucket=#{@tfstate_bucket}' -backend-config='key=#{@tfstate_s3_obj}'"
-      failure_message = 'something went wrong when fetching the S3 state'
+            " -backend-config='bucket=#{@tfstate_bucket}' -backend-config='key=#{@tfstate_s3_obj}'"
+      failure_message = 'Something went wrong when synchronising the S3 state.'
       execute_command(command, failure_message)
     end
 
