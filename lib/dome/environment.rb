@@ -8,6 +8,7 @@ module Dome
       @tfstate_s3_obj = "#{@environment}-terraform.tfstate"
       @varfile        = "params/env.tfvars"
       @plan           = "plans/#{@account}-#{@environment}-plan.tf"
+      @state_file     = "state-files/#{@environment}-terraform.tfstate"
     end
 
     # --------------------------------------------------------------
@@ -191,8 +192,8 @@ module Dome
       # not clear for me if the -state in the below command matters
       command         = "terraform remote config"\
             " -backend=S3"\
-            " -backend-config='bucket=#{tfstate_bucket}' -backend-config='key=#{tfstate_s3_obj}'"\
-            " -state=#{STATE_FILE_DIR}/#{REMOTE_STATE_FILE}"
+            " -backend-config='bucket=#{@tfstate_bucket}' -backend-config='key=#{@tfstate_s3_obj}'"\
+            " -state=#{@state_file}"
       failure_message = "something went wrong when creating the S3 state"
       execute_command(command, failure_message)
     end
@@ -201,7 +202,7 @@ module Dome
       puts "Setting up the initial terraform S3 state in the S3 bucket: #{@tfstate_bucket.colorize(:green)} for account: #{@account.colorize(:green)} and environment: #{@environment.colorize(:green)} ..."
       command         = "terraform remote config"\
           " -backend=S3"\
-          " -backend-config='bucket=#{tfstate_bucket}' -backend-config='key=#{tfstate_s3_obj}'"
+          " -backend-config='bucket=#{@tfstate_bucket}' -backend-config='key=#{@tfstate_s3_obj}'"
       failure_message = "something went wrong when creating the S3 state"
       execute_command(command, failure_message)
     end
