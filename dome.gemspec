@@ -23,6 +23,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'trollop', '~> 2.1'
   spec.add_dependency 'aws-profile_parser', '~> 0.0.4'
-  spec.add_dependency 'aws-sdk', '~> 2.1'
-  spec.add_dependency 'colorize', '~> 0.7'
+  spec.add_dependency 'aws-sdk', '~> 2.1.33'
+  spec.add_dependency 'colorize', '~> 0.7.7'
+  spec.add_dependency 'jmespath', '~> 1.1.3'
 end
