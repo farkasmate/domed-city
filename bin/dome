@@ -19,6 +19,7 @@ EOS
   opt :state, 'Synchronises the Terraform state'
 end
 
+# TODO: hopefully we can flip this logic to DRY it up
 if opts[:plan]
   @dome = Dome::Terraform.new
   @dome.validate_environment
