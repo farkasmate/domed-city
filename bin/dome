@@ -16,7 +16,6 @@ EOS
   opt :plan, 'Creates a Terraform plan'
   opt :apply, 'Applies a Terraform plan'
   opt :plan_destroy, 'Creates a destructive Terraform plan'
-  opt :apply_destroy, 'Applies a destructive Terraform plan'
   opt :state, 'Synchronises the Terraform state'
 end
 
@@ -25,7 +24,13 @@ if opts[:plan]
   @dome.validate_environment
   @dome.plan
 elsif opts[:apply]
-  puts 'apply called'
+  @dome = Dome::Environment.new
+  @dome.validate_environment
+  @dome.apply
+elsif opts[:plan_destroy]
+  @dome = Dome::Environment.new
+  @dome.validate_environment
+  @dome.plan_destroy
 elsif opts[:state]
   @dome = Dome::Environment.new
   @dome.validate_environment
