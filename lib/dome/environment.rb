@@ -172,38 +172,39 @@ module Dome
                            })
     end
 
+    def bootstrap_s3_state
+      if s3_bucket_exists?(@tfstate_bucket)
+        synchronise_s3_state
+      else
+        s3_tf_create_remote_state_bucket(@tfstate_bucket, @tfstate_s3_obj)
+      end
+    end
+
+    def synchronise_s3_state
+      puts "Synchronising the remote S3 state..."
+      # not clear for me if the -state in the below command matters
+      command         = "terraform remote config"\
+            " -backend=S3"\
+            " -backend-config='bucket=#{tfstate_bucket}' -backend-config='key=#{tfstate_s3_obj}'"\
+            " -state=#{STATE_FILE_DIR}/#{REMOTE_STATE_FILE}"
+      failure_message = "something went wrong when creating the S3 state"
+      execute_command(command, failure_message)
+    end
+
+    def synchronise_s3_state_setup
+      puts "Setting up the initial terraform S3 state in the S3 bucket: #{@tfstate_bucket.colorize(:green)} for account: #{@account.colorize(:green)} and environment: #{@environment.colorize(:green)} ..."
+      command         = "terraform remote config"\
+          " -backend=S3"\
+          " -backend-config='bucket=#{tfstate_bucket}' -backend-config='key=#{tfstate_s3_obj}'"
+      failure_message = "something went wrong when creating the S3 state"
+      execute_command(command, failure_message)
+    end
+
     def fetch_s3_state
       command         = "terraform remote config -backend=S3"\
       " -backend-config='bucket=#{@tfstate_bucket}' -backend-config='key=#{@tfstate_s3_obj}'"
       failure_message = "something went wrong when fetching the S3 state"
       execute_command(command, failure_message)
-    end
-
-    def bootstrap_s3_state
-      set_env
-      if s3_bucket_exists?(tfstate_bucket)
-        puts "Bootstrap attempted, but config for account: #{ACCOUNT.colorize(:green)} and environment: #{ENVIRONMENT.colorize(:green)} already exists in S3 bucket: #{tfstate_bucket.colorize(:green)}"
-        puts "synchronising the remote S3 state ..."
-        cd_to_tf_dir
-        cmd = "terraform remote config"\
-            " -backend=S3"\
-            " -backend-config='bucket=#{tfstate_bucket}' -backend-config='key=#{tfstate_s3_obj}'"\
-            " -state=#{STATE_FILE_DIR}/#{REMOTE_STATE_FILE}"
-        # still not clear for me if the -state in the above cmd matters
-        puts "Command to execute: #{cmd}"
-        bool = system(cmd)
-        fail "something went wrong when creating the S3 state" unless bool
-      else
-        s3_tf_create_remote_state_bucket(tfstate_bucket, tfstate_s3_obj)
-        puts "\nsetting up the initial terraform S3 state in the S3 bucket: #{tfstate_bucket.colorize(:green)} for account:#{ACCOUNT.colorize(:green)} and environment:#{ENVIRONMENT.colorize(:green)} ..."
-        cd_to_tf_dir
-        cmd = "terraform remote config"\
-          " -backend=S3"\
-          " -backend-config='bucket=#{tfstate_bucket}' -backend-config='key=#{tfstate_s3_obj}'"
-        puts "Command to execute: #{cmd}"
-        bool = system(cmd)
-        fail "something went wrong when creating the S3 state" unless bool
-      end
     end
 
     # --------------------------------------------------------------
