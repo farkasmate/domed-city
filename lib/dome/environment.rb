@@ -6,7 +6,7 @@ module Dome
       @team         = 'deirdre'
       @state_bucket = "#{@team}-tfstate-#{@environment}"
       @state_file   = "#{@environment}-terraform.tfstate"
-      @plan         = "plans/#{@account}-#{@environment}-plan.tf"
+      @plan_file    = "plans/#{@account}-#{@environment}-plan.tf"
     end
 
     # --------------------------------------------------------------
@@ -31,15 +31,18 @@ module Dome
       set_aws_credentials @account
     end
 
-    def set_aws_credentials(account)
+    def aws_credentials
       begin
-        @aws_creds = AWS::ProfileParser.new.get(account)
+        @aws_credentials ||= AWS::ProfileParser.new.get(@account)
       rescue RuntimeError
-        raise "No credentials found for account: '#{account}'."
+        raise "No credentials found for account: '#{@account}'."
       end
-      ENV['AWS_ACCESS_KEY_ID']     = @aws_creds[:access_key_id]
-      ENV['AWS_SECRET_ACCESS_KEY'] = @aws_creds[:secret_access_key]
-      ENV['AWS_DEFAULT_REGION']    = @aws_creds[:region]
+    end
+
+    def populate_aws_access_keys
+      ENV['AWS_ACCESS_KEY_ID']     = aws_credentials[:access_key_id]
+      ENV['AWS_SECRET_ACCESS_KEY'] = aws_credentials[:secret_access_key]
+      ENV['AWS_DEFAULT_REGION']    = aws_credentials[:region]
     end
 
     def valid_account?(account)
@@ -93,13 +96,13 @@ module Dome
     end
 
     def apply
-      command         = "terraform apply #{@plan}"
+      command         = "terraform apply #{@plan_file}"
       failure_message = 'something went wrong when applying the TF plan'
       execute_command(command, failure_message)
     end
 
     def create_plan
-      command         = "terraform plan -module-depth=1 -refresh=true -out=#{@plan} -var-file=params/env.tfvars"
+      command         = "terraform plan -module-depth=1 -refresh=true -out=#{@plan_file} -var-file=params/env.tfvars"
       failure_message = 'something went wrong when creating the TF plan'
       execute_command(command, failure_message)
     end
@@ -113,8 +116,8 @@ module Dome
 
     def delete_plan_file
       puts 'Deleting older terraform plan ...'.colorize(:green)
-      puts "About to delete: #{@plan}"
-      FileUtils.rm_f @plan
+      puts "About to delete: #{@plan_file}"
+      FileUtils.rm_f @plan_file
     end
 
     def plan_destroy
@@ -125,7 +128,7 @@ module Dome
     end
 
     def create_destroy_plan
-      command         = "terraform plan -destroy -module-depth=1 -out=#{@plan} -var-file=params/env.tfvars"
+      command         = "terraform plan -destroy -module-depth=1 -out=#{@plan_file} -var-file=params/env.tfvars"
       failure_message = 'something went wrong when creating the TF plan'
       execute_command(command, failure_message)
     end
@@ -139,7 +142,7 @@ module Dome
     # S3 stuff
 
     def s3_client
-      @s3_client ||= Aws::S3::Client.new(@aws_creds)
+      @s3_client ||= Aws::S3::Client.new(aws_credentials)
     end
 
     def s3_bucket_exists?(tfstate_bucket)
