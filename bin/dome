@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
 require "bundler/setup"
-require 'trollop'
 require "dome"
 
 #  desc "creates the S3 bucket relevant for the environment; if the S3 state exists it pulls the remote S3 state locally"
@@ -40,8 +39,9 @@ EOS
 end
 
 if opts[:plan]
-  Dome::Environment.validate_environment
-  puts 'plan called'
+  @dome = Dome::Environment.new
+  @dome.validate_environment
+  @dome.plan
 elsif opts[:apply]
   puts 'apply called'
 else
