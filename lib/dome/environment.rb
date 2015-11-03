@@ -54,7 +54,8 @@ module Dome
 
     def invalid_account_message
       puts "\n'#{@account}' is not a valid account.\n".colorize(:red)
-      puts "The 'account' and 'environment' values are calculated based on your current directory.\n".colorize(:red)
+      puts "The 'account' and 'environment' variables are assigned based on your current directory.\n".colorize(:red)
+      puts "The expected directory structure is '.../<account>/<environment>'\n".colorize(:red)
       puts "Valid accounts are: #{accounts}."
       puts "\nEither:"
       puts '1. Set your .aws/config to one of the valid accounts above.'
@@ -64,7 +65,8 @@ module Dome
 
     def invalid_environment_message
       puts "\n'#{@environment}' is not a valid environment for the account: '#{@account}'.\n".colorize(:red)
-      puts "The 'account' and 'environment' values are calculated based on your current directory.\n".colorize(:red)
+      puts "The 'account' and 'environment' variables are assigned based on your current directory.\n".colorize(:red)
+      puts "The expected directory structure is '.../<account>/<environment>'\n".colorize(:red)
 
       env = if account[-4..-1] == '-dev'
               non_production_environments
