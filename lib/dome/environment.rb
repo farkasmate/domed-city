@@ -8,7 +8,7 @@ module Dome
     end
 
     def team
-      @account.match(/(\w+)-\w+\z/)[1]
+      @account.split('-').first
     end
 
     def accounts
@@ -37,17 +37,17 @@ module Dome
       ENV['AWS_DEFAULT_REGION']    = aws_credentials[:region]
     end
 
-    def valid_account?(account)
-      puts "Account: #{account.colorize(:green)}"
-      accounts.include? account
+    def valid_account?(account_name)
+      puts "Account: #{account_name.colorize(:green)}"
+      accounts.include? account_name
     end
 
-    def valid_environment?(account, environment)
-      puts "Environment: #{environment.colorize(:green)}"
-      if account[-4..-1] == '-dev'
-        non_production_environments.include? environment
+    def valid_environment?(account_name, environment_name)
+      puts "Environment: #{environment_name.colorize(:green)}"
+      if account_name.split('-')[1] == 'dev'
+        non_production_environments.include? environment_name
       else
-        production_environments.include? environment
+        production_environments.include? environment_name
       end
     end
 
