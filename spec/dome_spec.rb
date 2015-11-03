@@ -1,7 +1,9 @@
 require 'spec_helper'
 
 describe Dome do
-  let(:dome) { Dome::Environment.new }
+  let(:account_dir) { 'deirdre-dev' }
+  let(:environment_dir) { 'qa' }
+  let(:dome) { Dome::Environment.new([account_dir, environment_dir]) }
 
   context 'environment validation' do
     it 'identifies a valid environment' do

@@ -2,8 +2,7 @@ module Dome
   class Environment
     attr_reader :environment, :account
 
-    def initialize
-      directories  = Dir.pwd.split('/')
+    def initialize(directories = Dir.pwd.split('/'))
       @environment = directories[-1]
       @account     = directories[-2]
     end
@@ -13,7 +12,7 @@ module Dome
     end
 
     def accounts
-      %w(deirdre-dev deirdre-prd)
+      %W(#{team}-dev #{team}-prd)
     end
 
     def non_production_environments
