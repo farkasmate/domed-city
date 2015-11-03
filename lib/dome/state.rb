@@ -3,9 +3,15 @@ module Dome
     include Dome::Shell
 
     def initialize(environment)
-      @environment  = environment
-      @state_bucket = "#{@environment.team}-tfstate-#{@environment.environment}"
-      @state_file   = "#{@environment.environment}-terraform.tfstate"
+      @environment = environment
+    end
+
+    def state_bucket
+      "#{@environment.team}-tfstate-#{@environment.environment}"
+    end
+
+    def state_file
+      "#{@environment.environment}-terraform.tfstate"
     end
 
     def s3_client
@@ -51,17 +57,17 @@ module Dome
     end
 
     def s3_state
-      if s3_bucket_exists?(@state_bucket)
+      if s3_bucket_exists?(state_bucket)
         synchronise_s3_state
       else
-        create_remote_state_bucket(@state_bucket, @state_file)
+        create_remote_state_bucket(state_bucket, state_file)
       end
     end
 
     def synchronise_s3_state
       puts 'Synchronising the remote S3 state...'
       command         = 'terraform remote config -backend=S3'\
-            " -backend-config='bucket=#{@state_bucket}' -backend-config='key=#{@state_file}'"
+            " -backend-config='bucket=#{state_bucket}' -backend-config='key=#{state_file}'"
       failure_message = 'Something went wrong when synchronising the S3 state.'
       execute_command(command, failure_message)
     end

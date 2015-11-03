@@ -1,11 +1,15 @@
 module Dome
   class Environment
-    attr_reader :environment, :account, :team
+    attr_reader :environment, :account
 
     def initialize
-      @environment = Dir.pwd.split('/')[-1]
-      @account     = Dir.pwd.split('/')[-2]
-      @team        = @account.match(/(\w+)-\w+\z/)[1]
+      directories  = Dir.pwd.split('/')
+      @environment = directories[-1]
+      @account     = directories[-2]
+    end
+
+    def team
+      @account.match(/(\w+)-\w+\z/)[1]
     end
 
     def accounts
