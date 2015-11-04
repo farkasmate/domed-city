@@ -31,10 +31,10 @@ gem 'domed-city'
 
 ## Usage
 
-For ease of use, type `dome` in the CLI:
+For ease of use, type `bundle exec dome` (you may get some warnings if you do not use `bundle exec`) in the CLI:
 
 ```
-$ dome
+$ bundle exec dome
 
 Dome wraps the Terraform API and performs useful stuff.
 
