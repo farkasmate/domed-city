@@ -19,23 +19,17 @@ EOS
   opt :state, 'Synchronises the Terraform state'
 end
 
-# TODO: hopefully we can flip this logic to DRY it up
+Trollop.educate unless opts.has_value?(true)
+
+@dome = Dome::Terraform.new
+@dome.validate_environment
+
 if opts[:plan]
-  @dome = Dome::Terraform.new
-  @dome.validate_environment
   @dome.plan
 elsif opts[:apply]
-  @dome = Dome::Terraform.new
-  @dome.validate_environment
   @dome.apply
 elsif opts[:plan_destroy]
-  @dome = Dome::Terraform.new
-  @dome.validate_environment
   @dome.plan_destroy
 elsif opts[:state]
-  @dome = Dome::Terraform.new
-  @dome.validate_environment
   @dome.state.s3_state
-else
-  Trollop.educate
 end
