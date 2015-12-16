@@ -17,6 +17,7 @@ EOS
   opt :apply, 'Applies a Terraform plan'
   opt :plan_destroy, 'Creates a destructive Terraform plan'
   opt :state, 'Synchronises the Terraform state'
+  opt :output, 'Print all Terraform output variables'
 end
 
 Trollop.educate unless opts.has_value?(true)
@@ -32,4 +33,6 @@ elsif opts[:plan_destroy]
   @dome.plan_destroy
 elsif opts[:state]
   @dome.state.s3_state
+elsif opts[:output]
+  @dome.output
 end

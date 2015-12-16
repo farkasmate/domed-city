@@ -72,5 +72,10 @@ module Dome
       failure_message = 'something went wrong when pulling remote TF modules'
       execute_command(command, failure_message)
     end
+
+    def output
+      command         = 'terraform output'
+      failure_message = 'something went wrong when printing TF output variables'
+      execute_command(command, failure_message)
   end
 end
