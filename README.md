@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ITV/domed-city.svg?branch=master)](https://travis-ci.org/ITV/domed-city)
+
 # domed-city
 Simple CLI application that wraps the Terraform API.
 
