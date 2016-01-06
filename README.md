@@ -50,3 +50,7 @@ where [commands] are:
   -v, --version         Print version and exit
   -h, --help            Show this message
 ```
+### NOTICE
+
+When used for the first time in an environment you need to run `dome -s` for domed-city to create the S3 bucket and and enable file versioning on it. If you run it after the bucket has been created, it will just sync the remote state, something planning already does by default.
+
