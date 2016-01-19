@@ -54,3 +54,6 @@ where [commands] are:
 ### NOTICE
 
 When used for the first time in an environment you need to run `dome -s` for domed-city to create the S3 bucket and and enable file versioning on it. If you run it after the bucket has been created, it will just sync the remote state, something planning already does by default.
+
+## Acknowledgment
+The initial release of `domed-city` is based on the original, and unpublished work, done by @stefancocora and @madAndroid for an internal project at itv.
