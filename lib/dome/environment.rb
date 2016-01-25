@@ -16,7 +16,7 @@ module Dome
     end
 
     def non_production_environments
-      %w(infradev sit qa qa1 qa2 stg)
+      %w(infradev dev sit qa qa1 qa2 stg)
     end
 
     def production_environments
