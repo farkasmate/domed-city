@@ -28,14 +28,6 @@ module Dome
       create_plan
     end
 
-    def plan_destroy
-      delete_terraform_directory
-      delete_plan_file
-      install_terraform_modules
-      @state.synchronise_s3_state
-      create_destroy_plan
-    end
-
     def apply
       command         = "terraform apply #{@plan_file}"
       failure_message = 'something went wrong when applying the TF plan'
@@ -59,12 +51,6 @@ module Dome
       puts 'Deleting older terraform plan ...'.colorize(:green)
       puts "About to delete: #{@plan_file}"
       FileUtils.rm_f @plan_file
-    end
-
-    def create_destroy_plan
-      command         = "terraform plan -destroy -module-depth=1 -out=#{@plan_file} -var-file=params/env.tfvars"
-      failure_message = 'something went wrong when creating the TF plan'
-      execute_command(command, failure_message)
     end
 
     def install_terraform_modules
