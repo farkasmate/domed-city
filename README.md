@@ -45,7 +45,6 @@ Usage:
 where [commands] are:
   -p, --plan            Creates a Terraform plan
   -a, --apply           Applies a Terraform plan
-  -l, --plan-destroy    Creates a destructive Terraform plan
   -s, --state           Synchronises the Terraform state
   -o, --output          Print all Terraform output variables
   -v, --version         Print version and exit
