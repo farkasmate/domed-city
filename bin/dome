@@ -24,12 +24,16 @@ Trollop.educate unless opts.has_value?(true)
 @dome = Dome::Terraform.new
 @dome.validate_environment
 
-if opts[:plan]
-  @dome.plan
-elsif opts[:apply]
-  @dome.apply
-elsif opts[:state]
-  @dome.state.s3_state
-elsif opts[:output]
-  @dome.output
+begin
+  if opts[:plan]
+    @dome.plan
+  elsif opts[:apply]
+    @dome.apply
+  elsif opts[:state]
+    @dome.state.s3_state
+  elsif opts[:output]
+    @dome.output
+  end
+rescue Interrupt
+  puts "\ndome execution interrupted!".colorize(:red)
 end
