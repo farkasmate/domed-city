@@ -19,7 +19,7 @@ EOS
   opt :output, 'Print all Terraform output variables'
 end
 
-Trollop.educate unless opts.has_value?(true)
+Trollop.educate unless opts.value?(true)
 
 @dome = Dome::Terraform.new
 @dome.validate_environment

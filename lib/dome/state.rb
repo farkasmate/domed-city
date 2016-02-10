@@ -25,11 +25,9 @@ module Dome
     end
 
     def create_bucket(name)
-      begin
-        s3_client.create_bucket(bucket: name, acl: 'private')
-      rescue Aws::S3::Errors::BucketAlreadyExists
-        raise 'The S3 bucket must be globally unique. See https://docs.aws.amazon.com/AmazonS3/latest/gsg/CreatingABucket.html'.colorize(:red)
-      end
+      s3_client.create_bucket(bucket: name, acl: 'private')
+    rescue Aws::S3::Errors::BucketAlreadyExists
+      raise 'The S3 bucket must be globally unique. See https://docs.aws.amazon.com/AmazonS3/latest/gsg/CreatingABucket.html'.colorize(:red)
     end
 
     def enable_bucket_versioning(bucket_name)
