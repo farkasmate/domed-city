@@ -5,8 +5,8 @@ describe Dome do
   let(:environment_dir) { 'qa' }
   let(:dome) { Dome::Environment.new([account_dir, environment_dir]) }
 
-  let(:parsed_yaml) { YAML.load_file('spec/fixtures/itv.yaml') }
-  before(:each) { allow(dome.settings).to receive(:parse) { parsed_yaml } }
+  let(:itv_yaml_path) { 'spec/fixtures/itv.yaml' }
+  before(:each) { allow(dome.settings).to receive(:itv_yaml_path) { itv_yaml_path } }
 
   context 'environment validation' do
     it 'identifies a valid DEV environment in a DEV account' do
