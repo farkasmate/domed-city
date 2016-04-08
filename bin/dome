@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'bundler/setup'
-require 'dome'
+require_relative '../lib/dome'
 
 opts = Trollop.options do
   version Dome::VERSION

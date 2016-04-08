@@ -5,23 +5,24 @@ describe Dome do
   let(:environment_dir) { 'qa' }
   let(:dome) { Dome::Environment.new([account_dir, environment_dir]) }
 
-  context 'environment validation' do
+  let(:itv_yaml_path) { 'spec/fixtures/itv.yaml' }
+  before(:each) { allow(dome.settings).to receive(:itv_yaml_path) { itv_yaml_path } }
+
+  context 'environment validation against itv.yaml' do
     it 'identifies a valid environment' do
-      account     = 'deirdre-dev'
-      environment = 'sit'
-      expect(dome.valid_environment?(account, environment)).to be_truthy
+      environment = 'qa'
+      expect(dome.valid_environment?(environment)).to be_truthy
     end
 
     it 'identifies an invalid environment' do
-      account     = 'deirdre-dev'
-      environment = 'prd'
-      expect(dome.valid_environment?(account, environment)).to be_falsey
+      environment = 'foo'
+      expect(dome.valid_environment?(environment)).to be_falsey
     end
   end
 
-  context 'account validation' do
+  context 'account validation against itv.yaml' do
     it 'identifies a valid account' do
-      account = 'deirdre-prd'
+      account = 'hubsvc-prd'
       expect(dome.valid_account?(account)).to be_truthy
     end
 

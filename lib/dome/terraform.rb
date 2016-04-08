@@ -14,7 +14,7 @@ module Dome
       environment = @environment.environment
       account     = @environment.account
       @environment.invalid_account_message unless @environment.valid_account? account
-      @environment.invalid_environment_message unless @environment.valid_environment?(account, environment)
+      @environment.invalid_environment_message unless @environment.valid_environment? environment
       puts "Team: #{@environment.team.colorize(:green)}"
       puts '----------------------------------------------------------------'
       @environment.populate_aws_access_keys
