@@ -1,14 +1,15 @@
 module Dome
   class Environment
-    attr_reader :environment, :account
+    attr_reader :environment, :account, :settings
 
     def initialize(directories = Dir.pwd.split('/'))
       @environment = directories[-1]
       @account     = directories[-2]
+      @settings    = Dome::Settings.new
     end
 
     def team
-      @account.split('-').first
+      @settings.parse['project']
     end
 
     def accounts
@@ -16,11 +17,11 @@ module Dome
     end
 
     def non_production_environments
-      %w(infradev dev sit qa qa1 qa2 stg)
+      @settings.parse['environments']
     end
 
     def production_environments
-      %w(infraprd prd)
+      @settings.parse['environments']
     end
 
     def aws_credentials

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'bundler/setup'
-require 'dome'
+require_relative '../lib/dome'
 
 opts = Trollop.options do
   version Dome::VERSION
@@ -23,6 +23,7 @@ Trollop.educate unless opts.value?(true)
 
 @dome = Dome::Terraform.new
 @dome.validate_environment
+
 
 begin
   if opts[:plan]

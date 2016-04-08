@@ -1,4 +1,4 @@
-module Dome
+ module Dome
   class State
     include Dome::Shell
 
