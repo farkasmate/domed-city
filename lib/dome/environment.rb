@@ -16,11 +16,7 @@ module Dome
       %W(#{team}-dev #{team}-prd)
     end
 
-    def non_production_environments
-      @settings.parse['environments']
-    end
-
-    def production_environments
+    def environments
       @settings.parse['environments']
     end
 
@@ -41,38 +37,39 @@ module Dome
       accounts.include? account_name
     end
 
-    def valid_environment?(account_name, environment_name)
+    def valid_environment?(environment_name)
       puts "Environment: #{environment_name.colorize(:green)}"
-      if account_name.split('-')[1] == 'dev'
-        non_production_environments.include? environment_name
-      else
-        production_environments.include? environment_name
-      end
+      environments.include? environment_name
     end
 
     def invalid_account_message
       puts "\n'#{@account}' is not a valid account.\n".colorize(:red)
-      puts "The 'account' and 'environment' variables are assigned based on your current directory.\n".colorize(:red)
-      puts "The expected directory structure is '.../<account>/<environment>'\n".colorize(:red)
-      puts "Valid accounts are: #{accounts}."
-      puts "\nEither:"
-      puts '1. Set your .aws/config to one of the valid accounts above.'
-      puts '2. Ensure you are running this from the correct directory.'
+      generic_error_message
       exit 1
     end
 
     def invalid_environment_message
-      puts "\n'#{@environment}' is not a valid environment for the account: '#{@account}'.\n".colorize(:red)
+      puts "\n'#{@environment}' is not a valid environment.\n".colorize(:red)
+      generic_error_message
+      exit 1
+    end
+
+    private
+
+    def generic_error_message
       puts "The 'account' and 'environment' variables are assigned based on your current directory.\n".colorize(:red)
       puts "The expected directory structure is '.../<account>/<environment>'\n".colorize(:red)
-
-      env = if account[-4..-1] == '-dev'
-              non_production_environments
-            else
-              production_environments
-            end
-      puts "Valid environments are: #{env}."
-      exit 1
+      puts '============================================================================='
+      puts "Valid environments are defined using the 'environments' key in your itv.yaml."
+      puts "The environments you have defined are: #{environments}."
+      puts '============================================================================='
+      puts "Valid accounts are of the format <project>-dev and <project>-prd (where 'project' is defined using the 'project' key in your itv.yaml."
+      puts "The accounts you have defined are: #{accounts}."
+      puts '============================================================================='
+      puts "To fix your issue, try the following:"
+      puts '1. Set your .aws/config to one of the valid accounts above.'
+      puts '2. Ensure you are running this from the correct directory.'
+      puts '3. Update your itv.yaml with the required environments or project.'
     end
   end
 end

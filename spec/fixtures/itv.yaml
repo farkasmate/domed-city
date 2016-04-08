@@ -11,4 +11,3 @@ environments:
   - stg
   - infraprd
   - prd
-  - foo
