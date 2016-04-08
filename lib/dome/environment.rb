@@ -56,6 +56,8 @@ module Dome
 
     private
 
+    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
     def generic_error_message
       puts "The 'account' and 'environment' variables are assigned based on your current directory.\n".colorize(:red)
       puts "The expected directory structure is '.../<account>/<environment>'\n".colorize(:red)
@@ -63,10 +65,11 @@ module Dome
       puts "Valid environments are defined using the 'environments' key in your itv.yaml."
       puts "The environments you have defined are: #{environments}."
       puts '============================================================================='
-      puts "Valid accounts are of the format <project>-dev and <project>-prd (where 'project' is defined using the 'project' key in your itv.yaml."
+      puts 'Valid accounts are of the format <project>-dev/prd and <project>-prd' \
+           " (where 'project' is defined using the 'project' key in your itv.yaml."
       puts "The accounts you have defined are: #{accounts}."
       puts '============================================================================='
-      puts "To fix your issue, try the following:"
+      puts 'To fix your issue, try the following:'
       puts '1. Set your .aws/config to one of the valid accounts above.'
       puts '2. Ensure you are running this from the correct directory.'
       puts '3. Update your itv.yaml with the required environments or project.'
