@@ -1,15 +1,16 @@
 module Dome
   class Settings
     def parse
-      if File.exist? '../../../itv.yaml'
-        @parsed_yaml ||= load_yaml
-      else
-        raise('[*] itv.yaml does not exist')
-      end
+      raise('[*] itv.yaml does not exist') unless File.exist? itv_yaml_path
+      load_yaml
     end
 
     def load_yaml
-      YAML.load_file('../../../itv.yaml')
+      @parsed_yaml ||= YAML.load_file(itv_yaml_path)
+    end
+
+    def itv_yaml_path
+      '../../../itv.yaml'
     end
   end
 end
