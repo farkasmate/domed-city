@@ -5,7 +5,7 @@ describe Dome do
   let(:environment_dir) { 'qa' }
   let(:dome) { Dome::Environment.new([account_dir, environment_dir]) }
 
-  let(:parsed_yaml) { YAML.load_file("spec/fixtures/itv.yaml")}
+  let(:parsed_yaml) { YAML.load_file('spec/fixtures/itv.yaml') }
 
   before(:each) { allow(dome.settings).to receive(:parse) { parsed_yaml } }
 

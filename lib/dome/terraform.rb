@@ -10,7 +10,6 @@ module Dome
       @plan_file   = "plans/#{@environment.account}-#{@environment.environment}-plan.tf"
     end
 
-
     def validate_environment
       environment = @environment.environment
       account     = @environment.account
@@ -65,6 +64,5 @@ module Dome
       failure_message = 'something went wrong when printing TF output variables'
       execute_command(command, failure_message)
     end
-
   end
 end
