@@ -16,11 +16,7 @@ module Dome
       %W(#{team}-dev #{team}-prd)
     end
 
-    def non_production_environments
-      @settings.parse['environments']
-    end
-
-    def production_environments
+    def environments
       @settings.parse['environments']
     end
 
@@ -41,13 +37,9 @@ module Dome
       accounts.include? account_name
     end
 
-    def valid_environment?(account_name, environment_name)
+    def valid_environment?(environment_name)
       puts "Environment: #{environment_name.colorize(:green)}"
-      if account_name.split('-')[1] == 'dev'
-        non_production_environments.include? environment_name
-      else
-        production_environments.include? environment_name
-      end
+      environments.include? environment_name
     end
 
     def invalid_account_message
