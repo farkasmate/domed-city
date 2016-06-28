@@ -18,10 +18,12 @@ module Dome
       @s3_client ||= Aws::S3::Client.new(@environment.aws_credentials)
     end
 
+    def bucket_names
+      s3_client.list_buckets
+    end
+
     def s3_bucket_exists?(bucket_name)
-      resp = s3_client.list_buckets
-      resp.buckets.each { |bucket| return true if bucket.name == bucket_name }
-      false
+      bucket_names.find { |bucket| bucket.name == bucket_name }
     end
 
     def create_bucket(name)
