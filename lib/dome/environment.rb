@@ -22,6 +22,10 @@ module Dome
 
     def aws_credentials
       @aws_credentials ||= AWS::ProfileParser.new.get(@account)
+      if @aws_credentials.key?(:output)
+        @aws_credentials.delete(:output)
+      end
+      return @aws_credentials
     rescue RuntimeError
       raise "No credentials found for account: '#{@account}'."
     end
