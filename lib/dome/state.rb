@@ -18,12 +18,18 @@ module Dome
       @s3_client ||= Aws::S3::Client.new(@environment.aws_credentials)
     end
 
-    def bucket_names
+    def list_buckets
       s3_client.list_buckets
     end
 
+    def bucket_names
+      bucket_names = list_buckets.buckets.map(&:name)
+      puts "Found the following buckets: #{bucket_names}".colorize(:yellow)
+      bucket_names
+    end
+
     def s3_bucket_exists?(bucket_name)
-      bucket_names.find { |bucket| bucket.name == bucket_name }
+      bucket_names.find { |bucket| bucket == bucket_name }
     end
 
     def create_bucket(name)
