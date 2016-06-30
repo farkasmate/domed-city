@@ -15,7 +15,7 @@ module Dome
     end
 
     def s3_client
-      @s3_client ||= Aws::S3::Client.new(@environment.aws_credentials)
+      @s3_client ||= Aws::S3::Client.new
     end
 
     def list_buckets

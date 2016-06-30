@@ -15,9 +15,11 @@ module Dome
       account     = @environment.account
       @environment.invalid_account_message unless @environment.valid_account? account
       @environment.invalid_environment_message unless @environment.valid_environment? environment
-      puts "Team: #{@environment.team.colorize(:green)}"
+      puts "Project: #{@environment.project.colorize(:green)}"
+      puts "State S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
+      puts "State file name: #{@state.state_file_name.colorize(:green)}"
+      @environment.aws_credentials
       puts '----------------------------------------------------------------'
-      @environment.populate_aws_access_keys
     end
 
     def plan
