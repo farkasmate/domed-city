@@ -1,6 +1,6 @@
 # 3.0.0
 
-Thanks to @Russell-IO for helping with these changes.
+Thanks to [@Russell-IO](https://github.com/Russell-IO) for helping with these changes.
 
 - Internal refactoring.
 - More tests added (but lots more needed).
@@ -9,4 +9,4 @@ Thanks to @Russell-IO for helping with these changes.
 the AWS CLI and terraform calls.
 
 ROADMAP:
-- Merge @mhlias changes that implements assumed-role support.
+- Merge [@mhlias](https://github.com/mhlias) changes that implements assumed-role support.
