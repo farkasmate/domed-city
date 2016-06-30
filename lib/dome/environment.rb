@@ -57,7 +57,7 @@ module Dome
     # rubocop:disable Metrics/AbcSize
     def generic_error_message
       puts "The 'account' and 'environment' variables are assigned based on your current directory.\n".colorize(:red)
-      puts "The expected directory structure is '.../<account>/<environment>'\n".colorize(:red)
+      puts "The expected directory structure is 'terraform/<account>/<environment>'\n".colorize(:red)
       puts '============================================================================='
       puts "Valid environments are defined using the 'environments' key in your itv.yaml."
       puts "The environments you have defined are: #{environments}."

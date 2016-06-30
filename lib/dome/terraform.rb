@@ -10,7 +10,20 @@ module Dome
       @plan_file   = "plans/#{@environment.account}-#{@environment.environment}-plan.tf"
     end
 
+    # TODO: this method is a bit of a mess and needs looking at
+    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
     def validate_environment
+      puts 'Initialising domed-city...'
+      puts "* Your 'account' and 'environment' are assigned based on your current directory. "\
+          "The expected directory structure is 'terraform/<account>/<environment>'".colorize(:yellow)
+      puts "* Your 'project' is defined using the 'project' key in your 'itv.yaml'.".colorize(:yellow)
+      puts "* Valid environments are defined using the 'environments' key in your 'itv.yaml'. "\
+        "You have defined: #{@environment.environments}".colorize(:yellow)
+      puts '* Valid accounts are of the format <project>-dev and <project>-prd and are calculated '\
+        "automatically using your 'project' variable.".colorize(:yellow)
+
+      puts "\nDebug output:\n------------"
       environment = @environment.environment
       account     = @environment.account
       @environment.invalid_account_message unless @environment.valid_account? account
