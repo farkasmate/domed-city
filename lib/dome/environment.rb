@@ -8,12 +8,12 @@ module Dome
       @settings    = Dome::Settings.new
     end
 
-    def team
+    def project
       @settings.parse['project']
     end
 
     def accounts
-      %W(#{team}-dev #{team}-prd)
+      %W(#{project}-dev #{project}-prd)
     end
 
     def environments
@@ -21,17 +21,12 @@ module Dome
     end
 
     def aws_credentials
-      @aws_credentials ||= AWS::ProfileParser.new.get(@account)
-      @aws_credentials.key?(:output) && @aws_credentials.delete(:output)
-      return @aws_credentials
-    rescue RuntimeError
-      raise "No credentials found for account: '#{@account}'."
-    end
-
-    def populate_aws_access_keys
-      ENV['AWS_ACCESS_KEY_ID']     = aws_credentials[:access_key_id]
-      ENV['AWS_SECRET_ACCESS_KEY'] = aws_credentials[:secret_access_key]
-      ENV['AWS_DEFAULT_REGION']    = aws_credentials[:region]
+      puts "Setting environment variable #{'AWS_PROFILE'.colorize(:green)} to your "\
+        "'account' name: #{@account.colorize(:green)}"
+      ENV['AWS_PROFILE'] = @account
+      puts "Setting environment variable #{'AWS_DEFAULT_REGION'.colorize(:green)} "\
+        "to #{'eu-west-1'.colorize(:green)}"
+      ENV['AWS_DEFAULT_REGION'] = 'eu-west-1' # should we let people override this? doubtful
     end
 
     def valid_account?(account_name)
@@ -62,7 +57,7 @@ module Dome
     # rubocop:disable Metrics/AbcSize
     def generic_error_message
       puts "The 'account' and 'environment' variables are assigned based on your current directory.\n".colorize(:red)
-      puts "The expected directory structure is '.../<account>/<environment>'\n".colorize(:red)
+      puts "The expected directory structure is 'terraform/<account>/<environment>'\n".colorize(:red)
       puts '============================================================================='
       puts "Valid environments are defined using the 'environments' key in your itv.yaml."
       puts "The environments you have defined are: #{environments}."

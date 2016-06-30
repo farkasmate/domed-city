@@ -6,22 +6,30 @@ module Dome
       @environment = environment
     end
 
-    def state_bucket
-      "#{@environment.team}-tfstate-#{@environment.environment}"
+    def state_bucket_name
+      "#{@environment.project}-tfstate-#{@environment.environment}"
     end
 
-    def state_file
+    def state_file_name
       "#{@environment.environment}-terraform.tfstate"
     end
 
     def s3_client
-      @s3_client ||= Aws::S3::Client.new(@environment.aws_credentials)
+      @s3_client ||= Aws::S3::Client.new
+    end
+
+    def list_buckets
+      s3_client.list_buckets
+    end
+
+    def bucket_names
+      bucket_names = list_buckets.buckets.map(&:name)
+      puts "Found the following buckets: #{bucket_names}".colorize(:yellow)
+      bucket_names
     end
 
     def s3_bucket_exists?(bucket_name)
-      resp = s3_client.list_buckets
-      resp.buckets.each { |bucket| return true if bucket.name == bucket_name }
-      false
+      bucket_names.find { |bucket| bucket == bucket_name }
     end
 
     def create_bucket(name)
@@ -48,24 +56,24 @@ module Dome
       )
     end
 
-    def create_remote_state_bucket(state_bucket, state_file)
-      create_bucket state_bucket
-      enable_bucket_versioning state_bucket
-      put_empty_object_in_bucket(state_bucket, state_file)
+    def create_remote_state_bucket(bucket_name, state_file)
+      create_bucket bucket_name
+      enable_bucket_versioning bucket_name
+      put_empty_object_in_bucket(bucket_name, state_file)
     end
 
     def s3_state
-      if s3_bucket_exists?(state_bucket)
-        synchronise_s3_state
+      if s3_bucket_exists?(state_bucket_name)
+        synchronise_s3_state(state_bucket_name, state_file_name)
       else
-        create_remote_state_bucket(state_bucket, state_file)
+        create_remote_state_bucket(state_bucket_name, state_file_name)
       end
     end
 
-    def synchronise_s3_state
+    def synchronise_s3_state(bucket_name, state_file_name)
       puts 'Synchronising the remote S3 state...'
       command         = 'terraform remote config -backend=S3'\
-            " -backend-config='bucket=#{state_bucket}' -backend-config='key=#{state_file}'"
+            " -backend-config='bucket=#{bucket_name}' -backend-config='key=#{state_file_name}'"
       failure_message = 'Something went wrong when synchronising the S3 state.'
       execute_command(command, failure_message)
     end

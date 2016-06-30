@@ -6,8 +6,8 @@ require 'dome/version'
 Gem::Specification.new do |spec|
   spec.name          = 'domed-city'
   spec.version       = Dome::VERSION
-  spec.authors       = ['Ben Snape']
-  spec.email         = ['ben.snape@itv.com']
+  spec.authors       = ['ITV'] # see CONTRIBUTORS.md
+  spec.email         = ['common-platform-team-group@itv.com']
 
   spec.summary       = 'A simple Terraform API wrapper and helpers for ITV.'
   spec.homepage      = 'https://github.com/ITV/dome'
@@ -23,7 +23,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop', '~> 0.37'
 
   spec.add_dependency 'trollop', '~> 2.1'
-  spec.add_dependency 'aws-profile_parser', '~> 0.0'
   spec.add_dependency 'aws-sdk', '~> 2.1'
   spec.add_dependency 'colorize', '~> 0.7'
 end
