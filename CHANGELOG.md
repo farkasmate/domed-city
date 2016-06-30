@@ -1,4 +1,4 @@
-# 2.0.0
+# 3.0.0
 
 Thanks to @Russell-IO for helping with these changes.
 
