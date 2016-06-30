@@ -7,7 +7,7 @@ module Dome
     end
 
     def state_bucket_name
-      "#{@environment.team}-tfstate-#{@environment.environment}"
+      "#{@environment.project}-tfstate-#{@environment.environment}"
     end
 
     def state_file_name

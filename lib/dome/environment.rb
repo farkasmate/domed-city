@@ -8,12 +8,12 @@ module Dome
       @settings    = Dome::Settings.new
     end
 
-    def team
+    def project
       @settings.parse['project']
     end
 
     def accounts
-      %W(#{team}-dev #{team}-prd)
+      %W(#{project}-dev #{project}-prd)
     end
 
     def environments
