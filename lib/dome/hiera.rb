@@ -7,14 +7,20 @@ module Dome
     end
 
     def config
-      puppet_dir = File.join(@settings.project_root, 'puppet')
-      config     = YAML.load_file(File.join(puppet_dir, 'hiera.yaml'))
+      puppet_dir  = File.join(@settings.project_root, 'puppet')
+      config      = YAML.load_file(File.join(puppet_dir, 'hiera.yaml'))
+      private_key = "#{puppet_dir}/keys/private_key.pkcs7.pem"
+      public_key  = "#{puppet_dir}/keys/public_key.pkcs7.pem"
+
+      unless File.exists?(private_key) and File.exists?(public_key)
+        raise "Cannot find eyaml keys! make sure they exist at #{public_key} and #{private_key}"
+      end
 
       config[:logger] = 'noop'
       config[:yaml][:datadir] = "#{puppet_dir}/hieradata"
       config[:eyaml][:datadir] = "#{puppet_dir}/hieradata"
-      config[:eyaml][:pkcs7_private_key] = "#{puppet_dir}/keys/private_key.pkcs7.pem"
-      config[:eyaml][:pkcs7_public_key] = "#{puppet_dir}/keys/public_key.pkcs7.pem"
+      config[:eyaml][:pkcs7_private_key] = private_key
+      config[:eyaml][:pkcs7_public_key] = public_key
 
       config
     end
