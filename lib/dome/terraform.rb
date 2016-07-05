@@ -6,6 +6,7 @@ module Dome
 
     def initialize
       @environment = Dome::Environment.new
+      @secrets     = Dome::Secrets.new(@environment)
       @state       = Dome::State.new(@environment)
       @plan_file   = "plans/#{@environment.account}-#{@environment.environment}-plan.tf"
     end
@@ -44,12 +45,15 @@ module Dome
     end
 
     def apply
+      @secrets.secret_env_vars
       command         = "terraform apply #{@plan_file}"
       failure_message = 'something went wrong when applying the TF plan'
       execute_command(command, failure_message)
     end
 
     def create_plan
+      @secrets.secret_env_vars
+      @secrets.extract_certs
       command         = "terraform plan -module-depth=1 -refresh=true -out=#{@plan_file} -var-file=params/env.tfvars"
       failure_message = 'something went wrong when creating the TF plan'
       execute_command(command, failure_message)
