@@ -38,7 +38,6 @@ module Dome
 
     def secret_env_vars(secret_vars = {})
       secret_vars.each_pair do |key, val|
-        puts "setting TF_VAR: #{key}"
         ENV["TF_VAR_#{key}"] = lookup(val)
       end
     end
@@ -48,7 +47,6 @@ module Dome
       FileUtils.mkdir_p cert_dir
 
       certs.each_pair do |key, val|
-        puts "Extracting cert #{key} into: #{cert_dir}/#{key}"
         File.open("#{cert_dir}/#{key}", 'w') { |f| f.write(lookup(val)) }
       end
     end
