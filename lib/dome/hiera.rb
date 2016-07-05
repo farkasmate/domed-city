@@ -38,6 +38,7 @@ module Dome
 
     def secret_env_vars(secret_vars = {})
       secret_vars.each_pair do |key, val|
+        puts "setting TF_VAR: #{key}"
         ENV["TF_VAR_#{key}"] = lookup(val)
       end
     end
