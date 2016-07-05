@@ -48,7 +48,7 @@ module Dome
       FileUtils.mkdir_p cert_dir
 
       certs.each_pair do |key, val|
-        puts "Extracting cert #{key} into: #{cert_dir}/#{val}"
+        puts "Extracting cert #{key} into: #{cert_dir}/#{key}"
         File.open("#{cert_dir}/#{key}", 'w') { |f| f.write(lookup(val)) }
       end
     end
