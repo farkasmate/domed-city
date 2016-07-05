@@ -7,12 +7,12 @@ module Dome
     end
 
     def secret_env_vars
-      return if @settings.parse['dome']['hiera_keys'].nil?
+      return if @settings.parse['dome'].nil? or @settings.parse['dome']['hiera_keys'].nil?
       @hiera.secret_env_vars(@settings.parse['dome']['hiera_keys'])
     end
 
     def extract_certs
-      return if @settings.parse['dome']['certs'].nil?
+      return if @settings.parse['dome'].nil? or @settings.parse['dome']['certs'].nil?
       @hiera.extract_certs(@settings['dome']['certs'])
     end
   end
