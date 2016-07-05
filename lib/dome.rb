@@ -4,7 +4,6 @@ require 'colorize'
 require 'fileutils'
 require 'yaml'
 require 'hiera'
-require 'hiera-eyaml'
 
 require 'dome/settings'
 require 'dome/version'
