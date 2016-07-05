@@ -13,7 +13,7 @@ module Dome
 
     def extract_certs
       return if @settings.parse['dome'].nil? or @settings.parse['dome']['certs'].nil?
-      @hiera.extract_certs(@settings['dome']['certs'])
+      @hiera.extract_certs(@settings.parse['dome']['certs'])
     end
   end
 end
