@@ -31,6 +31,7 @@ module Dome
       puts "Project: #{@environment.project.colorize(:green)}"
       puts "State S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
       puts "State file name: #{@state.state_file_name.colorize(:green)}"
+      @environment.unset_aws_keys
       @environment.aws_credentials
       puts '----------------------------------------------------------------'
     end

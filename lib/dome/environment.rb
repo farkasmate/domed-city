@@ -20,6 +20,13 @@ module Dome
       @settings.parse['environments']
     end
 
+    def unset_aws_keys
+      puts "Unsetting environment variables "\
+        "#{'AWS_ACCESS_KEY'.colorize(:green)} and #{'AWS_SECRET_KEY'.colorize(:green)}"
+      ENV['AWS_ACCESS_KEY'] = nil
+      ENV['AWS_SECRET_KEY'] = nil
+    end
+
     def aws_credentials
       puts "Setting environment variable #{'AWS_PROFILE'.colorize(:green)} to your "\
         "'account' name: #{@account.colorize(:green)}"
