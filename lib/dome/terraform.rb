@@ -40,7 +40,7 @@ module Dome
       delete_terraform_directory
       delete_plan_file
       install_terraform_modules
-      @state.synchronise_s3_state(@state.state_bucket_name, @state.state_file_name)
+      @state.s3_state
       create_plan
     end
 
