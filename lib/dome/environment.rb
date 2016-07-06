@@ -21,7 +21,7 @@ module Dome
     end
 
     def unset_aws_keys
-      puts "Unsetting environment variables "\
+      puts 'Unsetting environment variables '\
         "#{'AWS_ACCESS_KEY'.colorize(:green)} and #{'AWS_SECRET_KEY'.colorize(:green)}"
       ENV['AWS_ACCESS_KEY'] = nil
       ENV['AWS_SECRET_KEY'] = nil
