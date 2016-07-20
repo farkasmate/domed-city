@@ -42,7 +42,6 @@ module Dome
       delete_plan_file
       install_terraform_modules
       @state.s3_state
-      puts @state.sdb_lock.locked_resources
       raise_lock if @state.sdb_lock.locked_resources.include? @state.sdb_lock_name
       @state.sdb_lock.lock(@state.sdb_lock_name) do
         create_plan
@@ -93,6 +92,7 @@ module Dome
     end
 
     def raise_lock
+      puts "SimpleDB locking mechanism indicates that #{@state.sdb_lock_name} lock is currently in place...".colorize(:red)
       raise 'Dome has determined that state modification is currently locked'
     end
 
