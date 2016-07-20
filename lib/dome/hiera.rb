@@ -7,22 +7,29 @@ module Dome
     end
 
     def config
-      puppet_dir  = File.join(@settings.project_root, 'puppet')
-      config      = YAML.load_file(File.join(puppet_dir, 'hiera.yaml'))
-      private_key = "#{puppet_dir}/keys/private_key.pkcs7.pem"
-      public_key  = "#{puppet_dir}/keys/public_key.pkcs7.pem"
-
-      unless File.exists?(private_key) and File.exists?(public_key)
-        raise "Cannot find eyaml keys! make sure they exist at #{public_key} and #{private_key}"
-      end
-
+      config = YAML.load_file(File.join(puppet_dir, 'hiera.yaml'))
       config[:logger] = 'noop'
       config[:yaml][:datadir] = "#{puppet_dir}/hieradata"
       config[:eyaml][:datadir] = "#{puppet_dir}/hieradata"
-      config[:eyaml][:pkcs7_private_key] = private_key
-      config[:eyaml][:pkcs7_public_key] = public_key
-
+      config[:eyaml][:pkcs7_private_key] = eyaml_private_key
+      config[:eyaml][:pkcs7_public_key] = eyaml_public_key
       config
+    end
+
+    def puppet_dir
+      File.join(@settings.project_root, 'puppet')
+    end
+
+    def eyaml_private_key
+      private_key = File.join(puppet_dir, 'keys/private_key.pkcs7.pem')
+      raise "Cannot find eyaml private key! make sure it exists at #{private_key}" unless File.exist?(private_key)
+      private_key
+    end
+
+    def eyaml_public_key
+      public_key = File.join(puppet_dir, 'keys/public_key.pkcs7.pem')
+      raise "Cannot find eyaml public key! make sure it exists at #{public_key}" unless File.exist?(public_key)
+      public_key
     end
 
     def lookup(key, default = nil, order_override = nil, resolution_type = :priority)
