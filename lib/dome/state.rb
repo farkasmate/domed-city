@@ -19,7 +19,7 @@ module Dome
     end
 
     def sdb_lock
-      @sdb_lock ||= SdbLock.new(state_bucket_name, simple_db_endpoint: 'sdb.eu-west-1.amazonaws.com')
+      @sdb_lock ||= SdbLock.new(state_bucket_name)
     end
 
     def list_buckets
