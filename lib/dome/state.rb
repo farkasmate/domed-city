@@ -15,11 +15,11 @@ module Dome
     end
 
     def sdb_lock_name
-      state_file_name.gsub!(/(-)/, '_').gsub!(/(\.)/, '_')
+      state_file_name.gsub!(/(-|\.)/, '_')
     end
 
     def sdb_domain_name
-      state_bucket_name.gsub!(/(-)/, '_').gsub!(/(\.)/, '_')
+      state_bucket_name.gsub!(/(-|\.)/, '_')
     end
 
     def s3_client
