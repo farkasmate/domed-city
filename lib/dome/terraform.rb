@@ -42,15 +42,15 @@ module Dome
       delete_plan_file
       install_terraform_modules
       @state.s3_state
-      raise_lock if @state.sdb_lock.try_lock
-      @state.sdb_lock.try_lock(@state.state_file_name) do
+      raise_lock if @state.sdb_lock.try_lock(@state.sdb_lock_name)
+      @state.sdb_lock.try_lock(@state.sdb_lock_name) do
         create_plan
       end
     end
 
     def apply
-      raise_lock if @state.sdb_lock.try_lock
-      @state.sdb_lock.try_lock(@state.state_file_name) do
+      raise_lock if @state.sdb_lock.try_lock(@state.sdb_lock_name)
+      @state.sdb_lock.try_lock(@state.sdb_lock_name) do
         apply_plan
       end
     end
@@ -95,7 +95,7 @@ module Dome
       raise 'Dome has determined that state modification is currently locked'
     end
 
-    def purge_locks(age = nil)
+    def purge_locks(age = 10)
       @state.sdb_lock.unlock_old(age)
     end
 
