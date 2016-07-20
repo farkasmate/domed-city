@@ -3,6 +3,7 @@ require 'aws-sdk'
 require 'colorize'
 require 'fileutils'
 require 'yaml'
+require 'sdb_lock'
 
 require 'dome/settings'
 require 'dome/version'

@@ -41,19 +41,31 @@ module Dome
       delete_plan_file
       install_terraform_modules
       @state.s3_state
-      create_plan
+      locked = @state.sdb_lock.try_lock(@state.state_file_name) do
+        create_plan
+      end
+      raise_lock if locked
     end
 
     def apply
+      locked = @state.sdb_lock.try_lock(@state.state_file_name) do
+        apply_plan
+      end
+      raise_lock if locked
+    end
+
+    def apply_plan
       command         = "terraform apply #{@plan_file}"
       failure_message = 'something went wrong when applying the TF plan'
-      execute_command(command, failure_message)
+      result = execute_command(command, failure_message)
+      return result
     end
 
     def create_plan
       command         = "terraform plan -module-depth=1 -refresh=true -out=#{@plan_file} -var-file=params/env.tfvars"
       failure_message = 'something went wrong when creating the TF plan'
-      execute_command(command, failure_message)
+      result = execute_command(command, failure_message)
+      return result
     end
 
     def delete_terraform_directory
@@ -72,13 +84,21 @@ module Dome
     def install_terraform_modules
       command         = 'terraform get -update=true'
       failure_message = 'something went wrong when pulling remote TF modules'
-      execute_command(command, failure_message)
+      purge_locks if execute_command(command, failure_message)
+    end
+
+    def raise_lock
+      raise 'Dome has determined that state modification is currently locked'
+    end
+
+    def purge_locks(age=nil)
+      @state.sdb_lock.unlock_old(age)
     end
 
     def output
       command         = 'terraform output'
       failure_message = 'something went wrong when printing TF output variables'
-      execute_command(command, failure_message)
+      result = execute_command(command, failure_message)
     end
   end
 end

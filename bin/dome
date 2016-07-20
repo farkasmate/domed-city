@@ -33,6 +33,8 @@ begin
     @dome.state.s3_state
   elsif opts[:output]
     @dome.output
+  elsif opts[:unlock]
+    @dome.purge_locks
   end
 rescue Interrupt
   puts "\ndome execution interrupted!".colorize(:red)
