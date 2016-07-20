@@ -19,7 +19,7 @@ module Dome
     end
 
     def sdb_lock
-      @sdb_lock ||= SdbLock.new(state_bucket_name)
+      @sdb_lock ||= SdbLock.new(state_bucket_name.gsub!(/(-)/,'_'))
     end
 
     def list_buckets
