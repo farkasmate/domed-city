@@ -18,6 +18,12 @@ module Dome
       @s3_client ||= Aws::S3::Client.new
     end
 
+    def sdb_lock
+      @sdb_lock ||= SdbLock.new(state_bucket_name,
+                                create_domain: true,
+                                simple_db_endpoint: 'sdb.eu-west-1.amazonaws.com')
+    end
+
     def list_buckets
       s3_client.list_buckets
     end
