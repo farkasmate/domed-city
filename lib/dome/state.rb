@@ -15,7 +15,11 @@ module Dome
     end
 
     def sdb_lock_name
-      state_bucket_name.gsub!(/(-)/, '_')
+      state_file_name.gsub!(/(-)/, '_').gsub!(/(.)/, '_')
+    end
+
+    def sdb_domain_name
+      state_bucket_name.gsub!(/(-)/, '_').gsub!(/(.)/, '_')
     end
 
     def s3_client
@@ -23,7 +27,7 @@ module Dome
     end
 
     def sdb_lock
-      @sdb_lock ||= SdbLock.new(sdb_lock_name)
+      @sdb_lock ||= SdbLock.new(sdb_domain_name, simple_db_endpoint: 'sdb.eu-west-1.amazonaws.com')
     end
 
     def list_buckets

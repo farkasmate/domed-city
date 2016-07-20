@@ -42,15 +42,17 @@ module Dome
       delete_plan_file
       install_terraform_modules
       @state.s3_state
-      raise_lock if @state.sdb_lock.try_lock(@state.sdb_lock_name)
-      @state.sdb_lock.try_lock(@state.sdb_lock_name) do
+      puts @state.sdb_lock.locked_resources
+      raise_lock if @state.sdb_lock.locked_resources.any?(/(#{@state.sdb_lock_name})/)
+      @state.sdb_lock.lock(@state.sdb_lock_name) do
         create_plan
       end
     end
 
     def apply
-      raise_lock if @state.sdb_lock.try_lock(@state.sdb_lock_name)
-      @state.sdb_lock.try_lock(@state.sdb_lock_name) do
+      puts @state.sdb_lock.locked_resources
+      raise_lock if @state.sdb_lock.locked_resources.any?(/(#{@state.sdb_lock_name})/)
+      @state.sdb_lock.lock(@state.sdb_lock_name) do
         apply_plan
       end
     end
