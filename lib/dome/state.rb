@@ -27,7 +27,7 @@ module Dome
     end
 
     def sdb_lock
-      @sdb_lock ||= SdbLock.new(sdb_domain_name, simple_db_endpoint: 'sdb.eu-west-1.amazonaws.com')
+      @sdb_lock ||= SdbLock.new(sdb_domain_name)
     end
 
     def list_buckets
