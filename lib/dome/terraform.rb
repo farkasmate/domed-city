@@ -43,7 +43,7 @@ module Dome
       install_terraform_modules
       @state.s3_state
       puts @state.sdb_lock.locked_resources
-      raise_lock if @state.sdb_lock.locked_resources.any?(/(#{@state.sdb_lock_name})/)
+      raise_lock if @state.sdb_lock.locked_resources.include? @state.sdb_lock_name
       @state.sdb_lock.lock(@state.sdb_lock_name) do
         create_plan
       end
@@ -51,7 +51,7 @@ module Dome
 
     def apply
       puts @state.sdb_lock.locked_resources
-      raise_lock if @state.sdb_lock.locked_resources.any?(/(#{@state.sdb_lock_name})/)
+      raise_lock if @state.sdb_lock.locked_resources.include? @state.sdb_lock_name
       @state.sdb_lock.lock(@state.sdb_lock_name) do
         apply_plan
       end
@@ -90,7 +90,7 @@ module Dome
     def install_terraform_modules
       command         = 'terraform get -update=true'
       failure_message = 'something went wrong when pulling remote TF modules'
-      purge_locks if execute_command(command, failure_message)
+      execute_command(command, failure_message)
     end
 
     def raise_lock
