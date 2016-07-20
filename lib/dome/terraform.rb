@@ -42,16 +42,16 @@ module Dome
       delete_plan_file
       install_terraform_modules
       @state.s3_state
-      raise_lock if @state.sdb_lock.try_lock
-      @state.sdb_lock.try_lock(@state.state_file_name) do
+      raise_lock if @state.sdb_lock.try_lock(@state.sdb_lock_name)
+      @state.sdb_lock.try_lock(@state.sdb_lock_name) do
         create_plan
       end
     end
 
     def apply
       @secrets.secret_env_vars
-      raise_lock if @state.sdb_lock.try_lock
-      @state.sdb_lock.try_lock(@state.state_file_name) do
+      raise_lock if @state.sdb_lock.try_lock(@state.sdb_lock_name)
+      @state.sdb_lock.try_lock(@state.sdb_lock_name) do
         apply_plan
       end
     end
