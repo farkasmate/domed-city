@@ -95,7 +95,7 @@ module Dome
       raise 'Dome has determined that state modification is currently locked'
     end
 
-    def purge_locks(age = nil)
+    def purge_locks(age = 10)
       @state.sdb_lock.unlock_old(age)
     end
 
