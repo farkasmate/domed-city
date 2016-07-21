@@ -92,7 +92,8 @@ module Dome
     end
 
     def raise_lock
-      puts "SimpleDB locking mechanism indicates that #{@state.sdb_lock_name} lock is currently in place...".colorize(:red)
+      puts "SimpleDB locking mechanism indicates that #{@state.sdb_lock_name}" +
+           'lock is currently in place...'.colorize(:red)
       raise 'Dome has determined that state modification is currently locked'
     end
 
