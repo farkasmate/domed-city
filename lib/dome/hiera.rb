@@ -3,6 +3,7 @@ module Dome
     def initialize(environment)
       @environment  = environment.environment
       @account      = environment.account
+      @ecosystem    = environment.ecosystem
       @settings     = Dome::Settings.new
     end
 
@@ -36,8 +37,8 @@ module Dome
       hiera = Hiera.new(config: config)
 
       hiera_scope = {}
-      hiera_scope['ecosystem']  = @account
-      hiera_scope['location']   = 'awseuwest1'
+      hiera_scope['ecosystem']  = @ecosystem
+      hiera_scope['location']   = 'aeuw1'
       hiera_scope['env']        = @environment
 
       hiera.lookup(key.to_s, default, hiera_scope, order_override, resolution_type)
