@@ -5,7 +5,7 @@ module Dome
     def initialize(directories = Dir.pwd.split('/'))
       @environment = directories[-1]
       @account     = directories[-2]
-      @ecosystem   = directories[-2].split('-')[1]
+      @ecosystem   = directories[-2].split('-')[-1]
       @settings    = Dome::Settings.new
     end
 
