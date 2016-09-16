@@ -23,13 +23,13 @@ module Dome
 
     def eyaml_private_key
       private_key = File.join(puppet_dir, 'keys/private_key.pkcs7.pem')
-      raise "Cannot find eyaml private key! make sure it exists at #{private_key}" unless File.exist?(private_key)
+      raise "Cannot find eyaml private key! Make sure it exists at #{private_key}" unless File.exist?(private_key)
       private_key
     end
 
     def eyaml_public_key
       public_key = File.join(puppet_dir, 'keys/public_key.pkcs7.pem')
-      raise "Cannot find eyaml public key! make sure it exists at #{public_key}" unless File.exist?(public_key)
+      raise "Cannot find eyaml public key! Make sure it exists at #{public_key}" unless File.exist?(public_key)
       public_key
     end
 
@@ -46,7 +46,7 @@ module Dome
 
     def secret_env_vars(secret_vars = {})
       secret_vars.each_pair do |key, val|
-        puts "setting TF_VAR: #{key}"
+        puts "Setting TF_VAR: #{key.colorize(:green)}"
         ENV["TF_VAR_#{key}"] = lookup(val)
       end
     end
