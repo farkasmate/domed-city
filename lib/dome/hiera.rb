@@ -44,21 +44,29 @@ module Dome
       hiera.lookup(key.to_s, default, hiera_scope, order_override, resolution_type)
     end
 
-    def secret_env_vars(secret_vars = {})
+    def secret_env_vars(secret_vars)
       secret_vars.each_pair do |key, val|
         puts "Setting TF_VAR: #{key.colorize(:green)}"
         ENV["TF_VAR_#{key}"] = lookup(val)
       end
     end
 
-    def extract_certs(certs = {})
-      cert_dir = "#{@settings.project_root}/terraform/certs"
-      FileUtils.mkdir_p cert_dir
+    def extract_certs(certs)
+      create_certificate_directory
 
       certs.each_pair do |key, val|
         puts "Extracting cert #{key} into: #{cert_dir}/#{key}"
         File.open("#{cert_dir}/#{key}", 'w') { |f| f.write(lookup(val)) }
       end
+    end
+
+    def create_certificate_directory
+      puts "Creating certificate directory at #{certificate_directory.colorize(:green)}."
+      FileUtils.mkdir_p certificate_directory
+    end
+
+    def certificate_directory
+      "#{@settings.project_root}/terraform/certs"
     end
   end
 end
