@@ -61,8 +61,8 @@ module Dome
       create_certificate_directory
 
       certs.each_pair do |key, val|
-        puts "Extracting cert #{key} into: #{cert_dir}/#{key}"
-        File.open("#{cert_dir}/#{key}", 'w') { |f| f.write(lookup(val)) }
+        puts "Extracting cert #{key} into: #{certificate_directory}/#{key}"
+        File.open("#{certificate_directory}/#{key}", 'w') { |f| f.write(lookup(val)) }
       end
     end
 
