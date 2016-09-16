@@ -24,7 +24,9 @@ module Dome
     end
 
     def puppet_dir
-      File.join(@settings.project_root, 'puppet')
+      directory = File.join(@settings.project_root, 'puppet')
+      puts "The configured Puppet directory is: #{directory.colorize(:green)}" unless @directory
+      @directory ||= directory
     end
 
     def eyaml_private_key
