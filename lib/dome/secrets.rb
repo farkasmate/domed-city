@@ -5,7 +5,7 @@ module Dome
     def initialize(environment)
       @environment = environment
       @settings    = Dome::Settings.new
-      @hiera       = Dome::HieraLookups.new(@environment)
+      @hiera       = Dome::Hiera.new(@environment)
     end
 
     def secret_env_vars
