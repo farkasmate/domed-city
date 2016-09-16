@@ -72,13 +72,13 @@ module Dome
 
       certs.each_pair do |key, val|
         directory = "#{certificate_directory}/#{key}"
-        puts "Extracting cert #{key.colorize(:green)} into: #{directory.colorize(:green)}"
+        puts "Extracting certificate #{key.colorize(:green)} into #{directory.colorize(:green)}"
         File.open(directory, 'w') { |f| f.write(lookup(val)) }
       end
     end
 
     def create_certificate_directory
-      puts "Creating certificate directory at #{certificate_directory.colorize(:green)}."
+      puts "Creating certificate directory at #{certificate_directory.colorize(:green)}"
       FileUtils.mkdir_p certificate_directory
     end
 
