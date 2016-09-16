@@ -50,9 +50,9 @@ module Dome
         terraform_env_var = "TF_VAR_#{key}"
         ENV[terraform_env_var] = hiera_lookup
         if hiera_lookup
-          puts "Setting #{terraform_env_var.colorize(:green)} to #{hiera_lookup.colorize(:green)}."
+          puts "Setting #{terraform_env_var.colorize(:green)}."
         else
-          puts "Hiera lookup failed for '#{val}', so #{terraform_env_var.colorize(:green)} was not set.".colorize(:red)
+          puts "Hiera lookup failed for '#{val}', so #{terraform_env_var} was not set.".colorize(:red)
         end
       end
     end
