@@ -46,8 +46,14 @@ module Dome
 
     def secret_env_vars(secret_vars)
       secret_vars.each_pair do |key, val|
-        puts "Setting TF_VAR: #{key.colorize(:green)}"
-        ENV["TF_VAR_#{key}"] = lookup(val)
+        hiera_lookup = lookup(val)
+        terraform_env_var = "TF_VAR_#{key}"
+        ENV[terraform_env_var] = hiera_lookup
+        if hiera_lookup
+          puts "Setting #{terraform_env_var.colorize(:green)} to #{hiera_lookup.colorize(:green)}."
+        else
+          puts "Hiera lookup failed for '#{val}', so #{terraform_env_var.colorize(:green)} was not set.".colorize(:red)
+        end
       end
     end
 
