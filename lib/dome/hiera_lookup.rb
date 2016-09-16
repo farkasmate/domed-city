@@ -1,5 +1,5 @@
 module Dome
-  class Hiera
+  class HieraLookup
     def initialize(environment)
       @environment = environment.environment
       @account     = environment.account

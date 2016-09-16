@@ -4,7 +4,7 @@ describe Dome do
   let(:account_dir) { 'deirdre-dev' }
   let(:environment_dir) { 'qa' }
   let(:environment) { Dome::Environment.new([account_dir, environment_dir]) }
-  let(:hiera) { Dome::Hiera.new(environment) }
+  let(:hiera) { Dome::HieraLookup.new(environment) }
 
   it 'outputs the correct message for a hiera lookup' do
     vars = { 'foo' => 'bar' }
