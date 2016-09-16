@@ -9,16 +9,14 @@ module Dome
 
     def config
       @config ||= YAML.load_file(File.join(puppet_dir, 'hiera.yaml')).merge(
-        {
-          logger: 'noop',
-          yaml: {
-            datadir: "#{puppet_dir}/hieradata",
-          },
-          eyaml: {
-            datadir: "#{puppet_dir}/hieradata",
-            pkcs7_private_key: eyaml_private_key,
-            pkcs7_public_key: eyaml_public_key
-          }
+        logger: 'noop',
+        yaml: {
+          datadir: "#{puppet_dir}/hieradata"
+        },
+        eyaml: {
+          datadir: "#{puppet_dir}/hieradata",
+          pkcs7_private_key: eyaml_private_key,
+          pkcs7_public_key: eyaml_public_key
         }
       )
     end
