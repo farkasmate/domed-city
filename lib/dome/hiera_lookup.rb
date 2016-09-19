@@ -8,28 +8,40 @@ module Dome
     end
 
     def config
-      config = YAML.load_file(File.join(puppet_dir, 'hiera.yaml'))
-      config[:logger] = 'noop'
-      config[:yaml][:datadir] = "#{puppet_dir}/hieradata"
-      config[:eyaml][:datadir] = "#{puppet_dir}/hieradata"
-      config[:eyaml][:pkcs7_private_key] = eyaml_private_key
-      config[:eyaml][:pkcs7_public_key] = eyaml_public_key
-      config
+      @config ||= YAML.load_file(File.join(puppet_dir, 'hiera.yaml')).merge(default_config)
+    end
+
+    def default_config
+      {
+        logger: 'noop',
+        yaml: {
+          datadir: "#{puppet_dir}/hieradata"
+        },
+        eyaml: {
+          datadir: "#{puppet_dir}/hieradata",
+          pkcs7_private_key: eyaml_private_key,
+          pkcs7_public_key: eyaml_public_key
+        }
+      }
     end
 
     def puppet_dir
-      File.join(@settings.project_root, 'puppet')
+      directory = File.join(@settings.project_root, 'puppet')
+      puts "The configured Puppet directory is: #{directory.colorize(:green)}" unless @directory
+      @directory ||= directory
     end
 
     def eyaml_private_key
       private_key = File.join(puppet_dir, 'keys/private_key.pkcs7.pem')
       raise "Cannot find eyaml private key! Make sure it exists at #{private_key}" unless File.exist?(private_key)
+      puts "Found eyaml private key: #{private_key.colorize(:green)}"
       private_key
     end
 
     def eyaml_public_key
       public_key = File.join(puppet_dir, 'keys/public_key.pkcs7.pem')
       raise "Cannot find eyaml public key! Make sure it exists at #{public_key}" unless File.exist?(public_key)
+      puts "Found eyaml public key: #{public_key.colorize(:green)}"
       public_key
     end
 
@@ -62,13 +74,13 @@ module Dome
 
       certs.each_pair do |key, val|
         directory = "#{certificate_directory}/#{key}"
-        puts "Extracting cert #{key.colorize(:green)} into: #{directory.colorize(:green)}"
+        puts "Extracting certificate #{key.colorize(:green)} into #{directory.colorize(:green)}"
         File.open(directory, 'w') { |f| f.write(lookup(val)) }
       end
     end
 
     def create_certificate_directory
-      puts "Creating certificate directory at #{certificate_directory.colorize(:green)}."
+      puts "Creating certificate directory at #{certificate_directory.colorize(:green)}"
       FileUtils.mkdir_p certificate_directory
     end
 
