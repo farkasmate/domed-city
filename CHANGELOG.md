@@ -1,3 +1,26 @@
+# 3.1.0
+
+Added hiera-eyaml support.
+
+This allows us to use encrypted Terraform variables via hiera lookups (the `hiera.yaml` is consumed).
+
+It also allows us to decrypt and extract SSL certificates or SSH keys which can then be used as appropriate.
+
+In order to utilise these two improvements, you must update your `itv.yaml` e.g.:
+
+```
+dome:
+  hiera_keys:
+    artifactory_password: 'deirdre::artifactory_password'
+  certs:
+    sit.phoenix.itv.com.pem: 'phoenix::sit_wildcard_cert'
+    phoenix.key: 'phoenix::certificate_key'
+```
+
+This release also containes:
+- Improved debugging/output messages.
+- More tests.
+
 # 3.0.1
 
 Forcibly unsetting environment variables `AWS_ACCESS_KEY` and `AWS_SECRET_KEY`.

@@ -1,10 +1,11 @@
 module Dome
   class Environment
-    attr_reader :environment, :account, :settings
+    attr_reader :environment, :account, :ecosystem, :settings
 
     def initialize(directories = Dir.pwd.split('/'))
       @environment = directories[-1]
       @account     = directories[-2]
+      @ecosystem   = directories[-2].split('-')[-1]
       @settings    = Dome::Settings.new
     end
 
@@ -60,7 +61,6 @@ module Dome
 
     private
 
-    # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     def generic_error_message
       puts "The 'account' and 'environment' variables are assigned based on your current directory.\n".colorize(:red)

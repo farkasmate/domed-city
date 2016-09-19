@@ -12,5 +12,9 @@ module Dome
     def itv_yaml_path
       '../../../itv.yaml'
     end
+
+    def project_root
+      File.realpath(File.dirname(itv_yaml_path))
+    end
   end
 end
