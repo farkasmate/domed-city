@@ -18,7 +18,7 @@ module Dome
     end
 
     def environments
-      @settings.parse['ecosystems'].keys
+      @settings.parse['ecosystems'].values
     end
 
     def unset_aws_keys
