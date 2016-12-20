@@ -5,9 +5,11 @@ repo: hub-services-infra
 git_url: 'git@github.com:ITV/hub-services-infra.git'
 version: '0.0.1'
 
-environments:
-  - infradev
-  - qa
-  - stg
-  - infraprd
-  - prd
+ecosystems:
+  dev:
+    - infradev
+    - qa
+    - stg
+  prd:
+    - infraprd
+    - prd
