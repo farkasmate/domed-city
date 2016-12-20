@@ -18,6 +18,7 @@ module Dome
     end
 
     def environments
+      raise "Ecosystems must be a hashmap of ecosystems to environments" unless metadata['ecosystems'].is_a?(Hash)
       @settings.parse['ecosystems'].values
     end
 
