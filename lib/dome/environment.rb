@@ -19,7 +19,7 @@ module Dome
 
     def environments
       ecosystems = @settings.parse['ecosystems']
-      raise "ecosystems must be a hashmap of ecosystems to environments" unless ecosystems.is_a?(Hash)
+      raise 'ecosystems must be a hashmap of ecosystems to environments' unless ecosystems.is_a?(Hash)
       ecosystems.values.flatten
     end
 
