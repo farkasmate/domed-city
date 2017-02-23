@@ -31,15 +31,25 @@ module Dome
       @directory ||= directory
     end
 
+    def eyaml_dir
+      if File.exists?(File.join(puppet_dir, 'keys/private_key.pkcs7.pem'))
+        eyaml_directory = File.join(puppet_dir, 'keys')
+      elsif File.exists?('/etc/puppet/keys/private_key.pkcs7.pem')
+        eyaml_directory = '/etc/puppet/keys'
+      end
+      puts "The configured EYAML directory is: #{eyaml_directory.colorize(:green)}" unless @eyaml_directory
+      @eyaml_directory ||= eyaml_directory
+    end
+
     def eyaml_private_key
-      private_key = File.join(puppet_dir, 'keys/private_key.pkcs7.pem')
+      private_key = File.join(eyaml_dir, 'private_key.pkcs7.pem')
       raise "Cannot find eyaml private key! Make sure it exists at #{private_key}" unless File.exist?(private_key)
       puts "Found eyaml private key: #{private_key.colorize(:green)}"
       private_key
     end
 
     def eyaml_public_key
-      public_key = File.join(puppet_dir, 'keys/public_key.pkcs7.pem')
+      public_key = File.join(eyaml_dir, 'public_key.pkcs7.pem')
       raise "Cannot find eyaml public key! Make sure it exists at #{public_key}" unless File.exist?(public_key)
       puts "Found eyaml public key: #{public_key.colorize(:green)}"
       public_key
