@@ -32,9 +32,9 @@ module Dome
     end
 
     def eyaml_dir
-      if File.exists?(File.join(puppet_dir, 'keys/private_key.pkcs7.pem'))
+      if File.exist?(File.join(puppet_dir, 'keys/private_key.pkcs7.pem'))
         eyaml_directory = File.join(puppet_dir, 'keys')
-      elsif File.exists?('/etc/puppet/keys/private_key.pkcs7.pem')
+      elsif File.exist?('/etc/puppet/keys/private_key.pkcs7.pem')
         eyaml_directory = '/etc/puppet/keys'
       end
       puts "The configured EYAML directory is: #{eyaml_directory.colorize(:green)}" unless @eyaml_directory
