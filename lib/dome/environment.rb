@@ -24,14 +24,14 @@ module Dome
     def unset_aws_keys
       puts 'Unsetting environment variables '\
         "#{'AWS_ACCESS_KEY'.colorize(:green)} and #{'AWS_SECRET_KEY'.colorize(:green)}"
-      ENV['AWS_ACCESS_KEY'] = nil
-      ENV['AWS_SECRET_KEY'] = nil
+      #ENV['AWS_ACCESS_KEY'] = nil
+      #ENV['AWS_SECRET_KEY'] = nil
     end
 
     def aws_credentials
       puts "Setting environment variable #{'AWS_PROFILE'.colorize(:green)} to your "\
         "'account' name: #{@account.colorize(:green)}"
-      ENV['AWS_PROFILE'] = @account
+      #ENV['AWS_PROFILE'] = @account
       puts "Setting environment variable #{'AWS_DEFAULT_REGION'.colorize(:green)} "\
         "to #{'eu-west-1'.colorize(:green)}"
       ENV['AWS_DEFAULT_REGION'] = 'eu-west-1' # should we let people override this? doubtful
