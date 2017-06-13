@@ -72,8 +72,7 @@ module Dome
 
     def synchronise_s3_state(bucket_name, state_file_name)
       puts 'Synchronising the remote S3 state...'
-      command         = 'terraform remote config -backend=S3'\
-            " -backend-config='bucket=#{bucket_name}' -backend-config='key=#{state_file_name}'"
+      command         = 'true'
       failure_message = 'Something went wrong when synchronising the S3 state.'
       execute_command(command, failure_message)
     end
