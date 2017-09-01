@@ -14,7 +14,7 @@ module Dome
     end
 
     def accounts
-      %W(#{project}-dev #{project}-prd)
+      %W[#{project}-dev #{project}-prd]
     end
 
     def environments
