@@ -12,3 +12,7 @@ LineLength:
 
 Metrics/MethodLength:
   Max: 15
+
+Style/BlockLength:
+  Exclude:
+    - 'spec/*.rb'
