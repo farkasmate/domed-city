@@ -14,11 +14,13 @@ module Dome
     end
 
     def accounts
-      %W(#{project}-dev #{project}-prd)
+      %W[#{project}-dev #{project}-prd]
     end
 
     def environments
-      @settings.parse['environments']
+      ecosystems = @settings.parse['ecosystems']
+      raise 'ecosystems must be a hashmap of ecosystems to environments' unless ecosystems.is_a?(Hash)
+      ecosystems.values.flatten
     end
 
     def unset_aws_keys
