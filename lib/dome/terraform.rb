@@ -40,8 +40,7 @@ module Dome
     def plan
       delete_terraform_directory
       delete_plan_file
-      install_terraform_modules
-      @state.s3_state
+      terraform_init
       create_plan
     end
 
@@ -74,9 +73,9 @@ module Dome
       FileUtils.rm_f @plan_file
     end
 
-    def install_terraform_modules
-      command         = 'terraform get -update=true'
-      failure_message = 'something went wrong when pulling remote TF modules'
+    def terraform_init
+      command         = 'terraform init'
+      failure_message = 'something went wrong when initialising TF'
       execute_command(command, failure_message)
     end
 
