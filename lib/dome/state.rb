@@ -61,42 +61,33 @@ module Dome
     end
 
     def dynamodb_configured?(bucket_name)
-      begin
-        resp = ddb_client.describe_table({
-          table_name: bucket_name,
-        })
-        if resp.to_h[:table][:table_name] == bucket_name
-          puts "DynamoDB state locking table exists: #{bucket_name}".colorize(:green)
-          return true
-        end
-      rescue Aws::DynamoDB::Errors::ResourceNotFoundException => e
-        puts "DynamoDB state locking table doesn't exist! .. creating it".colorize(:yellow)
-        return false
-      rescue StandardError => e
-        raise "Could not read DynamoDB table! error occurred: #{e}"
+      resp = ddb_client.describe_table(
+        table_name: bucket_name
+      )
+      if resp.to_h[:table][:table_name] == bucket_name
+        puts "DynamoDB state locking table exists: #{bucket_name}".colorize(:green)
+        return true
       end
+    rescue Aws::DynamoDB::Errors::ResourceNotFoundException => e
+      puts "DynamoDB state locking table doesn't exist! #{e} .. creating it".colorize(:yellow)
+      return false
+    rescue StandardError => e
+      raise "Could not read DynamoDB table! error occurred: #{e}"
     end
 
     def setup_dynamodb(bucket_name)
-      begin
-        resp = ddb_client.create_table({
-          attribute_definitions: [{
-              attribute_name: "LockID",
-              attribute_type: "S",
-          }],
-          table_name: bucket_name,
-          key_schema: [{
-              attribute_name: "LockID",
-              key_type: "HASH",
-          }],
-          provisioned_throughput: {
-            read_capacity_units: 1,
-            write_capacity_units: 1,
-          },
-        })
-      rescue StandardError => e
-        raise "Could not create DynamoDB table! error occurred: #{e}".colorize(:red)
-      end
+      resp = ddb_client.create_table(
+        attribute_definitions: [{ attribute_name: 'LockID', attribute_type: 'S' }],
+        table_name: bucket_name,
+        key_schema: [{ attribute_name: 'LockID', key_type: 'HASH' }],
+        provisioned_throughput: {
+          read_capacity_units: 1,
+          write_capacity_units: 1
+        }
+      )
+      raise unless resp.to_h[:table_description][:table_name] == bucket_name
+    rescue StandardError => e
+      raise "Could not create DynamoDB table! error occurred: #{e}".colorize(:red)
     end
 
     def create_remote_state_bucket(bucket_name, state_file)
@@ -114,6 +105,5 @@ module Dome
         create_remote_state_bucket(state_bucket_name, state_file_name)
       end
     end
-
   end
 end
