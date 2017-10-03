@@ -60,7 +60,7 @@ module Dome
       )
     end
 
-    def dynamodb_configured?(bucket_name, state_file)
+    def dynamodb_configured?(bucket_name)
       begin
         resp = @ddb_client.describe_table({
           table_name: bucket_name,
@@ -71,7 +71,7 @@ module Dome
       end
     end
 
-    def setup_dynamodb(bucket_name, state_file)
+    def setup_dynamodb(bucket_name)
       begin
         resp = @ddb_client.create_table({
           attribute_definitions: [{
@@ -101,8 +101,8 @@ module Dome
 
     def s3_state
       if s3_bucket_exists?(state_bucket_name)
-        unless dynamodb_configured?
-          setup_dynamodb(state_bucket_name, state_file_name)
+        unless dynamodb_configured(state_bucket_name)?
+          setup_dynamodb(state_bucket_name)
         end
       else
         create_remote_state_bucket(state_bucket_name, state_file_name)
