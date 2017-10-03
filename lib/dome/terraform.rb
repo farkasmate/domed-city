@@ -40,6 +40,7 @@ module Dome
     def plan
       delete_terraform_directory
       delete_plan_file
+      @state.s3_state
       terraform_init
       create_plan
     end
@@ -48,6 +49,7 @@ module Dome
       @secrets.secret_env_vars
       command         = "terraform apply #{@plan_file}"
       failure_message = 'something went wrong when applying the TF plan'
+      @state.s3_state
       execute_command(command, failure_message)
     end
 
