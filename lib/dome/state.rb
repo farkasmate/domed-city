@@ -62,7 +62,7 @@ module Dome
 
     def dynamodb_configured?(bucket_name)
       begin
-        resp = @ddb_client.describe_table({
+        resp = ddb_client.describe_table({
           table_name: bucket_name,
         })
         return true unless resp.to_h.empty?
@@ -73,7 +73,7 @@ module Dome
 
     def setup_dynamodb(bucket_name)
       begin
-        resp = @ddb_client.create_table({
+        resp = ddb_client.create_table({
           attribute_definitions: [{
               attribute_name: "LockID",
               attribute_type: "S",
