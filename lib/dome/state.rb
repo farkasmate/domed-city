@@ -66,7 +66,7 @@ module Dome
           table_name: bucket_name,
         })
         return true if resp.to_h[:table][:table_name] == bucket_name
-      rescue ResourceNotFoundException => e
+      rescue Aws::DynamoDB::Errors::ResourceNotFoundException => e
         return false
       rescue StandardError => e
         raise "Could not read DynamoDB table! error occurred: #{e}"
