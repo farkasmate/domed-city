@@ -101,7 +101,7 @@ module Dome
 
     def s3_state
       if s3_bucket_exists?(state_bucket_name)
-        unless dynamodb_configured(state_bucket_name)?
+        unless dynamodb_configured?(state_bucket_name)
           setup_dynamodb(state_bucket_name)
         end
       else
