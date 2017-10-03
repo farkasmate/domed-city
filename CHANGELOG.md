@@ -1,3 +1,48 @@
+# 6.0.0
+
+BREAKING CHANGE:
+
+  - Terraform 0.10.x support
+
+REQUIRED CHANGES:
+
+  - Add a block for the s3 backend in the `main.tf` (example from root-infra):
+    ```
+    terraform {
+      backend "s3" {
+        bucket         = "root-tfstate-infraprd"
+        key            = "infraprd-terraform.tfstate"
+        region         = "eu-west-1"
+        dynamodb_table = "root-tfstate-infraprd"
+      }
+    }
+    ```
+  - Pin the providers to specific versions: (example from root-infra):
+    ```
+    provider "aws" {
+      region = "${var.region}"
+      version = "1.0.0"
+    }
+
+    provider "template" {
+      version = "1.0.0"
+    }
+
+    provider "terraform" {
+      version = "1.0.0"
+    }
+    ```
+
+# 5.0.0
+
+Update hiera to 3.x, required for projects which implement Puppet 5.x
+
+# 4.0.0
+
+Breaking change:
+
+Ecosystem variable within the ITV yaml now needs to be a hash - the Terraform run will fail hard if the ecosystems are not set to a hash within the config
+
 # 3.1.0
 
 Added hiera-eyaml support.

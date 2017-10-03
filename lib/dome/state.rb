@@ -18,6 +18,10 @@ module Dome
       @s3_client ||= Aws::S3::Client.new
     end
 
+    def ddb_client
+      @ddb_client ||= Aws::DynamoDB::Client.new
+    end
+
     def list_buckets
       s3_client.list_buckets
     end
@@ -56,6 +60,36 @@ module Dome
       )
     end
 
+    def dynamodb_configured?(bucket_name)
+      resp = ddb_client.describe_table(
+        table_name: bucket_name
+      )
+      if resp.to_h[:table][:table_name] == bucket_name
+        puts "DynamoDB state locking table exists: #{bucket_name}".colorize(:green)
+        return true
+      end
+    rescue Aws::DynamoDB::Errors::ResourceNotFoundException => e
+      puts "DynamoDB state locking table doesn't exist! #{e} .. creating it".colorize(:yellow)
+      return false
+    rescue StandardError => e
+      raise "Could not read DynamoDB table! error occurred: #{e}"
+    end
+
+    def setup_dynamodb(bucket_name)
+      resp = ddb_client.create_table(
+        attribute_definitions: [{ attribute_name: 'LockID', attribute_type: 'S' }],
+        table_name: bucket_name,
+        key_schema: [{ attribute_name: 'LockID', key_type: 'HASH' }],
+        provisioned_throughput: {
+          read_capacity_units: 1,
+          write_capacity_units: 1
+        }
+      )
+      raise unless resp.to_h[:table_description][:table_name] == bucket_name
+    rescue StandardError => e
+      raise "Could not create DynamoDB table! error occurred: #{e}".colorize(:red)
+    end
+
     def create_remote_state_bucket(bucket_name, state_file)
       create_bucket bucket_name
       enable_bucket_versioning bucket_name
@@ -64,18 +98,12 @@ module Dome
 
     def s3_state
       if s3_bucket_exists?(state_bucket_name)
-        synchronise_s3_state(state_bucket_name, state_file_name)
+        unless dynamodb_configured?(state_bucket_name)
+          setup_dynamodb(state_bucket_name)
+        end
       else
         create_remote_state_bucket(state_bucket_name, state_file_name)
       end
-    end
-
-    def synchronise_s3_state(bucket_name, state_file_name)
-      puts 'Synchronising the remote S3 state...'
-      command         = 'terraform remote config -backend=S3'\
-            " -backend-config='bucket=#{bucket_name}' -backend-config='key=#{state_file_name}'"
-      failure_message = 'Something went wrong when synchronising the S3 state.'
-      execute_command(command, failure_message)
     end
   end
 end

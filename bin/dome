@@ -5,13 +5,13 @@ require_relative '../lib/dome'
 
 opts = Trollop.options do
   version Dome::VERSION
-  banner <<-EOS
+  banner <<-BANNER
   Dome wraps the Terraform API and performs useful stuff.
 
   Usage:
         dome [command]
   where [commands] are:
-EOS
+BANNER
 
   opt :plan, 'Creates a Terraform plan'
   opt :apply, 'Applies a Terraform plan'
