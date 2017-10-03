@@ -65,8 +65,12 @@ module Dome
         resp = ddb_client.describe_table({
           table_name: bucket_name,
         })
-        return true if resp.to_h[:table][:table_name] == bucket_name
+        if resp.to_h[:table][:table_name] == bucket_name
+          puts "DynamoDB state locking table exists: #{bucket_name}".colorize(:green)
+          return true
+        end
       rescue Aws::DynamoDB::Errors::ResourceNotFoundException => e
+        puts "DynamoDB state locking table doesn't exist! .. creating it".colorize(:yellow)
         return false
       rescue StandardError => e
         raise "Could not read DynamoDB table! error occurred: #{e}"
@@ -91,7 +95,7 @@ module Dome
           },
         })
       rescue StandardError => e
-        raise "Could not create DynamoDB table! error occurred: #{e}"
+        raise "Could not create DynamoDB table! error occurred: #{e}".colorize(:red)
       end
     end
 
