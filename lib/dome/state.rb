@@ -65,7 +65,9 @@ module Dome
         resp = ddb_client.describe_table({
           table_name: bucket_name,
         })
-        return true unless resp.to_h.empty?
+        return true if resp.to_h[:table][:table_name] == bucket_name
+      rescue ResourceNotFoundException => e
+        return false
       rescue StandardError => e
         raise "Could not read DynamoDB table! error occurred: #{e}"
       end
