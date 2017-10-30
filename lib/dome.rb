@@ -4,6 +4,7 @@ require 'colorize'
 require 'fileutils'
 require 'yaml'
 require 'hiera'
+require 'aws_assume_role'
 
 require 'dome/settings'
 require 'dome/version'

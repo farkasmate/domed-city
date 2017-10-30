@@ -26,4 +26,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'colorize', '~> 0.7'
   spec.add_dependency 'hiera', '~> 3'
   spec.add_dependency 'hiera-eyaml', '~> 2.1'
+  spec.add_dependency 'aws_assume_role', '~> 1'
 end

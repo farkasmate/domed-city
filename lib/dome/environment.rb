@@ -28,12 +28,36 @@ module Dome
         "#{'AWS_ACCESS_KEY'.colorize(:green)} and #{'AWS_SECRET_KEY'.colorize(:green)}"
       ENV['AWS_ACCESS_KEY'] = nil
       ENV['AWS_SECRET_KEY'] = nil
+      ENV['AWS_SECRET_ACCESS_KEY'] = nil
+      ENV['AWS_ACCESS_KEY_ID'] = nil
+      ENV['AWS_SESSION_TOKEN'] = nil
     end
 
     def aws_credentials
-      puts "Setting environment variable #{'AWS_PROFILE'.colorize(:green)} to your "\
-        "'account' name: #{@account.colorize(:green)}"
-      ENV['AWS_PROFILE'] = @account
+      puts "Assuming the role defined by your profile for 'account' name: "\
+        "#{@account.colorize(:green)}. Requires valid Yubikey OAuth setup."
+      role_opts = { profile: account, role_session_name: account, use_mfa: true}
+      begin
+        assumedRole=AwsAssumeRole::DefaultProvider.new(role_opts).resolve
+      rescue StandardError => e
+        puts "Ensure that you have your AWS config setup correctly:\n"\
+             "[profile #{@account}]"\
+             "role_arn = <<ARN of Role you are assuming>>"\
+             "mfa_serial = automatic"\
+             "source_profile = Source profile in root account"\
+             "role_session_name = #{@account}"\
+             "duration_seconds = 3600"\
+             "yubikey_oath_name = <<e.g. Amazon Web Services:itv-root-ro@itv-root>>"
+        raise e
+      end
+
+      puts "Exporting temporary credentials to environment variables "\
+      "#{'AWS_ACCESS_KEY_ID'.colorize(:green)}, #{'AWS_SECRET_ACCESS_KEY'.colorize(:green)}"\
+      " and #{'AWS_SESSION_TOKEN'.colorize(:green)}."
+      ENV['AWS_ACCESS_KEY_ID'] = assumedRole.credentials.access_key_id
+      ENV['AWS_SECRET_ACCESS_KEY'] = assumedRole.credentials.secret_access_key
+      ENV['AWS_SESSION_TOKEN'] = assumedRole.credentials.session_token
+
       puts "Setting environment variable #{'AWS_DEFAULT_REGION'.colorize(:green)} "\
         "to #{'eu-west-1'.colorize(:green)}"
       ENV['AWS_DEFAULT_REGION'] = 'eu-west-1' # should we let people override this? doubtful
