@@ -25,7 +25,9 @@ module Dome
 
     def unset_aws_keys
       puts 'Unsetting environment variables '\
-        "#{'AWS_ACCESS_KEY'.colorize(:green)} and #{'AWS_SECRET_KEY'.colorize(:green)}"
+        "#{'AWS_ACCESS_KEY'.colorize(:green)}, #{'AWS_SECRET_KEY'.colorize(:green)}, "\
+        "#{'AWS_ACCESS_KEY_ID'.colorize(:green)}, #{'AWS_SECRET_ACCESS_KEY'.colorize(:green)}"\
+        " and #{'AWS_SESSION_TOKEN'.colorize(:green)}."
       ENV['AWS_ACCESS_KEY'] = nil
       ENV['AWS_SECRET_KEY'] = nil
       ENV['AWS_SECRET_ACCESS_KEY'] = nil
@@ -40,14 +42,17 @@ module Dome
       begin
         assumedRole=AwsAssumeRole::DefaultProvider.new(role_opts).resolve
       rescue StandardError => e
-        puts "Ensure that you have your AWS config setup correctly:\n"\
-             "[profile #{@account}]"\
-             "role_arn = <<ARN of Role you are assuming>>"\
-             "mfa_serial = automatic"\
-             "source_profile = Source profile in root account"\
-             "role_session_name = #{@account}"\
-             "duration_seconds = 3600"\
-             "yubikey_oath_name = <<e.g. Amazon Web Services:itv-root-ro@itv-root>>"
+        puts "#{'ERROR: Unable to assume role. '.colorize(:red)}"\
+             "#{'Ensure that you have your ~/.aws/config setup correctly, e.g.:'.colorize(:red)}\n"\
+             "------------\n"\
+             "[profile #{@account}]\n"\
+             "role_session_name = #{@account.colorize(:green)}\n"\
+             "duration_seconds = #{'3600'.colorize(:green)}\n"\
+             "mfa_serial = #{'automatic'.colorize(:green)}\n"\
+             "role_arn = #{'<<ARN of Role you are assuming>>'.colorize(:blue)}\n"\
+             "source_profile = #{'<<Source profile in root account>>'.colorize(:blue)}\n"\
+             "yubikey_oath_name = #{'<<e.g. Amazon Web Services:itv-root-ro@itv-root>>'.colorize(:blue)}\n"\
+             "------------\n"
         raise e
       end
 
