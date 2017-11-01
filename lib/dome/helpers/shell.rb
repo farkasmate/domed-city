@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Dome
   module Shell
     def execute_command(command, failure_message)

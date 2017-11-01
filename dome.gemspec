@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'dome/version'
@@ -21,10 +23,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rubocop', '~> 0.40'
 
-  spec.add_dependency 'trollop', '~> 2.1'
   spec.add_dependency 'aws-sdk', '~> 2.1'
+  spec.add_dependency 'aws_assume_role', '~> 1'
   spec.add_dependency 'colorize', '~> 0.7'
   spec.add_dependency 'hiera', '~> 3'
   spec.add_dependency 'hiera-eyaml', '~> 2.1'
-  spec.add_dependency 'aws_assume_role', '~> 1'
+  spec.add_dependency 'trollop', '~> 2.1'
 end

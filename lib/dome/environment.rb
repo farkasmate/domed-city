@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Dome
   class Environment
     attr_reader :environment, :account, :ecosystem, :settings
@@ -35,37 +37,30 @@ module Dome
       ENV['AWS_SESSION_TOKEN'] = nil
     end
 
-    def aws_credentials
-      puts "Assuming the role defined by your profile for 'account' name: "\
-        "#{@account.colorize(:green)}. Requires valid Yubikey OAuth setup."
-      role_opts = { profile: account, role_session_name: account, use_mfa: true}
-      begin
-        assumedRole=AwsAssumeRole::DefaultProvider.new(role_opts).resolve
-      rescue StandardError => e
-        puts "#{'ERROR: Unable to assume role. '.colorize(:red)}"\
-             "#{'Ensure that you have your ~/.aws/config setup correctly, e.g.:'.colorize(:red)}\n"\
-             "------------\n"\
-             "[profile #{@account}]\n"\
-             "role_session_name = #{@account.colorize(:green)}\n"\
-             "duration_seconds = #{'3600'.colorize(:green)}\n"\
-             "mfa_serial = #{'automatic'.colorize(:green)}\n"\
-             "role_arn = #{'<<ARN of Role you are assuming>>'.colorize(:blue)}\n"\
-             "source_profile = #{'<<Source profile in root account>>'.colorize(:blue)}\n"\
-             "yubikey_oath_name = #{'<<e.g. Amazon Web Services:itv-root-ro@itv-root>>'.colorize(:blue)}\n"\
-             "------------\n"
-        raise e
-      end
-
-      puts "Exporting temporary credentials to environment variables "\
+    def export_aws_keys(assumed_role)
+      puts 'Exporting temporary credentials to environment variables '\
       "#{'AWS_ACCESS_KEY_ID'.colorize(:green)}, #{'AWS_SECRET_ACCESS_KEY'.colorize(:green)}"\
       " and #{'AWS_SESSION_TOKEN'.colorize(:green)}."
-      ENV['AWS_ACCESS_KEY_ID'] = assumedRole.credentials.access_key_id
-      ENV['AWS_SECRET_ACCESS_KEY'] = assumedRole.credentials.secret_access_key
-      ENV['AWS_SESSION_TOKEN'] = assumedRole.credentials.session_token
+      ENV['AWS_ACCESS_KEY_ID'] = assumed_role.credentials.access_key_id
+      ENV['AWS_SECRET_ACCESS_KEY'] = assumed_role.credentials.secret_access_key
+      ENV['AWS_SESSION_TOKEN'] = assumed_role.credentials.session_token
 
       puts "Setting environment variable #{'AWS_DEFAULT_REGION'.colorize(:green)} "\
         "to #{'eu-west-1'.colorize(:green)}"
       ENV['AWS_DEFAULT_REGION'] = 'eu-west-1' # should we let people override this? doubtful
+    end
+
+    def aws_credentials
+      puts "Assuming the role defined by your profile for 'account' name: "\
+        "#{@account.colorize(:green)}. Requires valid Yubikey OAuth setup."
+      role_opts = { profile: account, role_session_name: account, use_mfa: true }
+      begin
+        assumed_role = AwsAssumeRole::DefaultProvider.new(role_opts).resolve
+      rescue StandardError => e
+        raise "ERROR: Unable to assume role: #{e}".colorize(:red)
+      end
+
+      export_aws_keys(assumed_role)
     end
 
     def valid_account?(account_name)
@@ -92,7 +87,6 @@ module Dome
 
     private
 
-    # rubocop:disable Metrics/AbcSize
     def generic_error_message
       puts "The 'account' and 'environment' variables are assigned based on your current directory.\n".colorize(:red)
       puts "The expected directory structure is 'terraform/<account>/<environment>'\n".colorize(:red)
@@ -104,10 +98,10 @@ module Dome
            " (where 'project' is defined using the 'project' key in your itv.yaml."
       puts "The accounts you have defined are: #{accounts}."
       puts '============================================================================='
-      puts 'To fix your issue, try the following:'
-      puts '1. Set your .aws/config to one of the valid accounts above.'
-      puts '2. Ensure you are running this from the correct directory.'
-      puts '3. Update your itv.yaml with the required environments or project.'
+      puts "To fix your issue, try the following:\n"\
+        "1. Set your .aws/config to one of the valid accounts above.\n"\
+        "2. Ensure you are running this from the correct directory.\n"\
+        '3. Update your itv.yaml with the required environments or project.'
     end
   end
 end

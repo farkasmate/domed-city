@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'trollop'
 require 'aws-sdk'
 require 'colorize'
