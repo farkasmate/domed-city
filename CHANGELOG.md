@@ -1,3 +1,14 @@
+# 7.0.0
+
+BREAKING CHANGE:
+
+  - assume-role with MFA support is now required
+
+REQUIRED CHANGES:
+
+  - added dependency on `aws-assume-role` Gem
+  - please follow [setup instructions](https://github.com/ITV/cp-docs/wiki/howto:-AWS-Assume-Role)
+
 # 6.0.0
 
 BREAKING CHANGE:
