@@ -38,6 +38,8 @@ module Dome
       @environment.aws_credentials
       puts '----------------------------------------------------------------'
     end
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
 
     def plan
       delete_terraform_directory
