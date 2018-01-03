@@ -5,6 +5,7 @@ FEATURES:
 
 REQUIRED CHANGES:
 
+  - ruby > `v2.1`
   - added dependency on `aws-assume-role` Gem
   - please follow [setup instructions](https://github.com/ITV/cp-docs/wiki/howto:-AWS-Assume-Role)
 
