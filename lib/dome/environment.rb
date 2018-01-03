@@ -51,8 +51,8 @@ module Dome
     end
 
     def aws_credentials
-      puts "Assuming the role defined by your profile for 'account' name: "\
-        "#{@account.colorize(:green)}. Requires valid Yubikey OAuth setup."
+      puts "Attempting to assume the role defined by your profile for 'account' name: "\
+        "#{@account.colorize(:green)}."
       role_opts = { profile: account, role_session_name: account, use_mfa: true }
       begin
         assumed_role = AwsAssumeRole::DefaultProvider.new(role_opts).resolve

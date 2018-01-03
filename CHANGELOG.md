@@ -1,8 +1,7 @@
-# 7.0.0
+# 6.1.0
 
-BREAKING CHANGE:
-
-  - assume-role with MFA support is now required
+FEATURES:
+  - added support for aws-assume-role with temporary STS credentials
 
 REQUIRED CHANGES:
 
