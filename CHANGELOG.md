@@ -1,3 +1,14 @@
+# 6.1.0
+
+FEATURES:
+  - added support for aws-assume-role with temporary STS credentials
+
+REQUIRED CHANGES:
+
+  - ruby > `v2.1`
+  - added dependency on `aws-assume-role` Gem
+  - please follow [setup instructions](https://github.com/ITV/cp-docs/wiki/howto:-AWS-Assume-Role)
+
 # 6.0.0
 
 BREAKING CHANGE:

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Dome
   class State
     include Dome::Shell
@@ -98,9 +100,7 @@ module Dome
 
     def s3_state
       if s3_bucket_exists?(state_bucket_name)
-        unless dynamodb_configured?(state_bucket_name)
-          setup_dynamodb(state_bucket_name)
-        end
+        setup_dynamodb(state_bucket_name) unless dynamodb_configured?(state_bucket_name)
       else
         create_remote_state_bucket(state_bucket_name, state_file_name)
       end
