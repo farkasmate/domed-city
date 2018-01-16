@@ -17,6 +17,7 @@ module Dome
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     def validate_environment
+      raise "Cannot find Terraform binary! is it installed?" unless binary
       puts 'Initialising domed-city...'
       puts "* Your 'account' and 'environment' are assigned based on your current directory. "\
           "The expected directory structure is 'terraform/<account>/<environment>'".colorize(:yellow)
