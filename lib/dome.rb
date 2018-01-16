@@ -7,6 +7,7 @@ require 'fileutils'
 require 'yaml'
 require 'hiera'
 require 'aws_assume_role'
+require 'open3'
 
 require 'dome/settings'
 require 'dome/version'
