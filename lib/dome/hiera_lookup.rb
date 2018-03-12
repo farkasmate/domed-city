@@ -38,6 +38,8 @@ module Dome
         eyaml_directory = File.join(puppet_dir, 'keys')
       elsif File.exist?('/etc/puppet/keys/private_key.pkcs7.pem')
         eyaml_directory = '/etc/puppet/keys'
+      else
+        abort("Puppet private key not in found in either '/etc/puppet/keys' or #{puppet_dir}keys.")
       end
       puts "The configured EYAML directory is: #{eyaml_directory.colorize(:green)}" unless @eyaml_directory
       @eyaml_directory ||= eyaml_directory
