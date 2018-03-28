@@ -61,7 +61,7 @@ module Dome
       @secrets.secret_env_vars
       @secrets.extract_certs
       FileUtils.mkdir_p 'plans'
-      command         = "terraform plan -refresh=true -out=#{@plan_file} -var-file=params/env.tfvars"
+      command         = "terraform plan -refresh=true -out=#{@plan_file} -var-file=params/env.tfvars | landscape"
       failure_message = 'something went wrong when creating the TF plan'
       execute_command(command, failure_message)
     end
