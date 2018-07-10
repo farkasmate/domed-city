@@ -5,7 +5,6 @@ module Dome
     attr_reader :environment, :account, :ecosystem, :settings
 
     def initialize(directories = Dir.pwd.split('/'))
-      @secrets.secret_env_vars
       @environment            = directories[-1]
       @account                = directories[-2]
       @ecosystem              = directories[-2].split('-')[-1]

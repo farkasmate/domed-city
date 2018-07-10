@@ -42,6 +42,7 @@ module Dome
     # rubocop:enable Metrics/AbcSize
 
     def plan
+      @secrets.secret_env_vars
       delete_terraform_directory
       delete_plan_file
       @state.s3_state
