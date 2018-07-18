@@ -5,10 +5,14 @@ module Dome
     attr_reader :environment, :account, :ecosystem, :settings
 
     def initialize(directories = Dir.pwd.split('/'))
-      @environment = directories[-1]
-      @account     = directories[-2]
-      @ecosystem   = directories[-2].split('-')[-1]
-      @settings    = Dome::Settings.new
+      @environment            = directories[-1]
+      @account                = directories[-2]
+      @ecosystem              = directories[-2].split('-')[-1]
+      ENV['TF_VAR_product']   = directories[-2].split('-')[-2]
+      ENV['TF_VAR_envname']   = @environment
+      ENV['TF_VAR_env']       = @environment
+      ENV['TF_VAR_ecosystem'] = @ecosystem
+      @settings               = Dome::Settings.new
     end
 
     def project

@@ -8,7 +8,7 @@ module Dome
     end
 
     def load_yaml
-      @parsed_yaml ||= YAML.load_file(itv_yaml_path)
+      @load_yaml ||= YAML.load_file(itv_yaml_path)
     end
 
     def itv_yaml_path

@@ -1,3 +1,10 @@
+# 6.2.0
+
+FEATURES:
+
+- Set TF_VAR_product,ecosystem,envname
+- Replace envname with env so we can transition to the new env name
+- You can remove product,envname,ecosystem from your params/env.tfvars as they are now discovered from your directory structure
 # 6.1.0
 
 FEATURES:

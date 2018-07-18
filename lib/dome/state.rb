@@ -72,7 +72,7 @@ module Dome
       end
     rescue Aws::DynamoDB::Errors::ResourceNotFoundException => e
       puts "DynamoDB state locking table doesn't exist! #{e} .. creating it".colorize(:yellow)
-      return false
+      false
     rescue StandardError => e
       raise "Could not read DynamoDB table! error occurred: #{e}"
     end
