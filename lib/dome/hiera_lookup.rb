@@ -30,7 +30,7 @@ module Dome
     def puppet_dir
       directory = File.join(@settings.project_root, 'puppet')
       puts "The configured Puppet directory is: #{directory.colorize(:green)}" unless @directory
-      @directory ||= directory
+      @puppet_dir ||= directory
     end
 
     def eyaml_dir
@@ -40,7 +40,7 @@ module Dome
         eyaml_directory = '/etc/puppet/keys'
       end
       puts "The configured EYAML directory is: #{eyaml_directory.colorize(:green)}" unless @eyaml_directory
-      @eyaml_directory ||= eyaml_directory
+      @eyaml_dir ||= eyaml_directory
     end
 
     def eyaml_private_key

@@ -12,7 +12,7 @@ opts = Trollop.options do
   Usage:
         dome [command]
   where [commands] are:
-BANNER
+  BANNER
 
   opt :plan, 'Creates a Terraform plan'
   opt :apply, 'Applies a Terraform plan'

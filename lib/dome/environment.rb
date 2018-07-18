@@ -8,10 +8,10 @@ module Dome
       @environment            = directories[-1]
       @account                = directories[-2]
       @ecosystem              = directories[-2].split('-')[-1]
-      ENV["TF_VAR_product"]   = directories[-2].split('-')[-2]
-      ENV["TF_VAR_envname"]   = @environment
-      ENV["TF_VAR_env"]       = @environment
-      ENV["TF_VAR_ecosystem"] = @ecosystem
+      ENV['TF_VAR_product']   = directories[-2].split('-')[-2]
+      ENV['TF_VAR_envname']   = @environment
+      ENV['TF_VAR_env']       = @environment
+      ENV['TF_VAR_ecosystem'] = @ecosystem
       @settings               = Dome::Settings.new
     end
 
