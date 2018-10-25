@@ -5,6 +5,15 @@ module Dome
     attr_reader :environment, :account, :ecosystem, :settings
 
     def initialize(directories = Dir.pwd.split('/'))
+
+      open 'params/env.tfvars' do |file|
+        file.each_line do |line|
+          if line =~ /^aws_account_id/ 
+            ENV['TF_VAR_aws_account_id'] = line.split('=').last.strip.delete('"')
+          end
+        end
+      end
+      
       @environment            = directories[-1]
       @account                = directories[-2]
       @ecosystem              = directories[-2].split('-')[-1]
