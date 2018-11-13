@@ -5,24 +5,22 @@ module Dome
     attr_reader :environment, :account, :ecosystem, :settings
 
     def initialize(directories = Dir.pwd.split('/'))
+      @settings               = Dome::Settings.new
       @environment            = directories[-1]
       @account                = directories[-2]
       @ecosystem              = directories[-2].split('-')[-1]
+
       ENV['TF_VAR_product']   = directories[-2].split('-')[-2]
       ENV['TF_VAR_envname']   = @environment
       ENV['TF_VAR_env']       = @environment
       ENV['TF_VAR_ecosystem'] = @ecosystem
-      ENV['TF_VAR_aws_account_id'] = aws_account_id(@ecosystem)
+      ENV['TF_VAR_aws_account_id'] = @settings.parse["aws"]["#{@ecosystem}"]["account_id"].to_s
 
-      @settings               = Dome::Settings.new
+      
     end
 
     def project
       @settings.parse['project']
-    end
-
-    def aws_account_id(ecosystem)
-      @settings.parse["aws"]["#{ecosystem}"]["account_id"]
     end
 
     def accounts
@@ -55,8 +53,14 @@ module Dome
       ENV['AWS_SECRET_ACCESS_KEY'] = assumed_role.credentials.secret_access_key
       ENV['AWS_SESSION_TOKEN'] = assumed_role.credentials.session_token
 
-      puts "Setting environment variable #{'AWS_DEFAULT_REGION'.colorize(:green)} "\
+      puts "[x] Setting environment variable #{'AWS_DEFAULT_REGION'.colorize(:green)} "\
         "to #{'eu-west-1'.colorize(:green)}"
+
+        puts "[x] Setting TF_VAR_aws_account_id to #{ENV['TF_VAR_aws_account_id']}"
+        puts "[x] Setting TF_VAR_product to #{ENV['TF_VAR_product']}"
+        puts "[x] Setting TF_VAR_env to #{ENV['TF_VAR_env']}"
+        puts "[x] Setting TF_VAR_ecosystem to #{ENV['TF_VAR_ecosystem']}"
+
       ENV['AWS_DEFAULT_REGION'] = 'eu-west-1' # should we let people override this? doubtful
     end
 
