@@ -12,11 +12,17 @@ module Dome
       ENV['TF_VAR_envname']   = @environment
       ENV['TF_VAR_env']       = @environment
       ENV['TF_VAR_ecosystem'] = @ecosystem
+      ENV['TF_VAR_aws_account_id'] = aws_account_id(@ecosystem)
+
       @settings               = Dome::Settings.new
     end
 
     def project
       @settings.parse['project']
+    end
+
+    def aws_account_id(ecosystem)
+      @settings.parse["aws"]["#{ecosystem}"]["account_id"]
     end
 
     def accounts

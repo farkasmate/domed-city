@@ -13,3 +13,27 @@ ecosystems:
   prd:
     - infraprd
     - prd
+
+aws:
+  dev:
+    account_id: 832390933830
+    environments:
+      infradev:
+        aws_vpc_cidr: 10.206.48.0/22
+        aws_vpc_public_subnets: 10.206.48.0/25,10.206.49.0/25,10.206.50.0/25
+        aws_vpc_private_subnets: 10.206.48.128/25,10.206.49.128/25,10.206.50.128/25
+      dev:
+        aws_vpc_cidr: 10.206.52.0/22
+        aws_vpc_public_subnets: 10.206.52.0/25,10.206.53.0/25,10.206.54.0/25
+        aws_vpc_private_subnets: 10.206.52.128/25,10.206.53.128/25,10.206.54.128/25
+  prd:
+    account_id: 222007316080
+    environments:
+      infraprd:
+        aws_vpc_cidr: 10.206.164.0/22
+        aws_vpc_public_subnets: 10.206.164.0/25,10.206.165.0/25,10.206.166.0/25
+        aws_vpc_private_subnets: 10.206.164.128/25,10.206.165.128/25,10.206.166.128/25
+      prd:
+        aws_vpc_cidr: 10.206.188.0/22
+        aws_vpc_public_subnets: 10.206.188.0/25,10.206.189.0/25,10.206.190.0/25
+        aws_vpc_private_subnets: 10.206.188.128/25,10.206.189.128/25,10.206.190.128/25
