@@ -69,7 +69,6 @@ module Dome
       puts "[*] Setting cidr_ecosystem_prd to #{ENV['TF_VAR_cidr_ecosystem_prd'].colorize(:green)}"
       puts
 
-      exit 0
     end
 
     def project
