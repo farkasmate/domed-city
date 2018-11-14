@@ -89,4 +89,6 @@ gem 'domed-city', :path => '/home/foo/github-repos/domed-city'
 ## TODO
 
 * Rename project references to product
+* Check the usage of certificate section
+* Remove dynamoDB state locking (Terraform does that now)
 
