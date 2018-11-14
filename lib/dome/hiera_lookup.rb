@@ -29,7 +29,8 @@ module Dome
 
     def puppet_dir
       directory = File.join(@settings.project_root, 'puppet')
-      puts "The configured Puppet directory is: #{directory.colorize(:green)}" unless @directory
+      # TODO: Add a debug flag to enable certain output
+      # puts "The configured Puppet directory is: #{directory.colorize(:green)}" unless @directory
       @puppet_dir ||= directory
     end
 
@@ -39,21 +40,24 @@ module Dome
       elsif File.exist?('/etc/puppet/keys/private_key.pkcs7.pem')
         eyaml_directory = '/etc/puppet/keys'
       end
-      puts "The configured EYAML directory is: #{eyaml_directory.colorize(:green)}" unless @eyaml_directory
+      # TODO: Add a debug flag to enable certain output
+      # puts "The configured EYAML directory is: #{eyaml_directory.colorize(:green)}" unless @eyaml_directory
       @eyaml_dir ||= eyaml_directory
     end
 
     def eyaml_private_key
       private_key = File.join(eyaml_dir, 'private_key.pkcs7.pem')
       raise "Cannot find eyaml private key! Make sure it exists at #{private_key}" unless File.exist?(private_key)
-      puts "Found eyaml private key: #{private_key.colorize(:green)}"
+      # TODO: Add a debug flag to enable certain output
+      # puts "Found eyaml private key: #{private_key.colorize(:green)}"
       private_key
     end
 
     def eyaml_public_key
       public_key = File.join(eyaml_dir, 'public_key.pkcs7.pem')
       raise "Cannot find eyaml public key! Make sure it exists at #{public_key}" unless File.exist?(public_key)
-      puts "Found eyaml public key: #{public_key.colorize(:green)}"
+      # TODO: Add a debug flag to enable certain output
+      # puts "Found eyaml public key: #{public_key.colorize(:green)}"
       public_key
     end
 

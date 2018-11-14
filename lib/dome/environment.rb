@@ -24,7 +24,7 @@ module Dome
         | (_| | (_) | | | | | |  __/
          \__,_|\___/|_| |_| |_|\___|
 
-      Wrapping terraform since 2015
+        Wrapping terraform since 2015
 
       EOF
 
@@ -65,6 +65,7 @@ module Dome
       puts '[*] Exporting temporary credentials to environment variables '\
       "#{'AWS_ACCESS_KEY_ID'.colorize(:green)}, #{'AWS_SECRET_ACCESS_KEY'.colorize(:green)}"\
       " and #{'AWS_SESSION_TOKEN'.colorize(:green)}."
+      puts
       ENV['AWS_ACCESS_KEY_ID'] = assumed_role.credentials.access_key_id
       ENV['AWS_SECRET_ACCESS_KEY'] = assumed_role.credentials.secret_access_key
       ENV['AWS_SESSION_TOKEN'] = assumed_role.credentials.session_token
@@ -72,7 +73,6 @@ module Dome
 
     def aws_credentials
       puts "[*] Attempting to assume the role defined by your profile for #{@account.colorize(:green)}."
-      exit 0 # temp
       role_opts = { profile: account, role_session_name: account, use_mfa: true }
       begin
         assumed_role = AwsAssumeRole::DefaultProvider.new(role_opts).resolve

@@ -30,7 +30,8 @@ module Dome
 
     def bucket_names
       bucket_names = list_buckets.buckets.map(&:name)
-      puts "Found the following buckets: #{bucket_names}".colorize(:yellow)
+      # TODO: Add a debug flag to enable certain output
+      # puts "Found the following buckets: #{bucket_names}".colorize(:yellow)
       bucket_names
     end
 
@@ -67,11 +68,12 @@ module Dome
         table_name: bucket_name
       )
       if resp.to_h[:table][:table_name] == bucket_name
-        puts "DynamoDB state locking table exists: #{bucket_name}".colorize(:green)
+        # TODO: Remove that because terraform handles the locking
+        # puts "[*] DynamoDB state locking table exists: #{bucket_name}".colorize(:green)
         return true
       end
     rescue Aws::DynamoDB::Errors::ResourceNotFoundException => e
-      puts "DynamoDB state locking table doesn't exist! #{e} .. creating it".colorize(:yellow)
+      puts "[*] DynamoDB state locking table doesn't exist! #{e} .. creating it".colorize(:yellow)
       false
     rescue StandardError => e
       raise "Could not read DynamoDB table! error occurred: #{e}"

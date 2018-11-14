@@ -29,14 +29,16 @@ module Dome
       @environment.unset_aws_keys
       @environment.aws_credentials
     end
-    # rubocop:enable Metrics/MethodLength
-    # rubocop:enable Metrics/AbcSize
 
     def plan
       @secrets.secret_env_vars
+      puts '--- Deleting old plans & .terraform cache folder ---'
+      puts
       delete_terraform_directory
       delete_plan_file
       @state.s3_state
+      puts '--- Terraform init & plan ---'
+      puts
       terraform_init
       create_plan
     end
@@ -44,7 +46,7 @@ module Dome
     def apply
       @secrets.secret_env_vars
       command         = "terraform apply #{@plan_file}"
-      failure_message = 'something went wrong when applying the TF plan'
+      failure_message = '[!] something went wrong when applying the TF plan'
       @state.s3_state
       execute_command(command, failure_message)
     end
@@ -54,20 +56,18 @@ module Dome
       @secrets.extract_certs
       FileUtils.mkdir_p 'plans'
       command         = "terraform plan -refresh=true -out=#{@plan_file} -var-file=params/env.tfvars"
-      failure_message = 'something went wrong when creating the TF plan'
+      failure_message = '[!] something went wrong when creating the TF plan'
       execute_command(command, failure_message)
     end
 
     def delete_terraform_directory
-      puts 'Deleting older terraform module cache dir ...'.colorize(:green)
+      puts '[*] Deleting terraform module cache dir ...'.colorize(:green)
       terraform_directory = '.terraform'
-      puts "About to delete directory: #{terraform_directory}"
       FileUtils.rm_rf '.terraform/'
     end
 
     def delete_plan_file
-      puts 'Deleting older terraform plan ...'.colorize(:green)
-      puts "About to delete: #{@plan_file}"
+      puts '[*] Deleting previous terraform plan ...'.colorize(:green)
       FileUtils.rm_f @plan_file
     end
 
