@@ -33,14 +33,14 @@ module Dome
     def plan
       @secrets.secret_env_vars
       puts '--- Deleting old plans & .terraform cache folder ---'
-      puts
       delete_terraform_directory
       delete_plan_file
       @state.s3_state
-      puts '--- Terraform init & plan ---'
       puts
+      puts '--- Terraform init & plan ---'
       terraform_init
       create_plan
+      puts
     end
 
     def apply
