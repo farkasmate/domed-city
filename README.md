@@ -50,3 +50,43 @@ where [commands] are:
   -v, --version         Print version and exit
   -h, --help            Show this message
 ```
+
+Domed is designed to work with a certain directory structure. Your account,product,ecosystem and environment are assigned based on your current directory. The expected directory structure is terraform/$PRODUCT-$ECOSYSTEM/$ENVIRONMENT
+
+It also requires certain things in itv.yaml.
+
+1. Your project (or better product) is defined using the project key in your itv.yaml. 
+```
+project: foo
+
+```
+2. Valid environments are defined using the hashmap of ecosystems to environments key in your itv.yaml. 
+eg
+```
+ecosystems:
+  dev:
+    - infradev
+    - qa
+    - stg
+  prd:
+    - infraprd
+    - prd
+
+```
+3. Valid accounts are of the format <project>-dev and <project>-prd and are calculated automatically using your project variable. This is consistent with the .aws/config because dome will try and assume the role based on that account.
+
+## Development & Releases
+
+In order to make changes, you can point the reference to domed-city in the Gemfile to your local working directory eg
+```
+gem 'domed-city', :path => '/home/foo/github-repos/domed-city'
+```
+
+* Every commit will trigger [travis CI](https://travis-ci.org/ITV/domed-city)
+* Make sure you run rake spec & rake rubocop
+* To release a new version make a PR with your code changes, update the CHANGELOG and lib/dome/version.rb with your version(semver). Then ask for someone to review your PR and merge it. Then manually create a github release.
+
+## TODO
+
+* Rename project references to product
+
