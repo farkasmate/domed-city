@@ -14,9 +14,27 @@ module Dome
       ENV['TF_VAR_envname']   = @environment
       ENV['TF_VAR_env']       = @environment
       ENV['TF_VAR_ecosystem'] = @ecosystem
-      ENV['TF_VAR_aws_account_id'] = @settings.parse["aws"]["#{@ecosystem}"]["account_id"].to_s
+      ENV['TF_VAR_aws_account_id'] = @settings.parse['aws'][@ecosystem.to_s]['account_id'].to_s
+      ENV['AWS_DEFAULT_REGION'] = 'eu-west-1'
 
-      
+      puts <<-'EOF'
+             _
+          __| | ___  _ __ ___   ___
+        /  _` |/ _ \| '_ ` _ \ / _ \
+        | (_| | (_) | | | | | |  __/
+         \__,_|\___/|_| |_| |_|\___|
+
+      Wrapping terraform since 2015
+
+      EOF
+
+      puts
+      puts '--- Initial TF_VAR variables to drive terraform ---'
+      puts "[*] Setting aws_account_id to #{ENV['TF_VAR_aws_account_id'].colorize(:green)}"
+      puts "[*] Setting product to #{ENV['TF_VAR_product'].colorize(:green)}"
+      puts "[*] Setting env to #{ENV['TF_VAR_env'].colorize(:green)}"
+      puts "[*] Setting ecosystem to #{ENV['TF_VAR_ecosystem'].colorize(:green)}"
+      puts
     end
 
     def project
@@ -29,15 +47,13 @@ module Dome
 
     def environments
       ecosystems = @settings.parse['ecosystems']
-      raise 'ecosystems must be a hashmap of ecosystems to environments' unless ecosystems.is_a?(Hash)
+      raise '[!] ecosystems must be a hashmap of ecosystems to environments' unless ecosystems.is_a?(Hash)
       ecosystems.values.flatten
     end
 
     def unset_aws_keys
-      puts 'Unsetting environment variables '\
-        "#{'AWS_ACCESS_KEY'.colorize(:green)}, #{'AWS_SECRET_KEY'.colorize(:green)}, "\
-        "#{'AWS_ACCESS_KEY_ID'.colorize(:green)}, #{'AWS_SECRET_ACCESS_KEY'.colorize(:green)}"\
-        " and #{'AWS_SESSION_TOKEN'.colorize(:green)}."
+      puts '[*] Unsetting AWS environment variables from the shell to make sure we are using the correct'\
+      'assumed roles credentials'
       ENV['AWS_ACCESS_KEY'] = nil
       ENV['AWS_SECRET_KEY'] = nil
       ENV['AWS_SECRET_ACCESS_KEY'] = nil
@@ -46,55 +62,43 @@ module Dome
     end
 
     def export_aws_keys(assumed_role)
-      puts 'Exporting temporary credentials to environment variables '\
+      puts '[*] Exporting temporary credentials to environment variables '\
       "#{'AWS_ACCESS_KEY_ID'.colorize(:green)}, #{'AWS_SECRET_ACCESS_KEY'.colorize(:green)}"\
       " and #{'AWS_SESSION_TOKEN'.colorize(:green)}."
       ENV['AWS_ACCESS_KEY_ID'] = assumed_role.credentials.access_key_id
       ENV['AWS_SECRET_ACCESS_KEY'] = assumed_role.credentials.secret_access_key
       ENV['AWS_SESSION_TOKEN'] = assumed_role.credentials.session_token
-
-      puts "[x] Setting environment variable #{'AWS_DEFAULT_REGION'.colorize(:green)} "\
-        "to #{'eu-west-1'.colorize(:green)}"
-
-        puts "[x] Setting TF_VAR_aws_account_id to #{ENV['TF_VAR_aws_account_id']}"
-        puts "[x] Setting TF_VAR_product to #{ENV['TF_VAR_product']}"
-        puts "[x] Setting TF_VAR_env to #{ENV['TF_VAR_env']}"
-        puts "[x] Setting TF_VAR_ecosystem to #{ENV['TF_VAR_ecosystem']}"
-
-      ENV['AWS_DEFAULT_REGION'] = 'eu-west-1' # should we let people override this? doubtful
     end
 
     def aws_credentials
-      puts "Attempting to assume the role defined by your profile for 'account' name: "\
-        "#{@account.colorize(:green)}."
+      puts "[*] Attempting to assume the role defined by your profile for #{@account.colorize(:green)}."
+      exit 0 # temp
       role_opts = { profile: account, role_session_name: account, use_mfa: true }
       begin
         assumed_role = AwsAssumeRole::DefaultProvider.new(role_opts).resolve
       rescue StandardError => e
-        raise "ERROR: Unable to assume role: #{e}".colorize(:red)
+        raise "[!] Unable to assume role, possibly yubikey related: #{e}".colorize(:red) \
       end
 
       export_aws_keys(assumed_role)
     end
 
     def valid_account?(account_name)
-      puts "Account: #{account_name.colorize(:green)}"
       accounts.include? account_name
     end
 
     def valid_environment?(environment_name)
-      puts "Environment: #{environment_name.colorize(:green)}"
       environments.include? environment_name
     end
 
     def invalid_account_message
-      puts "\n'#{@account}' is not a valid account.\n".colorize(:red)
+      puts "\n[!] '#{@account}' is not a valid account.\n".colorize(:red)
       generic_error_message
       exit 1
     end
 
     def invalid_environment_message
-      puts "\n'#{@environment}' is not a valid environment.\n".colorize(:red)
+      puts "\n[!] '#{@environment}' is not a valid environment.\n".colorize(:red)
       generic_error_message
       exit 1
     end
@@ -102,20 +106,18 @@ module Dome
     private
 
     def generic_error_message
-      puts "The 'account' and 'environment' variables are assigned based on your current directory.\n".colorize(:red)
-      puts "The expected directory structure is 'terraform/<account>/<environment>'\n".colorize(:red)
-      puts '============================================================================='
-      puts "Valid environments are defined using the 'environments' key in your itv.yaml."
+      puts
+      puts '--- Debug --- '
       puts "The environments you have defined are: #{environments}."
-      puts '============================================================================='
-      puts 'Valid accounts are of the format <project>-dev/prd and <project>-prd' \
-           " (where 'project' is defined using the 'project' key in your itv.yaml."
-      puts "The accounts you have defined are: #{accounts}."
-      puts '============================================================================='
-      puts "To fix your issue, try the following:\n"\
-        "1. Set your .aws/config to one of the valid accounts above.\n"\
-        "2. Ensure you are running this from the correct directory.\n"\
-        '3. Update your itv.yaml with the required environments or project.'
-    end
+      puts "The accounts we calculated from your project itv.yaml key are: #{accounts}."
+      puts
+      puts '--- Troubleshoot ---'
+      puts 'To fix your issue, try the following:'
+      puts '1. Set your .aws/config to one of the valid accounts above.'
+      puts '2. Ensure you are running this from the correct directory.'
+      puts '3. Update your itv.yaml with the required environments or project.'
+      puts '4. Check the README in case something is missing from your setup or ask in Slack'
+      puts
+      end
   end
 end
