@@ -1,9 +1,6 @@
 ---
 
 project: hubsvc
-repo: hub-services-infra
-git_url: 'git@github.com:ITV/hub-services-infra.git'
-version: '0.0.1'
 
 ecosystems:
   dev:
