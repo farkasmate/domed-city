@@ -15,31 +15,31 @@ module Dome
       ENV['TF_VAR_env']       = @environment
       ENV['TF_VAR_ecosystem'] = @ecosystem
       ENV['TF_VAR_aws_account_id'] = @settings.parse['aws'][@ecosystem.to_s]['account_id'].to_s
-      
+
       cidr_ecosystem = []
       cidr_ecosystem_dev = []
       cidr_ecosystem_prd = []
 
       ecosystem_environments = @settings.parse['aws'][@ecosystem.to_s]['environments'].keys
       ecosystem_environments.each do |k|
-        cidr_ecosystem << @settings.parse['aws'][@ecosystem.to_s]['environments']["#{k}"]["aws_vpc_cidr"]
+        cidr_ecosystem << @settings.parse['aws'][@ecosystem.to_s]['environments'][k.to_s]['aws_vpc_cidr']
       end
 
       dev_ecosystem_environments = @settings.parse['aws']['dev']['environments'].keys
       dev_ecosystem_environments.each do |k|
-        cidr_ecosystem_dev << @settings.parse['aws']['dev']['environments']["#{k}"]["aws_vpc_cidr"]
+        cidr_ecosystem_dev << @settings.parse['aws']['dev']['environments'][k.to_s]['aws_vpc_cidr']
       end
 
       prd_ecosystem_environments = @settings.parse['aws']['prd']['environments'].keys
       prd_ecosystem_environments.each do |k|
-        cidr_ecosystem_prd << @settings.parse['aws']['prd']['environments']["#{k}"]["aws_vpc_cidr"]
+        cidr_ecosystem_prd << @settings.parse['aws']['prd']['environments'][k.to_s]['aws_vpc_cidr']
       end
 
       ENV['TF_VAR_cidr_ecosystem'] = cidr_ecosystem.join(',')
-      ENV['TF_VAR_cidr_ecosystem_dev'] = cidr_ecosystem_dev.join(',')      
-      ENV['TF_VAR_cidr_ecosystem_prd'] = cidr_ecosystem_prd.join(',')      
-      ENV['TF_VAR_dev_ecosystem_environments'] = dev_ecosystem_environments.join(',')      
-      ENV['TF_VAR_prd_ecosystem_environments'] = prd_ecosystem_environments.join(',')      
+      ENV['TF_VAR_cidr_ecosystem_dev'] = cidr_ecosystem_dev.join(',')
+      ENV['TF_VAR_cidr_ecosystem_prd'] = cidr_ecosystem_prd.join(',')
+      ENV['TF_VAR_dev_ecosystem_environments'] = dev_ecosystem_environments.join(',')
+      ENV['TF_VAR_prd_ecosystem_environments'] = prd_ecosystem_environments.join(',')
 
       ENV['AWS_DEFAULT_REGION'] = 'eu-west-1'
 
@@ -62,13 +62,12 @@ module Dome
       puts "[*] Setting ecosystem to #{ENV['TF_VAR_ecosystem'].colorize(:green)}"
       puts "[*] Setting cidr_ecosystem to #{ENV['TF_VAR_cidr_ecosystem'].colorize(:green)}"
       puts
-      puts "--- The following TF_VAR are helpers that modules can use ---"
+      puts '--- The following TF_VAR are helpers that modules can use ---'
       puts "[*] Setting dev_ecosystem_environments to #{ENV['TF_VAR_dev_ecosystem_environments'].colorize(:green)}"
       puts "[*] Setting prd_ecosystem_environments to #{ENV['TF_VAR_prd_ecosystem_environments'].colorize(:green)}"
       puts "[*] Setting cidr_ecosystem_dev to #{ENV['TF_VAR_cidr_ecosystem_dev'].colorize(:green)}"
       puts "[*] Setting cidr_ecosystem_prd to #{ENV['TF_VAR_cidr_ecosystem_prd'].colorize(:green)}"
       puts
-
     end
 
     def project
