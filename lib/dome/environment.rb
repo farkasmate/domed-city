@@ -35,11 +35,11 @@ module Dome
         cidr_ecosystem_prd << @settings.parse['aws']['prd']['environments'][k.to_s]['aws_vpc_cidr']
       end
 
-      ENV['TF_VAR_cidr_ecosystem'] = cidr_ecosystem.join(',')
-      ENV['TF_VAR_cidr_ecosystem_dev'] = cidr_ecosystem_dev.join(',')
-      ENV['TF_VAR_cidr_ecosystem_prd'] = cidr_ecosystem_prd.join(',')
-      ENV['TF_VAR_dev_ecosystem_environments'] = dev_ecosystem_environments.join(',')
-      ENV['TF_VAR_prd_ecosystem_environments'] = prd_ecosystem_environments.join(',')
+      ENV['TF_VAR_cidr_ecosystem'] = "\"#{cidr_ecosystem.join(',')}\""
+      ENV['TF_VAR_cidr_ecosystem_dev'] = "\"#{cidr_ecosystem_dev.join(',')}\""
+      ENV['TF_VAR_cidr_ecosystem_prd'] = "\"#{cidr_ecosystem_prd.join(',')}\""
+      ENV['TF_VAR_dev_ecosystem_environments'] = "\"#{dev_ecosystem_environments.join(',')}\""
+      ENV['TF_VAR_prd_ecosystem_environments'] = "\"#{prd_ecosystem_environments.join(',')}\""
 
       ENV['AWS_DEFAULT_REGION'] = 'eu-west-1'
 
