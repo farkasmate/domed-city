@@ -73,7 +73,6 @@ module Dome
     end
 
     def secret_env_vars(secret_vars)
-      puts '--- Hiera lookups for encrypted TF_VAR variables ---'
 
       secret_vars.each_pair do |key, val|
         hiera_lookup = lookup(val)
