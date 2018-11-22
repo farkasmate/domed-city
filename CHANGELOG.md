@@ -1,3 +1,12 @@
+# 6.3.0
+
+FEATURES:
+
+ - Exports TF_VARS based on the current directory
+ - Update README
+ - Simplify output. Remove default debug mode.
+ - Doesn't delete cache folder
+
 # 6.2.0
 
 FEATURES:
