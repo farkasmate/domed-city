@@ -63,7 +63,7 @@ module Dome
     def delete_terraform_directory
       puts '[*] Deleting terraform module cache dir ...'.colorize(:green)
       terraform_directory = '.terraform'
-      FileUtils.rm_rf '.terraform/'
+      FileUtils.rm_rf terraform_directory
     end
 
     def delete_plan_file

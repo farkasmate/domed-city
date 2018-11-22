@@ -73,7 +73,6 @@ module Dome
     end
 
     def secret_env_vars(secret_vars)
-
       secret_vars.each_pair do |key, val|
         hiera_lookup = lookup(val)
         terraform_env_var = "TF_VAR_#{key}"

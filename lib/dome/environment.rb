@@ -151,6 +151,6 @@ module Dome
       puts '3. Update your itv.yaml with the required environments or project.'
       puts '4. Check the README in case something is missing from your setup or ask in Slack'
       puts
-      end
+    end
   end
 end
