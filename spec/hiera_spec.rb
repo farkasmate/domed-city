@@ -6,7 +6,10 @@ describe Dome do
   let(:account_dir) { 'deirdre-dev' }
   let(:environment_dir) { 'qa' }
   let(:environment) { Dome::Environment.new([account_dir, environment_dir]) }
+  let(:itv_yaml_path) { 'spec/fixtures/itv.yaml' }
   let(:hiera) { Dome::HieraLookup.new(environment) }
+
+  before(:each) { allow_any_instance_of(Dome::Settings).to receive(:itv_yaml_path).and_return(itv_yaml_path) }
 
   it 'outputs the correct message for a hiera lookup' do
     vars = { 'foo' => 'bar' }
