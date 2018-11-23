@@ -47,10 +47,10 @@ module Dome
 
     def enable_bucket_versioning(bucket_name)
       puts 'Enabling versioning on the S3 bucket - http://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html'.colorize(:green)
-      s3_client.put_bucket_versioning(bucket:                   bucket_name,
+      s3_client.put_bucket_versioning(bucket: bucket_name,
                                       versioning_configuration: {
                                         mfa_delete: 'Disabled',
-                                        status:     'Enabled'
+                                        status: 'Enabled'
                                       })
     end
 
@@ -58,8 +58,8 @@ module Dome
       puts "Putting an empty object with key: #{key_name} into bucket: #{bucket_name}".colorize(:green)
       s3_client.put_object(
         bucket: bucket_name,
-        key:    key_name,
-        body:   ''
+        key: key_name,
+        body: ''
       )
     end
 

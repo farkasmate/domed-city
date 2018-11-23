@@ -4,6 +4,7 @@ module Dome
   class Settings
     def parse
       raise('[*] itv.yaml does not exist') unless File.exist? itv_yaml_path
+
       load_yaml
     end
 
