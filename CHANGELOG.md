@@ -1,3 +1,9 @@
+# 6.3.1
+
+BUGFIX:
+
+- Remove cidr_ecosystem_dev/prd because they are breaking existing runs(in infraprd). Will enable again in the future once everyone is using 1.1.
+
 # 6.3.0
 
 FEATURES:
