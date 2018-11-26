@@ -36,8 +36,14 @@ module Dome
       end
 
       ENV['TF_VAR_cidr_ecosystem'] = cidr_ecosystem.join(',').to_s
-      ENV['TF_VAR_cidr_ecosystem_dev'] = cidr_ecosystem_dev.join(',').to_s
-      ENV['TF_VAR_cidr_ecosystem_prd'] = cidr_ecosystem_prd.join(',').to_s
+
+      #
+      # TODO: Will uncomment when all the products migrate to 1.1
+      #
+
+      # ENV['TF_VAR_cidr_ecosystem_dev'] = cidr_ecosystem_dev.join(',').to_s
+      # ENV['TF_VAR_cidr_ecosystem_prd'] = cidr_ecosystem_prd.join(',').to_s
+
       ENV['TF_VAR_dev_ecosystem_environments'] = dev_ecosystem_environments.join(',').to_s
       ENV['TF_VAR_prd_ecosystem_environments'] = prd_ecosystem_environments.join(',').to_s
 
@@ -65,8 +71,14 @@ module Dome
       puts '--- The following TF_VAR are helpers that modules can use ---'
       puts "[*] Setting dev_ecosystem_environments to #{ENV['TF_VAR_dev_ecosystem_environments'].colorize(:green)}"
       puts "[*] Setting prd_ecosystem_environments to #{ENV['TF_VAR_prd_ecosystem_environments'].colorize(:green)}"
-      puts "[*] Setting cidr_ecosystem_dev to #{ENV['TF_VAR_cidr_ecosystem_dev'].colorize(:green)}"
-      puts "[*] Setting cidr_ecosystem_prd to #{ENV['TF_VAR_cidr_ecosystem_prd'].colorize(:green)}"
+
+      #
+      # TODO: Will uncomment when all the products migrate to 1.1
+      #
+
+      # puts "[*] Setting cidr_ecosystem_dev to #{ENV['TF_VAR_cidr_ecosystem_dev'].colorize(:green)}"
+      # puts "[*] Setting cidr_ecosystem_prd to #{ENV['TF_VAR_cidr_ecosystem_prd'].colorize(:green)}"
+
       puts
     end
 

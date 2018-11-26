@@ -91,4 +91,4 @@ gem 'domed-city', :path => '/home/foo/github-repos/domed-city'
 * Rename project references to product
 * Check the usage of certificate section
 * Remove dynamoDB state locking (Terraform does that now)
-
+* When everyone moves to 1.1 uncomment and use the TF_VARs cidr_ecosystem_dev/prd
