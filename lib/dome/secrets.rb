@@ -12,11 +12,13 @@ module Dome
 
     def secret_env_vars
       return if dome_config.nil? || hiera_keys_config.nil?
+
       @hiera.secret_env_vars(hiera_keys_config)
     end
 
     def extract_certs
       return if dome_config.nil? || certs_config.nil?
+
       @hiera.extract_certs(certs_config)
     end
 

@@ -5,10 +5,11 @@ require 'spec_helper'
 describe Dome do
   let(:account_dir) { 'deirdre-dev' }
   let(:environment_dir) { 'qa' }
+  let(:itv_yaml_path) { 'spec/fixtures/itv.yaml' }
+
   let(:dome) { Dome::Environment.new([account_dir, environment_dir]) }
 
-  let(:itv_yaml_path) { 'spec/fixtures/itv.yaml' }
-  before(:each) { allow(dome.settings).to receive(:itv_yaml_path) { itv_yaml_path } }
+  before(:each) { allow_any_instance_of(Dome::Settings).to receive(:itv_yaml_path).and_return(itv_yaml_path) }
 
   context 'environment validation against itv.yaml' do
     it 'identifies a valid environment' do
