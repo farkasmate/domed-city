@@ -3,19 +3,34 @@
 module Dome
   class Terraform
     include Dome::Shell
+    include Dome::Level
 
     attr_reader :state
 
     def initialize
-      @environment = Dome::Environment.new
-      @secrets     = Dome::Secrets.new(@environment)
-      @state       = Dome::State.new(@environment)
-      @plan_file   = "plans/#{@environment.account}-#{@environment.environment}-plan.tf"
+   
+      case level
+      when 'environment'
+        @environment = Dome::Environment.new
+        @secrets     = Dome::Secrets.new(@environment)
+        @state       = Dome::State.new(@environment)
+        @plan_file   = "plans/#{@environment.account}-#{@environment.environment}-plan.tf"
 
-      puts '--- Terraform state location ---'
-      puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
-      puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
-      puts
+        puts '--- Environment terraform state location ---'
+        puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
+        puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
+        puts
+      when 'ecosystem'
+        @environment = Dome::Environment.new
+        @secrets     = Dome::Secrets.new(@environment)
+        @state       = Dome::State.new(@environment)
+        @plan_file   = "plans/#{@environment.account}-#{@environment.environment}-plan.tf"
+
+        puts '--- Ecosystem terraform state location ---'
+        puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
+        puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
+        puts
+      end
     end
 
     # TODO: this method is a bit of a mess and needs looking at

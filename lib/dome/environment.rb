@@ -3,54 +3,14 @@
 module Dome
   class Environment
     attr_reader :environment, :account, :ecosystem, :settings
+    include Dome::Level
 
     def initialize(directories = Dir.pwd.split('/'))
-      @settings               = Dome::Settings.new
-      @environment            = directories[-1]
-      @account                = directories[-2]
-      @ecosystem              = directories[-2].split('-')[-1]
-
-      ENV['TF_VAR_product']   = directories[-2].split('-')[-2]
-      ENV['TF_VAR_envname']   = @environment
-      ENV['TF_VAR_env']       = @environment
-      ENV['TF_VAR_ecosystem'] = @ecosystem
-      ENV['TF_VAR_aws_account_id'] = @settings.parse['aws'][@ecosystem.to_s]['account_id'].to_s
-
-      cidr_ecosystem = []
-      cidr_ecosystem_dev = []
-      cidr_ecosystem_prd = []
-
-      ecosystem_environments = @settings.parse['aws'][@ecosystem.to_s]['environments'].keys
-      ecosystem_environments.each do |k|
-        cidr_ecosystem << @settings.parse['aws'][@ecosystem.to_s]['environments'][k.to_s]['aws_vpc_cidr']
-      end
-
-      dev_ecosystem_environments = @settings.parse['aws']['dev']['environments'].keys
-      dev_ecosystem_environments.each do |k|
-        cidr_ecosystem_dev << @settings.parse['aws']['dev']['environments'][k.to_s]['aws_vpc_cidr']
-      end
-
-      prd_ecosystem_environments = @settings.parse['aws']['prd']['environments'].keys
-      prd_ecosystem_environments.each do |k|
-        cidr_ecosystem_prd << @settings.parse['aws']['prd']['environments'][k.to_s]['aws_vpc_cidr']
-      end
-
-      ENV['TF_VAR_cidr_ecosystem'] = cidr_ecosystem.join(',').to_s
-
-      #
-      # TODO: Will uncomment when all the products migrate to 1.1
-      #
-
-      # ENV['TF_VAR_cidr_ecosystem_dev'] = cidr_ecosystem_dev.join(',').to_s
-      # ENV['TF_VAR_cidr_ecosystem_prd'] = cidr_ecosystem_prd.join(',').to_s
-
-      ENV['TF_VAR_dev_ecosystem_environments'] = dev_ecosystem_environments.join(',').to_s
-      ENV['TF_VAR_prd_ecosystem_environments'] = prd_ecosystem_environments.join(',').to_s
 
       ENV['AWS_DEFAULT_REGION'] = 'eu-west-1'
 
       puts <<-'MSG'
-             _
+            _
           __| | ___  _ __ ___   ___
         /  _` |/ _ \| '_ ` _ \ / _ \
         | (_| | (_) | | | | | |  __/
@@ -61,29 +21,132 @@ module Dome
       MSG
 
       puts
-      puts '--- Initial TF_VAR variables to drive terraform ---'
-      puts "[*] Setting aws_account_id to #{ENV['TF_VAR_aws_account_id'].colorize(:green)}"
-      puts "[*] Setting product to #{ENV['TF_VAR_product'].colorize(:green)}"
-      puts "[*] Setting env to #{ENV['TF_VAR_env'].colorize(:green)}"
-      puts "[*] Setting ecosystem to #{ENV['TF_VAR_ecosystem'].colorize(:green)}"
-      puts "[*] Setting cidr_ecosystem to #{ENV['TF_VAR_cidr_ecosystem'].colorize(:green)}"
-      puts
-      puts '--- The following TF_VAR are helpers that modules can use ---'
-      puts "[*] Setting dev_ecosystem_environments to #{ENV['TF_VAR_dev_ecosystem_environments'].colorize(:green)}"
-      puts "[*] Setting prd_ecosystem_environments to #{ENV['TF_VAR_prd_ecosystem_environments'].colorize(:green)}"
 
-      #
-      # TODO: Will uncomment when all the products migrate to 1.1
-      #
+      case level
+      when 'environment'
+        @settings               = Dome::Settings.new
+        @environment            = directories[-1]
+        @account                = directories[-2]
+        @ecosystem              = directories[-2].split('-')[-1]
 
-      # puts "[*] Setting cidr_ecosystem_dev to #{ENV['TF_VAR_cidr_ecosystem_dev'].colorize(:green)}"
-      # puts "[*] Setting cidr_ecosystem_prd to #{ENV['TF_VAR_cidr_ecosystem_prd'].colorize(:green)}"
+        ENV['TF_VAR_product']   = directories[-2].split('-')[-2]
+        ENV['TF_VAR_envname']   = @environment
+        ENV['TF_VAR_env']       = @environment
+        ENV['TF_VAR_ecosystem'] = @ecosystem
+        ENV['TF_VAR_aws_account_id'] = @settings.parse['aws'][@ecosystem.to_s]['account_id'].to_s
 
-      puts
+        cidr_ecosystem = []
+        cidr_ecosystem_dev = []
+        cidr_ecosystem_prd = []
+
+        ecosystem_environments = @settings.parse['aws'][@ecosystem.to_s]['environments'].keys
+        ecosystem_environments.each do |k|
+          cidr_ecosystem << @settings.parse['aws'][@ecosystem.to_s]['environments'][k.to_s]['aws_vpc_cidr']
+        end
+
+        dev_ecosystem_environments = @settings.parse['aws']['dev']['environments'].keys
+        dev_ecosystem_environments.each do |k|
+          cidr_ecosystem_dev << @settings.parse['aws']['dev']['environments'][k.to_s]['aws_vpc_cidr']
+        end
+
+        prd_ecosystem_environments = @settings.parse['aws']['prd']['environments'].keys
+        prd_ecosystem_environments.each do |k|
+          cidr_ecosystem_prd << @settings.parse['aws']['prd']['environments'][k.to_s]['aws_vpc_cidr']
+        end
+
+        ENV['TF_VAR_cidr_ecosystem'] = cidr_ecosystem.join(',').to_s
+
+        #
+        # TODO: Will uncomment when all the products migrate to 1.1
+        #
+
+        # ENV['TF_VAR_cidr_ecosystem_dev'] = cidr_ecosystem_dev.join(',').to_s
+        # ENV['TF_VAR_cidr_ecosystem_prd'] = cidr_ecosystem_prd.join(',').to_s
+
+        ENV['TF_VAR_dev_ecosystem_environments'] = dev_ecosystem_environments.join(',').to_s
+        ENV['TF_VAR_prd_ecosystem_environments'] = prd_ecosystem_environments.join(',').to_s
+
+        puts '--- Initial TF_VAR variables to drive terraform ---'
+        puts "[*] Setting aws_account_id to #{ENV['TF_VAR_aws_account_id'].colorize(:green)}"
+        puts "[*] Setting product to #{ENV['TF_VAR_product'].colorize(:green)}"
+        puts "[*] Setting env to #{ENV['TF_VAR_env'].colorize(:green)}"
+        puts "[*] Setting ecosystem to #{ENV['TF_VAR_ecosystem'].colorize(:green)}"
+        puts "[*] Setting cidr_ecosystem to #{ENV['TF_VAR_cidr_ecosystem'].colorize(:green)}"
+        puts
+        puts '--- The following TF_VAR are helpers that modules can use ---'
+        puts "[*] Setting dev_ecosystem_environments to #{ENV['TF_VAR_dev_ecosystem_environments'].colorize(:green)}"
+        puts "[*] Setting prd_ecosystem_environments to #{ENV['TF_VAR_prd_ecosystem_environments'].colorize(:green)}"
+
+        #
+        # TODO: Will uncomment when all the products migrate to 1.1
+        #
+
+        # puts "[*] Setting cidr_ecosystem_dev to #{ENV['TF_VAR_cidr_ecosystem_dev'].colorize(:green)}"
+        # puts "[*] Setting cidr_ecosystem_prd to #{ENV['TF_VAR_cidr_ecosystem_prd'].colorize(:green)}"
+
+        puts
+      when 'ecosystem'
+        @settings               = Dome::Settings.new
+        @account                = directories[-1].split('-')[-2]
+        @ecosystem              = directories[-1].split('-')[-1]
+
+        ENV['TF_VAR_product']   = directories[-1].split('-')[-2]
+        ENV['TF_VAR_ecosystem'] = @ecosystem
+        ENV['TF_VAR_aws_account_id'] = @settings.parse['aws'][@ecosystem.to_s]['account_id'].to_s
+
+        cidr_ecosystem = []
+        cidr_ecosystem_dev = []
+        cidr_ecosystem_prd = []
+
+        ecosystem_environments = @settings.parse['aws'][@ecosystem.to_s]['environments'].keys
+        ecosystem_environments.each do |k|
+          cidr_ecosystem << @settings.parse['aws'][@ecosystem.to_s]['environments'][k.to_s]['aws_vpc_cidr']
+        end
+
+        dev_ecosystem_environments = @settings.parse['aws']['dev']['environments'].keys
+        dev_ecosystem_environments.each do |k|
+          cidr_ecosystem_dev << @settings.parse['aws']['dev']['environments'][k.to_s]['aws_vpc_cidr']
+        end
+
+        prd_ecosystem_environments = @settings.parse['aws']['prd']['environments'].keys
+        prd_ecosystem_environments.each do |k|
+          cidr_ecosystem_prd << @settings.parse['aws']['prd']['environments'][k.to_s]['aws_vpc_cidr']
+        end
+
+        ENV['TF_VAR_cidr_ecosystem'] = cidr_ecosystem.join(',').to_s
+
+        puts '--- Initial TF_VAR variables to drive terraform ---'
+        puts "[*] Setting aws_account_id to #{ENV['TF_VAR_aws_account_id'].colorize(:green)}"
+        puts "[*] Setting product to #{ENV['TF_VAR_product'].colorize(:green)}"
+        puts "[*] Setting ecosystem to #{ENV['TF_VAR_ecosystem'].colorize(:green)}"
+        puts "[*] Setting cidr_ecosystem to #{ENV['TF_VAR_cidr_ecosystem'].colorize(:green)}"
+        puts
+
+      when 'product'
+        puts 'product level'
+      when 'role'
+        puts 'role level'   
+      end
+
     end
 
     def project
       @settings.parse['project']
+    end
+
+    def ecosystem
+      directories = Dir.pwd.split('/')
+      case level
+      when 'ecosystem'
+        directories[-1].split('-')[-1]
+      when 'environment'
+        directories[-2].split('-')[-1]
+      when 'product'
+        'product'
+      when 'role'
+        directories[-3].split('-')[-1]
+      end
+      
     end
 
     def accounts

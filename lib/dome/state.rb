@@ -3,6 +3,7 @@
 module Dome
   class State
     include Dome::Shell
+    include Dome::Level
 
     def initialize(environment)
       @environment = environment
