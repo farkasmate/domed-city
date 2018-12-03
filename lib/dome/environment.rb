@@ -10,7 +10,7 @@ module Dome
       ENV['AWS_DEFAULT_REGION'] = 'eu-west-1'
 
       puts <<-'MSG'
-            _
+             _
           __| | ___  _ __ ___   ___
         /  _` |/ _ \| '_ ` _ \ / _ \
         | (_| | (_) | | | | | |  __/
