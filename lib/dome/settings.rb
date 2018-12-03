@@ -2,7 +2,6 @@
 
 module Dome
   class Settings
-
     include Dome::Level
 
     def parse
@@ -16,17 +15,17 @@ module Dome
     end
 
     def itv_yaml_path
-      case level 
-        when 'role'
-          '../../../../itv.yaml'
-        when 'environment'
-          '../../../itv.yaml'
-        when 'ecosystem'
-          '../../itv.yaml'
-        when 'product'
-          '../itv.yaml'
-        when 'root'
-          'itv.yaml'
+      case level
+      when 'roles'
+        '../../../../itv.yaml'
+      when 'environment'
+        '../../../itv.yaml'
+      when 'ecosystem'
+        '../../itv.yaml'
+      when 'product'
+        '../itv.yaml'
+      when 'root'
+        'itv.yaml'
         end
     end
 
