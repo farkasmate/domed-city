@@ -56,11 +56,11 @@ module Dome
     def validate_environment
       case level
       when 'environment'
+        puts '--- AWS credentials for accessing environment state ---'
         environment = @environment.environment
         account     = @environment.account
         @environment.invalid_account_message unless @environment.valid_account? account
         @environment.invalid_environment_message unless @environment.valid_environment? environment
-        puts '--- AWS credentials for accessing environment state ---'
         @environment.unset_aws_keys
         @environment.aws_credentials
       when 'ecosystem'
@@ -71,14 +71,19 @@ module Dome
         puts '--- AWS credentials for accessing product state ---'
         @environment.unset_aws_keys
         @environment.aws_credentials
-      when 'role'
-        puts '--- AWS credentials for accessing role state ---'
+      when 'roles'
+        puts '--- AWS credentials for accessing roles state ---'
+        environment = @environment.environment
+        account     = @environment.account
+        @environment.invalid_account_message unless @environment.valid_account? account
+        @environment.invalid_environment_message unless @environment.valid_environment? environment
         @environment.unset_aws_keys
         @environment.aws_credentials
       end
       end
 
     def plan
+      puts '--- Decrypting hiera secrets and pass them as TF_VARs ---'
       @secrets.secret_env_vars
       puts '--- Deleting old plans'
       # delete_terraform_directory # Don't delete it

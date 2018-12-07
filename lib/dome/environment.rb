@@ -70,8 +70,8 @@ module Dome
         puts '--- Initial TF_VAR variables to drive terraform ---'
         puts "[*] Setting aws_account_id to #{ENV['TF_VAR_aws_account_id'].colorize(:green)}"
         puts "[*] Setting product to #{ENV['TF_VAR_product'].colorize(:green)}"
-        puts "[*] Setting env to #{ENV['TF_VAR_env'].colorize(:green)}"
         puts "[*] Setting ecosystem to #{ENV['TF_VAR_ecosystem'].colorize(:green)}"
+        puts "[*] Setting env to #{ENV['TF_VAR_env'].colorize(:green)}"
         puts "[*] Setting cidr_ecosystem to #{ENV['TF_VAR_cidr_ecosystem'].colorize(:green)}"
         puts
         puts '--- The following TF_VAR are helpers that modules can use ---'
@@ -149,8 +149,68 @@ module Dome
         puts "[*] Setting aws_account_id to #{ENV['TF_VAR_aws_account_id'].colorize(:green)}"
         puts "[*] Setting product to #{ENV['TF_VAR_product'].colorize(:green)}"
         puts
-      when 'role'
-        puts 'role level'
+      when 'roles'
+        @settings               = Dome::Settings.new
+        @environment            = directories[-2]
+        @account                = directories[-3]
+        @ecosystem              = directories[-3].split('-')[-1]
+
+        ENV['TF_VAR_product']   = directories[-3].split('-')[-2]
+        ENV['TF_VAR_envname']   = @environment
+        ENV['TF_VAR_env']       = @environment
+        ENV['TF_VAR_ecosystem'] = @ecosystem
+        ENV['TF_VAR_aws_account_id'] = @settings.parse['aws'][@ecosystem.to_s]['account_id'].to_s
+
+        cidr_ecosystem = []
+        cidr_ecosystem_dev = []
+        cidr_ecosystem_prd = []
+
+        ecosystem_environments = @settings.parse['aws'][@ecosystem.to_s]['environments'].keys
+        ecosystem_environments.each do |k|
+          cidr_ecosystem << @settings.parse['aws'][@ecosystem.to_s]['environments'][k.to_s]['aws_vpc_cidr']
+        end
+
+        dev_ecosystem_environments = @settings.parse['aws']['dev']['environments'].keys
+        dev_ecosystem_environments.each do |k|
+          cidr_ecosystem_dev << @settings.parse['aws']['dev']['environments'][k.to_s]['aws_vpc_cidr']
+        end
+
+        prd_ecosystem_environments = @settings.parse['aws']['prd']['environments'].keys
+        prd_ecosystem_environments.each do |k|
+          cidr_ecosystem_prd << @settings.parse['aws']['prd']['environments'][k.to_s]['aws_vpc_cidr']
+        end
+
+        ENV['TF_VAR_cidr_ecosystem'] = cidr_ecosystem.join(',').to_s
+
+        #
+        # TODO: Will uncomment when all the products migrate to 1.1
+        #
+
+        # ENV['TF_VAR_cidr_ecosystem_dev'] = cidr_ecosystem_dev.join(',').to_s
+        # ENV['TF_VAR_cidr_ecosystem_prd'] = cidr_ecosystem_prd.join(',').to_s
+
+        ENV['TF_VAR_dev_ecosystem_environments'] = dev_ecosystem_environments.join(',').to_s
+        ENV['TF_VAR_prd_ecosystem_environments'] = prd_ecosystem_environments.join(',').to_s
+
+        puts '--- Initial TF_VAR variables to drive terraform ---'
+        puts "[*] Setting aws_account_id to #{ENV['TF_VAR_aws_account_id'].colorize(:green)}"
+        puts "[*] Setting product to #{ENV['TF_VAR_product'].colorize(:green)}"
+        puts "[*] Setting ecosystem to #{ENV['TF_VAR_ecosystem'].colorize(:green)}"
+        puts "[*] Setting env to #{ENV['TF_VAR_env'].colorize(:green)}"
+        puts "[*] Setting cidr_ecosystem to #{ENV['TF_VAR_cidr_ecosystem'].colorize(:green)}"
+        puts
+        puts '--- The following TF_VAR are helpers that modules can use ---'
+        puts "[*] Setting dev_ecosystem_environments to #{ENV['TF_VAR_dev_ecosystem_environments'].colorize(:green)}"
+        puts "[*] Setting prd_ecosystem_environments to #{ENV['TF_VAR_prd_ecosystem_environments'].colorize(:green)}"
+
+        #
+        # TODO: Will uncomment when all the products migrate to 1.1
+        #
+
+        # puts "[*] Setting cidr_ecosystem_dev to #{ENV['TF_VAR_cidr_ecosystem_dev'].colorize(:green)}"
+        # puts "[*] Setting cidr_ecosystem_prd to #{ENV['TF_VAR_cidr_ecosystem_prd'].colorize(:green)}"
+
+        puts
       end
     end
 
@@ -167,7 +227,7 @@ module Dome
         directories[-2].split('-')[-1]
       when 'product'
         'product'
-      when 'role'
+      when 'roles'
         directories[-3].split('-')[-1]
       end
     end
@@ -200,6 +260,7 @@ module Dome
       ENV['AWS_ACCESS_KEY_ID'] = assumed_role.credentials.access_key_id
       ENV['AWS_SECRET_ACCESS_KEY'] = assumed_role.credentials.secret_access_key
       ENV['AWS_SESSION_TOKEN'] = assumed_role.credentials.session_token
+      puts
     end
 
     def aws_credentials
