@@ -10,7 +10,7 @@ describe Dome do
 
   # to prevent a validation error
   let(:itv_yaml_path) { 'spec/fixtures/itv.yaml' }
-  before(:each) { allow(secrets.settings).to receive(:itv_yaml_path) { itv_yaml_path } }
+  before(:each) { allow_any_instance_of(Dome::Settings).to receive(:itv_yaml_path).and_return(itv_yaml_path) }
 
   context 'if config is missing from itv.yaml' do
     context 'outputs a debug message to STDOUT' do

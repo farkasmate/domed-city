@@ -1,3 +1,25 @@
+# 6.3.1
+
+BUGFIX:
+
+- Remove cidr_ecosystem_dev/prd because they are breaking existing runs(in infraprd). Will enable again in the future once everyone is using 1.1.
+
+# 6.3.0
+
+FEATURES:
+
+ - Exports TF_VARS based on the current directory
+ - Update README
+ - Simplify output. Remove default debug mode.
+ - Doesn't delete cache folder
+
+# 6.2.0
+
+FEATURES:
+
+- Set TF_VAR_product,ecosystem,envname
+- Replace envname with env so we can transition to the new env name
+- You can remove product,envname,ecosystem from your params/env.tfvars as they are now discovered from your directory structure
 # 6.1.0
 
 FEATURES:
