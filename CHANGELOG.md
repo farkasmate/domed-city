@@ -1,3 +1,9 @@
+# 6.3.2
+
+BUGFIX:
+
+- Give a useful error message if you try to run without Puppet private keys available.
+
 # 6.3.1
 
 BUGFIX:
