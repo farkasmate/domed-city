@@ -1,3 +1,9 @@
+# 6.4.0
+
+FEATURES:
+ - Added refresh & console commands (dome -r,dome -c).
+ - Added level support. Where level is ecosystem,environment,product,role. Each level has its own remote state.
+
 # 6.3.2
 
 BUGFIX:
