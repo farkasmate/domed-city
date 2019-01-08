@@ -106,6 +106,14 @@ module Dome
       execute_command(command, failure_message)
     end
 
+    def refresh
+      # @secrets.secret_env_vars
+      command         = "terraform refresh"
+      failure_message = '[!] something went wrong when doing terraform refresh'
+      #@state.s3_state
+      execute_command(command, failure_message)
+    end
+
     def create_plan
       case level
       when 'environment'
