@@ -19,6 +19,8 @@ opts = Trollop.options do
   opt :state, 'Synchronises the Terraform state'
   opt :output, 'Print all Terraform output variables'
   opt :refresh, 'Refresh the state'
+  opt :console, 'Spawn terraform console'
+
 end
 
 Trollop.educate unless opts.value?(true)
@@ -33,6 +35,8 @@ begin
     @dome.apply
   elsif opts[:refresh]
     @dome.refresh
+  elsif opts[:console]
+    @dome.console
   elsif opts[:state]
     @dome.state.s3_state
   elsif opts[:output]

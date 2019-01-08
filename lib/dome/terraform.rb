@@ -107,10 +107,16 @@ module Dome
     end
 
     def refresh
-      # @secrets.secret_env_vars
       command         = "terraform refresh"
       failure_message = '[!] something went wrong when doing terraform refresh'
-      #@state.s3_state
+      execute_command(command, failure_message)
+    end
+
+
+    def console
+      @secrets.secret_env_vars
+      command         = "terraform console"
+      failure_message = '[!] something went wrong when doing terraform console'
       execute_command(command, failure_message)
     end
 
