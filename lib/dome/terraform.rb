@@ -112,6 +112,11 @@ module Dome
       execute_command(command, failure_message)
     end
 
+    def statecmd(arguments)
+      command         = "terraform state #{arguments}"
+      failure_message = "[!] something went wrong when doing terraform state #{arguments}"
+      execute_command(command, failure_message)
+    end
 
     def console
       @secrets.secret_env_vars
