@@ -5,8 +5,8 @@ require 'spec_helper'
 describe Dome do
   let(:account_dir) { 'deirdre-dev' }
   let(:environment_dir) { 'qa' }
-  let(:level) {'environment'}
-  let(:ecosystem) {'dev'}
+  let(:level) { 'environment' }
+  let(:ecosystem) { 'dev' }
   let(:itv_yaml_path) { 'spec/fixtures/itv.yaml' }
 
   before(:each) { allow_any_instance_of(Dome::Settings).to receive(:itv_yaml_path).and_return(itv_yaml_path) }
