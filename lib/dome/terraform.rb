@@ -80,7 +80,7 @@ module Dome
         @environment.unset_aws_keys
         @environment.aws_credentials
       end
-      end
+    end
 
     def plan
       puts '--- Decrypting hiera secrets and pass them as TF_VARs ---'
@@ -107,7 +107,7 @@ module Dome
     end
 
     def refresh
-      command         = "terraform refresh"
+      command         = 'terraform refresh'
       failure_message = '[!] something went wrong when doing terraform refresh'
       execute_command(command, failure_message)
     end
@@ -120,7 +120,7 @@ module Dome
 
     def console
       @secrets.secret_env_vars
-      command         = "terraform console"
+      command         = 'terraform console'
       failure_message = '[!] something went wrong when doing terraform console'
       execute_command(command, failure_message)
     end
@@ -150,7 +150,7 @@ module Dome
         failure_message = '[!] something went wrong when creating the role TF plan'
         execute_command(command, failure_message)
       end
-      end
+    end
 
     def delete_terraform_directory
       puts '[*] Deleting terraform module cache dir ...'.colorize(:green)

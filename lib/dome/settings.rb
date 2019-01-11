@@ -26,7 +26,7 @@ module Dome
         '../itv.yaml'
       when 'root'
         'itv.yaml'
-        end
+      end
     end
 
     def project_root
