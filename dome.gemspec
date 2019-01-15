@@ -28,5 +28,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'colorize', '~> 0.7'
   spec.add_dependency 'hiera', '~> 3'
   spec.add_dependency 'hiera-eyaml', '~> 2.1'
-  spec.add_dependency 'trollop', '~> 2.1'
+  spec.add_dependency 'optimist', '~> 3'
 end

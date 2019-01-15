@@ -244,23 +244,31 @@ module Dome
     end
 
     def unset_aws_keys
-      puts '[*] Unsetting AWS environment variables from the shell to make sure we are using the correct'\
-      'assumed roles credentials'
-      ENV['AWS_ACCESS_KEY'] = nil
-      ENV['AWS_SECRET_KEY'] = nil
-      ENV['AWS_SECRET_ACCESS_KEY'] = nil
-      ENV['AWS_ACCESS_KEY_ID'] = nil
-      ENV['AWS_SESSION_TOKEN'] = nil
+      unless ENV['FREEZE_AWS_ENVVAR']
+        puts '[*] Unsetting AWS environment variables from the shell to make sure we are using the correct'\
+        'assumed roles credentials'
+        ENV['AWS_ACCESS_KEY'] = nil
+        ENV['AWS_SECRET_KEY'] = nil
+        ENV['AWS_SECRET_ACCESS_KEY'] = nil
+        ENV['AWS_ACCESS_KEY_ID'] = nil
+        ENV['AWS_SESSION_TOKEN'] = nil
+      else
+        puts "$FREEZE_AWS_ENVVAR is set. Leaving AWS environment variables unchanged."
+      end
     end
 
     def export_aws_keys(assumed_role)
-      puts '[*] Exporting temporary credentials to environment variables '\
-      "#{'AWS_ACCESS_KEY_ID'.colorize(:green)}, #{'AWS_SECRET_ACCESS_KEY'.colorize(:green)}"\
-      " and #{'AWS_SESSION_TOKEN'.colorize(:green)}."
-      ENV['AWS_ACCESS_KEY_ID'] = assumed_role.credentials.access_key_id
-      ENV['AWS_SECRET_ACCESS_KEY'] = assumed_role.credentials.secret_access_key
-      ENV['AWS_SESSION_TOKEN'] = assumed_role.credentials.session_token
-      puts
+      unless ENV['FREEZE_AWS_ENVVAR']
+        puts '[*] Exporting temporary credentials to environment variables '\
+        "#{'AWS_ACCESS_KEY_ID'.colorize(:green)}, #{'AWS_SECRET_ACCESS_KEY'.colorize(:green)}"\
+        " and #{'AWS_SESSION_TOKEN'.colorize(:green)}."
+        ENV['AWS_ACCESS_KEY_ID'] = assumed_role.credentials.access_key_id
+        ENV['AWS_SECRET_ACCESS_KEY'] = assumed_role.credentials.secret_access_key
+        ENV['AWS_SESSION_TOKEN'] = assumed_role.credentials.session_token
+        puts
+      else
+        puts "$FREEZE_AWS_ENVVAR is set. Leaving AWS environment variables unchanged."
+      end
     end
 
     def aws_credentials
