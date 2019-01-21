@@ -3,17 +3,36 @@
 module Dome
   class State
     include Dome::Shell
+    include Dome::Level
 
     def initialize(environment)
       @environment = environment
     end
 
     def state_bucket_name
-      "#{@environment.project}-tfstate-#{@environment.environment}"
+      case level
+      when 'environment'
+        "terraform-state-#{@environment.project}-#{@environment.ecosystem}-#{@environment.environment}"
+      when 'ecosystem'
+        "terraform-state-#{@environment.project}-#{@environment.ecosystem}"
+      when 'product'
+        "terraform-state-#{@environment.project}"
+      when 'roles'
+        "terraform-state-#{@environment.project}-#{@environment.ecosystem}-#{@environment.environment}-roles"
+      end
     end
 
     def state_file_name
-      "#{@environment.environment}-terraform.tfstate"
+      case level
+      when 'environment'
+        "#{@environment.level}.tfstate"
+      when 'ecosystem'
+        "#{@environment.level}.tfstate"
+      when 'product'
+        "#{@environment.level}.tfstate"
+      when 'roles'
+        "#{@environment.level}.tfstate"
+      end
     end
 
     def s3_client

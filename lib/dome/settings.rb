@@ -2,8 +2,10 @@
 
 module Dome
   class Settings
+    include Dome::Level
+
     def parse
-      raise('[*] itv.yaml does not exist') unless File.exist? itv_yaml_path
+      raise("[*] #{itv_yaml_path} does not exist") unless File.exist? itv_yaml_path
 
       load_yaml
     end
@@ -13,7 +15,18 @@ module Dome
     end
 
     def itv_yaml_path
-      '../../../itv.yaml'
+      case level
+      when 'roles'
+        '../../../../itv.yaml'
+      when 'environment'
+        '../../../itv.yaml'
+      when 'ecosystem'
+        '../../itv.yaml'
+      when 'product'
+        '../itv.yaml'
+      when 'root'
+        'itv.yaml'
+      end
     end
 
     def project_root

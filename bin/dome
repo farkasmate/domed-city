@@ -18,6 +18,9 @@ opts = Trollop.options do
   opt :apply, 'Applies a Terraform plan'
   opt :state, 'Synchronises the Terraform state'
   opt :output, 'Print all Terraform output variables'
+  opt :statecmd, 'Wrapper arround terraform state', type: :strings
+  opt :refresh, 'Refresh the state'
+  opt :console, 'Spawn terraform console'
 end
 
 Trollop.educate unless opts.value?(true)
@@ -30,6 +33,12 @@ begin
     @dome.plan
   elsif opts[:apply]
     @dome.apply
+  elsif opts[:refresh]
+    @dome.refresh
+  elsif opts[:console]
+    @dome.console
+  elsif opts[:statecmd]
+    @dome.statecmd(opts[:statecmd].join(' '))
   elsif opts[:state]
     @dome.state.s3_state
   elsif opts[:output]

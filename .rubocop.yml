@@ -11,13 +11,16 @@ LineLength:
   Enabled: true
   Max: 120
 
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
 Metrics/MethodLength:
-  Max: 55
+  Max: 155
 
 Metrics/ClassLength:
-  Max: 130
+  Max: 250
 
-Style/BlockLength:
+Metrics/BlockLength:
   Exclude:
     - 'spec/*.rb'
 
