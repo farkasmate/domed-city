@@ -12,13 +12,13 @@ module Dome
     def state_bucket_name
       case level
       when 'environment'
-        "terraform-state-#{@environment.project}-#{@environment.ecosystem}-#{@environment.environment}"
+        "itv-terraform-state-#{@environment.project}-#{@environment.ecosystem}-#{@environment.environment}"
       when 'ecosystem'
-        "terraform-state-#{@environment.project}-#{@environment.ecosystem}"
+        "itv-terraform-state-#{@environment.project}-#{@environment.ecosystem}"
       when 'product'
-        "terraform-state-#{@environment.project}"
+        "itv-terraform-state-#{@environment.project}"
       when 'roles'
-        "terraform-state-#{@environment.project}-#{@environment.ecosystem}-#{@environment.environment}-roles"
+        "itv-terraform-state-#{@environment.project}-#{@environment.ecosystem}-#{@environment.environment}-roles"
       end
     end
 
