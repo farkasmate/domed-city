@@ -1,4 +1,12 @@
+# 6.5.0
+
+FEATURES:
+- allow option to conserve existing environment variables rather than overriding them
+  - this is required for cross account role assuming from `ec2`
+  - default behaviour is unchanged
+
 # 6.4.0
+
 
 FEATURES:
  - Added refresh, console and state commands (dome -r,dome -c,dome -t).
