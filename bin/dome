@@ -16,6 +16,7 @@ opts = Optimist.options do
 
   opt :plan, 'Creates a Terraform plan'
   opt :apply, 'Applies a Terraform plan'
+  opt :init, 'Run Terraform init'
   opt :state, 'Synchronises the Terraform state'
   opt :output, 'Print all Terraform output variables'
   opt :statecmd, 'Wrapper arround terraform state', type: :strings
@@ -33,6 +34,8 @@ begin
     @dome.plan
   elsif opts[:apply]
     @dome.apply
+  elsif opts[:init]
+    @dome.terraform_init
   elsif opts[:refresh]
     @dome.refresh
   elsif opts[:console]
