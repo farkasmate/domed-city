@@ -19,9 +19,9 @@ module Dome
         Wrapping terraform since 2015
       MSG
 
-      puts
+      puts ''
       puts "[*] Operating at #{level.colorize(:red)} level"
-      puts
+      puts ''
 
       case level
       when 'environment'
@@ -73,7 +73,7 @@ module Dome
         puts "[*] Setting ecosystem to #{ENV['TF_VAR_ecosystem'].colorize(:green)}"
         puts "[*] Setting env to #{ENV['TF_VAR_env'].colorize(:green)}"
         puts "[*] Setting cidr_ecosystem to #{ENV['TF_VAR_cidr_ecosystem'].colorize(:green)}"
-        puts
+        puts ''
         puts '--- The following TF_VAR are helpers that modules can use ---'
         puts "[*] Setting dev_ecosystem_environments to #{ENV['TF_VAR_dev_ecosystem_environments'].colorize(:green)}"
         puts "[*] Setting prd_ecosystem_environments to #{ENV['TF_VAR_prd_ecosystem_environments'].colorize(:green)}"
@@ -85,7 +85,7 @@ module Dome
         # puts "[*] Setting cidr_ecosystem_dev to #{ENV['TF_VAR_cidr_ecosystem_dev'].colorize(:green)}"
         # puts "[*] Setting cidr_ecosystem_prd to #{ENV['TF_VAR_cidr_ecosystem_prd'].colorize(:green)}"
 
-        puts
+        puts ''
       when 'ecosystem'
         @settings               = Dome::Settings.new
         @account                = directories[-1]
@@ -121,7 +121,7 @@ module Dome
         puts "[*] Setting product to #{ENV['TF_VAR_product'].colorize(:green)}"
         puts "[*] Setting ecosystem to #{ENV['TF_VAR_ecosystem'].colorize(:green)}"
         puts "[*] Setting cidr_ecosystem to #{ENV['TF_VAR_cidr_ecosystem'].colorize(:green)}"
-        puts
+        puts ''
       when 'product'
         @settings               = Dome::Settings.new
         @account                = "#{directories[-2].split('-')[-2]}-prd"
@@ -148,7 +148,7 @@ module Dome
         puts '--- Initial TF_VAR variables to drive terraform ---'
         puts "[*] Setting aws_account_id to #{ENV['TF_VAR_aws_account_id'].colorize(:green)}"
         puts "[*] Setting product to #{ENV['TF_VAR_product'].colorize(:green)}"
-        puts
+        puts ''
       when 'roles'
         @settings               = Dome::Settings.new
         @environment            = directories[-2]
@@ -198,7 +198,7 @@ module Dome
         puts "[*] Setting ecosystem to #{ENV['TF_VAR_ecosystem'].colorize(:green)}"
         puts "[*] Setting env to #{ENV['TF_VAR_env'].colorize(:green)}"
         puts "[*] Setting cidr_ecosystem to #{ENV['TF_VAR_cidr_ecosystem'].colorize(:green)}"
-        puts
+        puts ''
         puts '--- The following TF_VAR are helpers that modules can use ---'
         puts "[*] Setting dev_ecosystem_environments to #{ENV['TF_VAR_dev_ecosystem_environments'].colorize(:green)}"
         puts "[*] Setting prd_ecosystem_environments to #{ENV['TF_VAR_prd_ecosystem_environments'].colorize(:green)}"
@@ -210,7 +210,7 @@ module Dome
         # puts "[*] Setting cidr_ecosystem_dev to #{ENV['TF_VAR_cidr_ecosystem_dev'].colorize(:green)}"
         # puts "[*] Setting cidr_ecosystem_prd to #{ENV['TF_VAR_cidr_ecosystem_prd'].colorize(:green)}"
 
-        puts
+        puts ''
       end
     end
 
@@ -267,7 +267,7 @@ module Dome
         ENV['AWS_ACCESS_KEY_ID'] = assumed_role.credentials.access_key_id
         ENV['AWS_SECRET_ACCESS_KEY'] = assumed_role.credentials.secret_access_key
         ENV['AWS_SESSION_TOKEN'] = assumed_role.credentials.session_token
-        puts
+        puts ''
       end
     end
 
@@ -306,18 +306,18 @@ module Dome
     private
 
     def generic_error_message
-      puts
+      puts ''
       puts '--- Debug --- '
       puts "The environments you have defined are: #{environments}."
       puts "The accounts we calculated from your project itv.yaml key are: #{accounts}."
-      puts
+      puts ''
       puts '--- Troubleshoot ---'
       puts 'To fix your issue, try the following:'
       puts '1. Set your .aws/config to one of the valid accounts above.'
       puts '2. Ensure you are running this from the correct directory.'
       puts '3. Update your itv.yaml with the required environments or project.'
       puts '4. Check the README in case something is missing from your setup or ask in Slack'
-      puts
+      puts ''
     end
   end
 end

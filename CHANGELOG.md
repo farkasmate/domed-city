@@ -1,3 +1,8 @@
+# 6.6.0
+
+FEATURES:
+- add `--init` option to invoke `terraform init`
+
 # 6.5.0
 
 FEATURES:
