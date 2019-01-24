@@ -49,6 +49,9 @@ module Dome
         puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
         puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
         puts
+      else
+        puts '[*] Dome is meant to run from either a product,ecosystem,environment or role level'
+        exit 1
       end
     end
 

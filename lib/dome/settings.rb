@@ -5,7 +5,7 @@ module Dome
     include Dome::Level
 
     def parse
-      raise('[*] itv.yaml does not exist') unless File.exist? itv_yaml_path
+      raise("[*] #{itv_yaml_path} does not exist") unless File.exist? itv_yaml_path
 
       load_yaml
     end

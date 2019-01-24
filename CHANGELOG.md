@@ -2,7 +2,7 @@
 
 FEATURES:
  - Added refresh, console and state commands (dome -r,dome -c,dome -t).
- - Added level support. Where level is ecosystem,environment,product,role. Each level has its own remote state.
+ - Added level support. Where level is ecosystem,environment,product,roles. Each level has its own remote state.
 
 # 6.3.2
 
