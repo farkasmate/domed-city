@@ -4,7 +4,7 @@
 require 'bundler/setup'
 require_relative '../lib/dome'
 
-opts = Trollop.options do
+opts = Optimist.options do
   version Dome::VERSION
   banner <<-BANNER
   Dome wraps the Terraform API and performs useful stuff.
@@ -23,7 +23,7 @@ opts = Trollop.options do
   opt :console, 'Spawn terraform console'
 end
 
-Trollop.educate unless opts.value?(true)
+Optimist.educate unless opts.value?(true)
 
 @dome = Dome::Terraform.new
 @dome.validate_environment

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'trollop'
+require 'optimist'
 require 'aws-sdk'
 require 'colorize'
 require 'fileutils'
