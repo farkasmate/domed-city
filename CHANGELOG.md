@@ -4,6 +4,7 @@ FEATURES:
 - allow option to conserve existing environment variables rather than overriding them
   - this is required for cross account role assuming from `ec2`
   - default behaviour is unchanged
+- update deprecated gem
 
 # 6.4.0
 
