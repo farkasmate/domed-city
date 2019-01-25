@@ -1,3 +1,9 @@
+# 6.7.0
+
+FEATURES:
+- prepend `itv-` to the state bucket names, to help avoid name collision
+- add state bootstrap to init command, with small delay to avoid S3 asynchronicity
+
 # 6.6.0
 
 FEATURES:

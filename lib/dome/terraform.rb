@@ -166,6 +166,12 @@ module Dome
       FileUtils.rm_f @plan_file
     end
 
+    def init
+      @state.s3_state
+      sleep 5
+      terraform_init
+    end
+
     def terraform_init
       command         = 'terraform init'
       failure_message = 'something went wrong when initialising TF'
