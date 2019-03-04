@@ -1,3 +1,8 @@
+# 6.8.0
+
+FEATURES:
+- Parse product from itv.yaml
+
 # 6.7.0
 
 FEATURES:
