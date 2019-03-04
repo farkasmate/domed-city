@@ -124,7 +124,7 @@ module Dome
         puts ''
       when 'product'
         @settings               = Dome::Settings.new
-        @account                = "#{directories[-2].split('-')[-2]}-prd"
+        @account                = "#{@settings.parse['product']}-prd"
         @ecosystem              = 'prd'
         ENV['TF_VAR_product']   = @settings.parse['product']
         ENV['TF_VAR_aws_account_id'] = @settings.parse['aws'][@ecosystem.to_s]['account_id'].to_s

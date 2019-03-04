@@ -1,3 +1,8 @@
+# 6.8.1
+
+FEATURES:
+- Fix account on product level
+
 # 6.8.0
 
 FEATURES:
