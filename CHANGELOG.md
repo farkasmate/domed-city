@@ -1,3 +1,9 @@
+# 6.9.0
+
+FEATURES:
+- Add secrets-init and secrets-config levels
+- Better error handling
+
 # 6.8.1
 
 FEATURES:
