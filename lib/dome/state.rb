@@ -22,7 +22,7 @@ module Dome
       when /^secrets-/
         "itv-terraform-state-#{@environment.project}-#{@environment.ecosystem}-#{@environment.environment}-secrets"
       else
-        raise Dome::InvalidLevelError.new(level)
+        puts "Invalid level: #{level}".colorize(:red)
       end
     end
 
@@ -39,7 +39,7 @@ module Dome
       when /^secrets-/
         "#{@environment.level}.tfstate"
       else
-        raise Dome::InvalidLevelError.new(level)
+        puts "Invalid level: #{level}".colorize(:red)
       end
     end
 

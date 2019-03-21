@@ -274,7 +274,7 @@ module Dome
 
         puts ''
       else
-        raise Dome::InvalidLevelError.new(level)
+        puts "Invalid level: #{level}".colorize(:red)
       end
     end
 
@@ -296,7 +296,7 @@ module Dome
       when /^secrets-/
         directories[-4].split('-')[-1]
       else
-        raise Dome::InvalidLevelError.new(level)
+        puts "Invalid level: #{level}".colorize(:red)
       end
     end
 

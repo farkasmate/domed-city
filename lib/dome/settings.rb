@@ -27,7 +27,7 @@ module Dome
       when 'product'
         '../itv.yaml'
       else
-        raise Dome::InvalidLevelError.new(level)
+        puts "Invalid level: #{level}".colorize(:red)
       end
     end
 
