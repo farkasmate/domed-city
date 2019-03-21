@@ -49,9 +49,19 @@ module Dome
         puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
         puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
         puts
+      when /^secrets-/
+        @environment = Dome::Environment.new
+        @secrets     = Dome::Secrets.new(@environment)
+        @state       = Dome::State.new(@environment)
+        @plan_file   = "plans/#{@environment.level}-plan.tf"
+
+        puts '--- Secrets terraform state location ---'
+        puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
+        puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
+        puts
       else
-        puts '[*] Dome is meant to run from either a product,ecosystem,environment or role level'
-        exit 1
+        puts '[*] Dome is meant to run from either a product,ecosystem,environment,role or secrets level'
+        raise Dome::InvalidLevelError.new(level)
       end
     end
 
@@ -82,6 +92,16 @@ module Dome
         @environment.invalid_environment_message unless @environment.valid_environment? environment
         @environment.unset_aws_keys
         @environment.aws_credentials
+      when /^secrets-/
+        puts '--- AWS credentials for accessing secrets state ---'
+        environment = @environment.environment
+        account     = @environment.account
+        @environment.invalid_account_message unless @environment.valid_account? account
+        @environment.invalid_environment_message unless @environment.valid_environment? environment
+        @environment.unset_aws_keys
+        @environment.aws_credentials
+      else
+        raise Dome::InvalidLevelError.new(level)
       end
     end
 
@@ -152,6 +172,14 @@ module Dome
         command         = "terraform plan -refresh=true -out=#{@plan_file}"
         failure_message = '[!] something went wrong when creating the role TF plan'
         execute_command(command, failure_message)
+      when /^secrets-/
+        @secrets.extract_certs
+        FileUtils.mkdir_p 'plans'
+        command         = "terraform plan -refresh=true -out=#{@plan_file}"
+        failure_message = '[!] something went wrong when creating the role TF plan'
+        execute_command(command, failure_message)
+      else
+        raise Dome::InvalidLevelError.new(level)
       end
     end
 
