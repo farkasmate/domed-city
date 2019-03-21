@@ -19,7 +19,7 @@ module Dome
       elsif directories[-5] == 'terraform' and directories[-2] == 'secrets' and directories[-1] == 'config'
         'secrets-config'
       else
-        'root'
+        raise Dome::InvalidLevelError.new('UNKNOWN')
       end
     end
   end

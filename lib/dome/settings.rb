@@ -26,8 +26,6 @@ module Dome
         '../../itv.yaml'
       when 'product'
         '../itv.yaml'
-      when 'root'
-        'itv.yaml'
       else
         raise Dome::InvalidLevelError.new(level)
       end
