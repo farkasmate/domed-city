@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
 module Dome
+  # FIXME: Simplify *initialize*
+  # rubocop:disable Metrics/ClassLength
   class Environment
     attr_reader :environment, :account, :settings
 
     include Dome::Level
 
+    # FIXME: Simplify *initialize*
+    # rubocop:disable Metrics/MethodLength
     def initialize(directories = Dir.pwd.split('/'))
       ENV['AWS_DEFAULT_REGION'] = 'eu-west-1'
 
@@ -277,6 +281,7 @@ module Dome
         puts "Invalid level: #{level}".colorize(:red)
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     def project
       @settings.parse['project']
@@ -386,4 +391,5 @@ module Dome
       puts ''
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end

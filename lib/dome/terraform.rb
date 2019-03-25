@@ -66,6 +66,8 @@ module Dome
     end
 
     # TODO: this method is a bit of a mess and needs looking at
+    # FIXME: Simplify *validate_environment*
+    # rubocop:disable Metrics/PerceivedComplexity
     def validate_environment
       case level
       when 'environment'
@@ -116,6 +118,7 @@ module Dome
         raise Dome::InvalidLevelError.new, level
       end
     end
+    # rubocop:enable Metrics/PerceivedComplexity
 
     def plan
       puts '--- Decrypting hiera secrets and pass them as TF_VARs ---'

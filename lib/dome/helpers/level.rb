@@ -2,6 +2,8 @@
 
 module Dome
   module Level
+    # FIXME: Remove dependency on *pwd* and reduce complexity
+    # rubocop:disable Metrics/PerceivedComplexity
     def level
       directories = Dir.pwd.split('/')
 
@@ -22,5 +24,6 @@ module Dome
         'root'
       end
     end
+    # rubocop:enable Metrics/PerceivedComplexity
   end
 end
