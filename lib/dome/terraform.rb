@@ -61,7 +61,7 @@ module Dome
         puts
       else
         puts '[*] Dome is meant to run from either a product,ecosystem,environment,role or secrets level'
-        raise Dome::InvalidLevelError.new(level)
+        raise Dome::InvalidLevelError.new, level
       end
     end
 
@@ -107,13 +107,13 @@ module Dome
         when 'secrets-config'
           role = 'content_administrator'
         else
-          raise Dome::InvalidLevelError.new(level)
+          raise Dome::InvalidLevelError.new, level
         end
         puts "[*] Logging in as: #{role}"
         vault_login(role)
         puts ''
       else
-        raise Dome::InvalidLevelError.new(level)
+        raise Dome::InvalidLevelError.new, level
       end
     end
 
@@ -191,7 +191,7 @@ module Dome
         failure_message = '[!] something went wrong when creating the role TF plan'
         execute_command(command, failure_message)
       else
-        raise Dome::InvalidLevelError.new(level)
+        raise Dome::InvalidLevelError.new, level
       end
     end
 
@@ -230,7 +230,8 @@ module Dome
       begin
         require 'vault/helper'
       rescue LoadError
-        raise '[!] Failed to load vault/helper. Please add "gem \'hiera-vault\', git: \'git@github.com:ITV/hiera-vault\', ref: \'v1.0.0\'" or later to your Gemfile'.colorize(:red)
+        raise '[!] Failed to load vault/helper. Please add \
+"gem \'hiera-vault\', git: \'git@github.com:ITV/hiera-vault\', ref: \'v1.0.0\'" or later to your Gemfile'.colorize(:red)
       end
       product = ENV['TF_VAR_product']
       environment_name = @environment.environment
