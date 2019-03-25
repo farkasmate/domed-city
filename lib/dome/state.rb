@@ -19,6 +19,10 @@ module Dome
         "itv-terraform-state-#{@environment.project}"
       when 'roles'
         "itv-terraform-state-#{@environment.project}-#{@environment.ecosystem}-#{@environment.environment}-roles"
+      when /^secrets-/
+        "itv-terraform-state-#{@environment.project}-#{@environment.ecosystem}-#{@environment.environment}-secrets"
+      else
+        puts "Invalid level: #{level}".colorize(:red)
       end
     end
 
@@ -32,6 +36,10 @@ module Dome
         "#{@environment.level}.tfstate"
       when 'roles'
         "#{@environment.level}.tfstate"
+      when /^secrets-/
+        "#{@environment.level}.tfstate"
+      else
+        puts "Invalid level: #{level}".colorize(:red)
       end
     end
 

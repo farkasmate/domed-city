@@ -49,13 +49,25 @@ module Dome
         puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
         puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
         puts
+      when /^secrets-/
+        @environment = Dome::Environment.new
+        @secrets     = Dome::Secrets.new(@environment)
+        @state       = Dome::State.new(@environment)
+        @plan_file   = "plans/#{@environment.level}-plan.tf"
+
+        puts '--- Secrets terraform state location ---'
+        puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
+        puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
+        puts
       else
-        puts '[*] Dome is meant to run from either a product,ecosystem,environment or role level'
-        exit 1
+        puts '[*] Dome is meant to run from either a product,ecosystem,environment,role or secrets level'
+        raise Dome::InvalidLevelError.new, level
       end
     end
 
     # TODO: this method is a bit of a mess and needs looking at
+    # FIXME: Simplify *validate_environment*
+    # rubocop:disable Metrics/PerceivedComplexity
     def validate_environment
       case level
       when 'environment'
@@ -82,8 +94,31 @@ module Dome
         @environment.invalid_environment_message unless @environment.valid_environment? environment
         @environment.unset_aws_keys
         @environment.aws_credentials
+      when /^secrets-/
+        puts '--- AWS credentials for accessing secrets state ---'
+        environment = @environment.environment
+        account     = @environment.account
+        @environment.invalid_account_message unless @environment.valid_account? account
+        @environment.invalid_environment_message unless @environment.valid_environment? environment
+        @environment.unset_aws_keys
+        @environment.aws_credentials
+        puts '--- Vault login ---'
+        case level
+        when 'secrets-init'
+          role = 'service_administrator'
+        when 'secrets-config'
+          role = 'content_administrator'
+        else
+          raise Dome::InvalidLevelError.new, level
+        end
+        puts "[*] Logging in as: #{role}"
+        vault_login(role)
+        puts ''
+      else
+        raise Dome::InvalidLevelError.new, level
       end
     end
+    # rubocop:enable Metrics/PerceivedComplexity
 
     def plan
       puts '--- Decrypting hiera secrets and pass them as TF_VARs ---'
@@ -152,6 +187,14 @@ module Dome
         command         = "terraform plan -refresh=true -out=#{@plan_file}"
         failure_message = '[!] something went wrong when creating the role TF plan'
         execute_command(command, failure_message)
+      when /^secrets-/
+        @secrets.extract_certs
+        FileUtils.mkdir_p 'plans'
+        command         = "terraform plan -refresh=true -out=#{@plan_file}"
+        failure_message = '[!] something went wrong when creating the role TF plan'
+        execute_command(command, failure_message)
+      else
+        raise Dome::InvalidLevelError.new, level
       end
     end
 
@@ -182,6 +225,21 @@ module Dome
       command         = 'terraform output'
       failure_message = 'something went wrong when printing TF output variables'
       execute_command(command, failure_message)
+    end
+
+    private
+
+    def vault_login(role)
+      begin
+        require 'vault/helper'
+      rescue LoadError
+        raise '[!] Failed to load vault/helper. Please add \
+"gem \'hiera-vault\', git: \'git@github.com:ITV/hiera-vault\', ref: \'v1.0.0\'" or later to your Gemfile'.colorize(:red)
+      end
+      product = ENV['TF_VAR_product']
+      environment_name = @environment.environment
+      # TODO: Change to TCP8200 after port is open on the firewall
+      Vault::Helper.login(role, address: "https://secrets.#{environment_name}.#{product}.itv.com:8200")
     end
   end
 end

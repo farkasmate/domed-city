@@ -16,6 +16,8 @@ module Dome
 
     def itv_yaml_path
       case level
+      when /^secrets-/
+        '../../../../../itv.yaml'
       when 'roles'
         '../../../../itv.yaml'
       when 'environment'
@@ -24,8 +26,8 @@ module Dome
         '../../itv.yaml'
       when 'product'
         '../itv.yaml'
-      when 'root'
-        'itv.yaml'
+      else
+        puts "Invalid level: #{level}".colorize(:red)
       end
     end
 
