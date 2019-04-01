@@ -119,10 +119,11 @@ module Dome
         when 'secrets-init'
           role = 'service_administrator'
           unless Vault::Helper.initialized?
-            keys = Vault::Helper.init
-            Vault.token = keys[:root_token]
-            puts "[*] Recovery key for matefark: #{keys[:recovery_keys_base64]}".colorize(:yellow)
-            #raise 'Vault not initialized, export the root token and try again'
+            init_user = ENV['VAULT_INIT_USER'] || 'tomclar'
+            keys = Vault::Helper.init(init_user: init_user, token_file: nil)
+            puts "[*] Root token for #{init_user}: #{keys[:root_token]}".colorize(:yellow)
+            puts "[*] Recovery key for #{init_user}: #{keys[:recovery_key]}".colorize(:yellow)
+            raise "Vault not initialized, send the keys printed above to #{init_user} to finish initialization."
           end
         when 'secrets-config'
           role = 'content_administrator'
