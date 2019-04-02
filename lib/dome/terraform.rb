@@ -120,7 +120,7 @@ module Dome
           role = 'service_administrator'
           unless Vault::Helper.initialized?
             init_user = ENV['VAULT_INIT_USER'] || 'tomclar'
-            keys = Vault::Helper.init(init_user: init_user, token_file: nil)
+            keys = Vault::Helper.init(init_user: init_user)
             puts "[*] Root token for #{init_user}: #{keys[:root_token]}".colorize(:yellow)
             puts "[*] Recovery key for #{init_user}: #{keys[:recovery_key]}".colorize(:yellow)
             raise "Vault not initialized, send the keys printed above to #{init_user} to finish initialization."
