@@ -1,3 +1,9 @@
+# 6.10.0
+
+FEATURES:
+- Initialize Vault if necessary (requires PE)
+- Use VAULT_TOKEN environment variable if set
+
 # 6.9.0
 
 FEATURES:

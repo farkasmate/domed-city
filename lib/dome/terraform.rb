@@ -102,17 +102,43 @@ module Dome
         @environment.invalid_environment_message unless @environment.valid_environment? environment
         @environment.unset_aws_keys
         @environment.aws_credentials
+
         puts '--- Vault login ---'
+        begin
+          require 'vault/helper'
+        rescue LoadError
+          raise '[!] Failed to load vault/helper. Please add \
+"gem \'hiera-vault\', git: \'git@github.com:ITV/hiera-vault\', ref: \'v1.0.0\'" or later to your Gemfile'.colorize(:red)
+        end
+
+        product = ENV['TF_VAR_product']
+        environment_name = @environment.environment
+        Vault.address = "https://secrets.#{environment_name}.#{product}.itv.com:8200"
+
         case level
         when 'secrets-init'
           role = 'service_administrator'
+          unless Vault::Helper.initialized?
+            init_user = ENV['VAULT_INIT_USER'] || 'tomclar'
+            keys = Vault::Helper.init(init_user: init_user)
+            puts "[*] Root token for #{init_user}: #{keys[:root_token]}".colorize(:yellow)
+            puts "[*] Recovery key for #{init_user}: #{keys[:recovery_key]}".colorize(:yellow)
+            raise "Vault not initialized, send the keys printed above to #{init_user} to finish initialization."
+          end
         when 'secrets-config'
           role = 'content_administrator'
         else
           raise Dome::InvalidLevelError.new, level
         end
-        puts "[*] Logging in as: #{role}"
-        vault_login(role)
+
+        if ENV['VAULT_TOKEN']
+          puts '[*] Using VAULT_TOKEN environment variable'.colorize(:yellow)
+          Vault.token = ENV['VAULT_TOKEN']
+        else
+          puts "[*] Logging in as: #{role}"
+          ENV['VAULT_TOKEN'] = Vault::Helper.login(role)
+        end
+
         puts ''
       else
         raise Dome::InvalidLevelError.new, level
@@ -225,21 +251,6 @@ module Dome
       command         = 'terraform output'
       failure_message = 'something went wrong when printing TF output variables'
       execute_command(command, failure_message)
-    end
-
-    private
-
-    def vault_login(role)
-      begin
-        require 'vault/helper'
-      rescue LoadError
-        raise '[!] Failed to load vault/helper. Please add \
-"gem \'hiera-vault\', git: \'git@github.com:ITV/hiera-vault\', ref: \'v1.0.0\'" or later to your Gemfile'.colorize(:red)
-      end
-      product = ENV['TF_VAR_product']
-      environment_name = @environment.environment
-      # TODO: Change to TCP8200 after port is open on the firewall
-      Vault::Helper.login(role, address: "https://secrets.#{environment_name}.#{product}.itv.com:8200")
     end
   end
 end
