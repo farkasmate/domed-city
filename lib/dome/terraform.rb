@@ -136,7 +136,7 @@ module Dome
           Vault.token = ENV['VAULT_TOKEN']
         else
           puts "[*] Logging in as: #{role}"
-          Vault::Helper.login(role)
+          ENV['VAULT_TOKEN'] = Vault::Helper.login(role)
         end
 
         puts ''
