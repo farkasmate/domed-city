@@ -252,6 +252,5 @@ module Dome
       failure_message = 'something went wrong when printing TF output variables'
       execute_command(command, failure_message)
     end
-
   end
 end
