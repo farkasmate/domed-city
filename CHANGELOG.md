@@ -1,3 +1,8 @@
+# 6.11.0
+
+FEATURE:
+- Use secrets-init endpoint for initialization
+
 # 6.10.0
 
 FEATURES:

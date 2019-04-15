@@ -117,6 +117,7 @@ module Dome
 
         case level
         when 'secrets-init'
+          Vault.address = "https://secrets-init.#{environment_name}.#{product}.itv.com:8200"
           role = 'service_administrator'
           unless Vault::Helper.initialized?
             init_user = ENV['VAULT_INIT_USER'] || 'tomclar'
