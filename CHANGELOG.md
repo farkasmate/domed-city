@@ -1,3 +1,8 @@
+# 6.11.1
+
+BUGFIX:
+- Pin `dry-validation` gem to '< 0.13.1' to work with Ruby v2.3.1.
+
 # 6.11.0
 
 FEATURE:
