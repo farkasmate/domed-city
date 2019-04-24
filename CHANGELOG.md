@@ -1,3 +1,8 @@
+# 6.11.2
+
+REMOVED:
+- rvm 2.2.4 to ensure C.I is ran on rvm 2.3.1 only.
+
 # 6.11.1
 
 BUGFIX:
