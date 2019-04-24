@@ -1,3 +1,8 @@
+# 6.12.0
+
+FEATURES:
+- Add `--sudo` option to assume `itv-root`
+
 # 6.11.2
 
 REMOVED:

@@ -10,8 +10,8 @@ opts = Optimist.options do
   Dome wraps the Terraform API and performs useful stuff.
 
   Usage:
-        dome [command]
-  where [commands] are:
+        dome [--sudo] --<command>
+  where <command>s are:
   BANNER
 
   opt :plan, 'Creates a Terraform plan'
@@ -22,11 +22,12 @@ opts = Optimist.options do
   opt :statecmd, 'Wrapper arround terraform state', type: :strings
   opt :refresh, 'Refresh the state'
   opt :console, 'Spawn terraform console'
+  opt :sudo, 'Assume itv-root instead of the role specified in profile'
 end
 
 Optimist.educate unless opts.value?(true)
 
-@dome = Dome::Terraform.new
+@dome = Dome::Terraform.new(sudo: opts[:sudo])
 @dome.validate_environment
 
 begin

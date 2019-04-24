@@ -7,7 +7,7 @@ module Dome
 
     attr_reader :state
 
-    def initialize
+    def initialize(sudo: false)
       case level
       when 'environment'
         @environment = Dome::Environment.new
@@ -63,6 +63,8 @@ module Dome
         puts '[*] Dome is meant to run from either a product,ecosystem,environment,role or secrets level'
         raise Dome::InvalidLevelError.new, level
       end
+
+      @environment.sudo if sudo
     end
 
     # TODO: this method is a bit of a mess and needs looking at

@@ -38,29 +38,34 @@ For ease of use, type `bundle exec dome` (you may get some warnings if you do no
 ```
 $ bundle exec dome
 
-Dome wraps the Terraform API and performs useful stuff.
+  Dome wraps the Terraform API and performs useful stuff.
 
-Usage:
-       dome [command]
-where [commands] are:
-  -p, --plan            Creates a Terraform plan
-  -a, --apply           Applies a Terraform plan
-  -s, --state           Synchronises the Terraform state
-  -o, --output          Print all Terraform output variables
-  -v, --version         Print version and exit
-  -h, --help            Show this message
+  Usage:
+        dome [--sudo] --<command>
+  where <command>s are:
+  -p, --plan             Creates a Terraform plan
+  -a, --apply            Applies a Terraform plan
+  -i, --init             Run Terraform init
+  -s, --state            Synchronises the Terraform state
+  -o, --output           Print all Terraform output variables
+  -t, --statecmd=<s+>    Wrapper arround terraform state
+  -r, --refresh          Refresh the state
+  -c, --console          Spawn terraform console
+  -u, --sudo             Assume itv-root instead of the role specified in profile
+  -v, --version          Print version and exit
+  -h, --help             Show this message
 ```
 
 Domed is designed to work with a certain directory structure. Your account,product,ecosystem and environment are assigned based on your current directory. The expected directory structure is terraform/$PRODUCT-$ECOSYSTEM/$ENVIRONMENT
 
 It also requires certain things in itv.yaml.
 
-1. Your project (or better product) is defined using the project key in your itv.yaml. 
+1. Your project (or better product) is defined using the project key in your itv.yaml.
 ```
 project: foo
 
 ```
-2. Valid environments are defined using the hashmap of ecosystems to environments key in your itv.yaml. 
+2. Valid environments are defined using the hashmap of ecosystems to environments key in your itv.yaml.
 eg
 ```
 ecosystems:
@@ -74,6 +79,12 @@ ecosystems:
 
 ```
 3. Valid accounts are of the format <project>-dev and <project>-prd and are calculated automatically using your project variable. This is consistent with the .aws/config because dome will try and assume the role based on that account.
+
+### Sudo mode
+
+By default dome will assume the role defined in your AWS profile. If `--sudo` is specified, the value is overwritten by `itv-root` role in the same account.
+
+Use this mode only when you need to manage resources requiring `itv-root`.
 
 ## Development & Releases
 
