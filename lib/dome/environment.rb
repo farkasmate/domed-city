@@ -27,6 +27,8 @@ module Dome
       puts "[*] Operating at #{level.colorize(:red)} level"
       puts ''
 
+      @sudo = false
+
       case level
       when 'environment'
         @settings               = Dome::Settings.new
@@ -347,6 +349,12 @@ module Dome
     def aws_credentials
       puts "[*] Attempting to assume the role defined by your profile for #{@account.colorize(:green)}."
       role_opts = { profile: account, role_session_name: account, use_mfa: true }
+
+      if @sudo
+        account_id = @settings.parse['aws'][@ecosystem.to_s]['account_id'].to_s
+        role_opts[:role_arn] = "arn:aws:iam::#{account_id}:role/itv-root"
+      end
+
       begin
         assumed_role = AwsAssumeRole::DefaultProvider.new(role_opts).resolve
       rescue StandardError => e
@@ -372,6 +380,10 @@ module Dome
     def invalid_environment_message
       generic_error_message
       raise "\n[!] '#{@environment}' is not a valid environment.\n".colorize(:red)
+    end
+
+    def sudo
+      @sudo = true
     end
 
     private
