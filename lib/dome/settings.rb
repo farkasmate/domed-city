@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # This class represents itv.yaml
 
 module Dome
@@ -9,7 +10,8 @@ module Dome
 
     def initialize(path = nil)
       if path
-        raise "#{path} does not exist" unless File.exists? path
+        raise "#{path} does not exist" unless File.exist? path
+
         @project_root = File.realpath(File.dirname(path))
       else
         @project_root = find_project_root
@@ -24,10 +26,11 @@ module Dome
     end
 
     private
+
     def find_project_root
       path = Dir.pwd.split('/')
       until path.empty?
-        unless File.exists? File.join(path, 'itv.yaml')
+        unless File.exist? File.join(path, 'itv.yaml')
           path.pop
           next
         end

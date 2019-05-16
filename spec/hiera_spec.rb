@@ -11,7 +11,6 @@ describe Dome do
 
   before(:each) { allow_any_instance_of(Dome::Settings).to receive(:find_project_root).and_return(project_root) }
 
-
   it 'outputs the correct message for a hiera lookup' do
     vars = { 'foo' => 'bar' }
     allow(hiera).to receive(:lookup).and_return('bar')
