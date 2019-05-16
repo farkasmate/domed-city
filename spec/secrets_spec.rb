@@ -9,8 +9,8 @@ describe Dome do
   let(:secrets) { Dome::Secrets.new(environment) }
 
   # to prevent a validation error
-  let(:itv_yaml_path) { 'spec/fixtures/itv.yaml' }
-  before(:each) { allow_any_instance_of(Dome::Settings).to receive(:itv_yaml_path).and_return(itv_yaml_path) }
+  let(:project_root) { File.realpath('spec/fixtures') }
+  before(:each) { allow_any_instance_of(Dome::Settings).to receive(:find_project_root).and_return(project_root) }
 
   context 'if config is missing from itv.yaml' do
     context 'outputs a debug message to STDOUT' do
