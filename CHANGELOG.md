@@ -1,3 +1,8 @@
+# 6.13.0
+
+FEATURES:
+- Locate project root and itv.yaml
+
 # 6.12.0
 
 FEATURES:
