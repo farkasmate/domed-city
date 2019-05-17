@@ -1,3 +1,17 @@
+# 6.14.0
+
+FEATURES:
+- Simplify Environment class
+  - changes per level
+    - ecosystem level
+      - environment set explicitly to nil
+      - exports TF_VAR_dev_ecosystem_environments
+      - exports TF_VAR_prd_ecosystem_environments
+    - product level
+      - environment set explicitly to nil
+      - exports TF_VAR_cidr_ecosystem (prd cidr)
+- More consistent prints
+
 # 6.13.0
 
 FEATURES:
