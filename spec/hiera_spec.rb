@@ -7,9 +7,11 @@ describe Dome do
   let(:environment_dir) { 'qa' }
   let(:environment) { Dome::Environment.new([account_dir, environment_dir]) }
   let(:hiera) { Dome::HieraLookup.new(environment) }
+  let(:level) { 'environment' }
   let(:project_root) { File.realpath('spec/fixtures') }
 
   before(:each) { allow_any_instance_of(Dome::Settings).to receive(:find_project_root).and_return(project_root) }
+  before(:each) { allow_any_instance_of(Dome::Environment).to receive(:level).and_return(level) }
 
   it 'outputs the correct message for a hiera lookup' do
     vars = { 'foo' => 'bar' }

@@ -10,7 +10,9 @@ describe Dome do
 
   # to prevent a validation error
   let(:project_root) { File.realpath('spec/fixtures') }
+  let(:level) { 'environment' }
   before(:each) { allow_any_instance_of(Dome::Settings).to receive(:find_project_root).and_return(project_root) }
+  before(:each) { allow_any_instance_of(Dome::Environment).to receive(:level).and_return(level) }
 
   context 'if config is missing from itv.yaml' do
     context 'outputs a debug message to STDOUT' do
@@ -42,10 +44,6 @@ describe Dome do
       allow(secrets.settings).to receive(:parse).and_return({})
       expect(secrets.hiera).not_to receive(:extract_certs)
       secrets.extract_certs
-    end
-
-    xit 'only warns you once about missing parent key dome when performing a plan' do
-      # TODO
     end
   end
 
