@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# This class represents the current directory
+
 module Dome
   # FIXME: Simplify *initialize*
   # rubocop:disable Metrics/ClassLength

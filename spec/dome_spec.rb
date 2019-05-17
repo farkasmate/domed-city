@@ -7,9 +7,9 @@ describe Dome do
   let(:environment_dir) { 'qa' }
   let(:level) { 'environment' }
   let(:ecosystem) { 'dev' }
-  let(:itv_yaml_path) { 'spec/fixtures/itv.yaml' }
+  let(:project_root) { File.realpath('spec/fixtures') }
 
-  before(:each) { allow_any_instance_of(Dome::Settings).to receive(:itv_yaml_path).and_return(itv_yaml_path) }
+  before(:each) { allow_any_instance_of(Dome::Settings).to receive(:find_project_root).and_return(project_root) }
   before(:each) { allow_any_instance_of(Dome::Environment).to receive(:level).and_return(level) }
 
   let(:dome) { Dome::Environment.new([account_dir, environment_dir]) }

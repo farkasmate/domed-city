@@ -1,38 +1,42 @@
 # frozen_string_literal: true
 
+# This class represents itv.yaml
+
 module Dome
   class Settings
+    attr_reader :project_root
+
     include Dome::Level
 
-    def parse
-      raise("[*] #{itv_yaml_path} does not exist") unless File.exist? itv_yaml_path
+    def initialize(path = nil)
+      if path
+        raise "#{path} does not exist" unless File.exist? path
 
-      load_yaml
-    end
-
-    def load_yaml
-      @load_yaml ||= YAML.load_file(itv_yaml_path)
-    end
-
-    def itv_yaml_path
-      case level
-      when /^secrets-/
-        '../../../../../itv.yaml'
-      when 'roles'
-        '../../../../itv.yaml'
-      when 'environment'
-        '../../../itv.yaml'
-      when 'ecosystem'
-        '../../itv.yaml'
-      when 'product'
-        '../itv.yaml'
+        @project_root = File.realpath(File.dirname(path))
       else
-        puts "Invalid level: #{level}".colorize(:red)
+        @project_root = find_project_root
+        path = File.join(@project_root, 'itv.yaml')
       end
+
+      @itv_yaml ||= YAML.load_file(path)
     end
 
-    def project_root
-      File.realpath(File.dirname(itv_yaml_path))
+    def parse
+      @itv_yaml
+    end
+
+    private
+
+    def find_project_root
+      path = Dir.pwd.split('/')
+      until path.empty?
+        unless File.exist? File.join(path, 'itv.yaml')
+          path.pop
+          next
+        end
+        return File.realpath(File.join(path))
+      end
+      raise 'Cannot locate itv.yaml'
     end
   end
 end
