@@ -99,7 +99,7 @@ module Dome
       puts "[*] Setting aws_account_id to #{ENV['TF_VAR_aws_account_id'].colorize(:green)}"
       puts "[*] Setting product to #{ENV['TF_VAR_product'].colorize(:green)}"
       puts "[*] Setting ecosystem to #{ENV['TF_VAR_ecosystem'].colorize(:green)}"
-      puts "[*] Setting env to #{ENV['TF_VAR_env'].colorize(:green)}"
+      puts "[*] Setting env to #{ENV['TF_VAR_env'].colorize(:green)}" unless ENV['TF_VAR_env'].nil?
       puts "[*] Setting cidr_ecosystem to #{ENV['TF_VAR_cidr_ecosystem'].colorize(:green)}"
       puts ''
 
