@@ -23,11 +23,20 @@ opts = Optimist.options do
   opt :refresh, 'Refresh the state'
   opt :console, 'Spawn terraform console'
   opt :sudo, 'Assume itv-root instead of the role specified in profile'
+  opt :environment, 'Spawn sub-shell with the exported variables'
 end
 
 Optimist.educate unless opts.value?(true)
 
 @dome = Dome::Terraform.new(sudo: opts[:sudo])
+
+if opts[:environment]
+  puts '--- Spawning shell ---'
+  @dome.spawn_environment_shell
+  puts '--- Exiting shell ---'
+  exit 0
+end
+
 @dome.validate_environment
 
 begin

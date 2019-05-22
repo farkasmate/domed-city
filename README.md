@@ -54,6 +54,7 @@ $ bundle exec dome
   -u, --sudo             Assume itv-root instead of the role specified in profile
   -v, --version          Print version and exit
   -h, --help             Show this message
+  -e, --environment      Spawn sub-shell with the exported variables
 ```
 
 Domed is designed to work with a certain directory structure. Your account,product,ecosystem and environment are assigned based on your current directory. The expected directory structure is terraform/$PRODUCT-$ECOSYSTEM/$ENVIRONMENT
