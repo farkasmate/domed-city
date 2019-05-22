@@ -255,5 +255,13 @@ module Dome
       failure_message = 'something went wrong when printing TF output variables'
       execute_command(command, failure_message)
     end
+
+    def spawn_environment_shell
+      @environment.unset_aws_keys
+      @environment.aws_credentials
+
+      shell = ENV['SHELL'] || '/bin/sh'
+      system shell
+    end
   end
 end

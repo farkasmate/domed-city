@@ -1,3 +1,8 @@
+# 6.15.0
+
+FEATURES:
+- `--environment` command to export variables and spawn a sub-shell
+
 # 6.14.0
 
 FEATURES:
