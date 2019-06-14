@@ -11,6 +11,7 @@ module Dome
 
     def config
       return @config if @config
+
       config = YAML.load_file(File.join(puppet_dir, 'hiera.yaml')).merge(default_config)
       if config[:vault]
         vault_env = ENV['TF_VAR_env'] || "infra#{ENV['TF_VAR_ecosystem']}"
