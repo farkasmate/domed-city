@@ -10,7 +10,15 @@ module Dome
     end
 
     def config
-      @config ||= YAML.load_file(File.join(puppet_dir, 'hiera.yaml')).merge(default_config)
+      return @config if @config
+      config = YAML.load_file(File.join(puppet_dir, 'hiera.yaml')).merge(default_config)
+      if config[:vault]
+        vault_env = ENV['TF_VAR_env'] || "infra#{ENV['TF_VAR_ecosystem']}"
+        config[:vault][:address] = "https://secrets.#{vault_env}.#{ENV['TF_VAR_product']}.itv.com:8200"
+        config[:vault][:auth_method] = :env
+        config[:vault][:role] = 'dome_ro'
+      end
+      @config = config
     end
 
     def default_config

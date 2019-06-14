@@ -1,3 +1,9 @@
+# 6.16.0
+
+FEATURES:
+
+- Lookup Hiera secrets using a modified config (dome_ro Vault role)
+
 # 6.15.0
 
 FEATURES:
