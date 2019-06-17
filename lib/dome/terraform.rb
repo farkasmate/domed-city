@@ -279,7 +279,7 @@ module Dome
         plugin_dirs << install_provider(name, version)
       end
 
-      return plugin_dirs.map { |dir| "-plugin-dir #{dir}" }.join(' ')
+      plugin_dirs.map { |dir| "-plugin-dir #{dir}" }.join(' ')
     end
 
     def install_provider(name, version)
@@ -293,19 +293,19 @@ module Dome
         raise 'Invalid platform, only linux and darwin are supported.'
       end
 
-      uri = "https://releases.hashicorp.com/terraform-provider-#{name}/#{version}/terraform-provider-#{name}_#{version}_#{arch}.zip"
+      uri = "https://releases.hashicorp.com/terraform-provider-#{name}/#{version}/terraform-provider-#{name}_#{version}_#{arch}.zip" # rubocop:disable Metrics/LineLength
       dir = File.join(Dir.home, '.terraform.d', 'providers', name, version)
 
       return dir unless Dir[File.join(dir, '*')].empty? # Ruby >= 2.4: Dir.empty? dir
 
       FileUtils.makedirs(dir)
 
-      content = open(uri)
+      content = URI.parse(uri).open
       Zip::File.open_buffer(content) do |zip|
         zip.each { |entry| entry.extract(File.join(dir, entry.name)) }
       end
 
-      return dir
+      dir
     end
   end
 end
