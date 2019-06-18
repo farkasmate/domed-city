@@ -275,6 +275,9 @@ module Dome
       puts 'Installing providers...'.colorize(:yellow)
       plugin_dirs = []
       providers = YAML.load_file(providers_config)
+
+      return unless providers
+
       providers.each do |name, version|
         plugin_dirs << install_provider(name, version)
       end
