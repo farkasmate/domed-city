@@ -1,3 +1,9 @@
+# 6.17.1
+
+BUGFIX:
+- Fix provider permissions
+- Fix empty provider config
+
 # 6.17.0
 
 FEATURES:
