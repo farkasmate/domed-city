@@ -1,3 +1,8 @@
+# 6.17.0
+
+FEATURES:
+- Install and configure Terraform providers if `.terraform-providers.yaml` file is present in the root of the project
+
 # 6.16.0
 
 FEATURES:

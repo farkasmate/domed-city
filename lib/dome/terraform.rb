@@ -245,7 +245,9 @@ module Dome
     end
 
     def terraform_init
-      command         = 'terraform init'
+      extra_params = configure_providers
+
+      command         = "terraform init #{extra_params}"
       failure_message = 'something went wrong when initialising TF'
       execute_command(command, failure_message)
     end
@@ -262,6 +264,48 @@ module Dome
 
       shell = ENV['SHELL'] || '/bin/sh'
       system shell
+    end
+
+    private
+
+    def configure_providers
+      providers_config = File.join(@environment.settings.project_root, '.terraform-providers.yaml')
+      return unless File.exist? providers_config
+
+      puts 'Installing providers...'.colorize(:yellow)
+      plugin_dirs = []
+      providers = YAML.load_file(providers_config)
+      providers.each do |name, version|
+        plugin_dirs << install_provider(name, version)
+      end
+
+      plugin_dirs.map { |dir| "-plugin-dir #{dir}" }.join(' ')
+    end
+
+    def install_provider(name, version)
+      puts "Installing provider #{name}:#{version} ...".colorize(:green)
+
+      if RUBY_PLATFORM =~ /linux/
+        arch = 'linux_amd64'
+      elsif RUBY_PLATFORM =~ /darwin/
+        arch = 'darwin_amd64'
+      else
+        raise 'Invalid platform, only linux and darwin are supported.'
+      end
+
+      uri = "https://releases.hashicorp.com/terraform-provider-#{name}/#{version}/terraform-provider-#{name}_#{version}_#{arch}.zip" # rubocop:disable Metrics/LineLength
+      dir = File.join(Dir.home, '.terraform.d', 'providers', name, version)
+
+      return dir unless Dir[File.join(dir, '*')].empty? # Ruby >= 2.4: Dir.empty? dir
+
+      FileUtils.makedirs(dir)
+
+      content = URI.parse(uri).open
+      Zip::File.open_buffer(content) do |zip|
+        zip.each { |entry| entry.extract(File.join(dir, entry.name)) }
+      end
+
+      dir
     end
   end
 end

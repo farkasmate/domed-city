@@ -87,6 +87,19 @@ By default dome will assume the role defined in your AWS profile. If `--sudo` is
 
 Use this mode only when you need to manage resources requiring `itv-root`.
 
+### Pin provider versions
+
+Create a file called `.terraform-providers.yaml` in the root of the project:
+
+```
+aws: 2.6.0
+external: 1.1.0
+local: 1.2.0
+template: 2.1.0
+terraform: 1.0.0
+vault: 1.6.0
+```
+
 ## Development & Releases
 
 In order to make changes, you can point the reference to domed-city in the Gemfile to your local working directory eg
