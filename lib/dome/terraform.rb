@@ -275,6 +275,9 @@ module Dome
       puts 'Installing providers...'.colorize(:yellow)
       plugin_dirs = []
       providers = YAML.load_file(providers_config)
+
+      return unless providers
+
       providers.each do |name, version|
         plugin_dirs << install_provider(name, version)
       end
@@ -298,11 +301,15 @@ module Dome
 
       return dir unless Dir[File.join(dir, '*')].empty? # Ruby >= 2.4: Dir.empty? dir
 
-      FileUtils.makedirs(dir)
+      FileUtils.makedirs(dir, mode: 0o0755)
 
       content = URI.parse(uri).open
       Zip::File.open_buffer(content) do |zip|
-        zip.each { |entry| entry.extract(File.join(dir, entry.name)) }
+        zip.each do |entry|
+          entry_file = File.join(dir, entry.name)
+          entry.extract(entry_file)
+          FileUtils.chmod(0o0755, entry_file)
+        end
       end
 
       dir
