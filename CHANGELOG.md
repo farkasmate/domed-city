@@ -1,3 +1,8 @@
+# 6.18.0
+
+FEATURES:
+- Add Hiera secrets to `dome --environment`
+
 # 6.17.1
 
 BUGFIX:
