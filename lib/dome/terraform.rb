@@ -261,6 +261,7 @@ module Dome
     def spawn_environment_shell
       @environment.unset_aws_keys
       @environment.aws_credentials
+      @secrets.secret_env_vars
 
       shell = ENV['SHELL'] || '/bin/sh'
       system shell
