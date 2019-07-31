@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'zip'
+
 module Dome
   class Terraform
     include Dome::Shell
