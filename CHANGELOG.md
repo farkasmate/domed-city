@@ -1,3 +1,8 @@
+# 6.18.1
+
+BUGFIX:
+- Add `rubyzip` dependency
+
 # 6.18.0
 
 FEATURES:

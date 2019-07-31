@@ -31,4 +31,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'hiera', '~> 3'
   spec.add_dependency 'hiera-eyaml', '~> 2.1'
   spec.add_dependency 'optimist', '~> 3'
+  spec.add_dependency 'rubyzip', '~> 1.2'
 end
