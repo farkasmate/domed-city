@@ -25,7 +25,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop', '~> 0.49'
 
   spec.add_dependency 'aws-sdk', '~> 2.1'
-  spec.add_dependency 'aws_assume_role', '~> 1'
   spec.add_dependency 'colorize', '~> 0.7'
   spec.add_dependency 'dry-validation', '< 0.13.1'
   spec.add_dependency 'hiera', '~> 3'

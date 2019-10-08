@@ -180,18 +180,21 @@ module Dome
     end
 
     def aws_credentials
+      if !ENV['FREEZE_AWS_ENVVAR']
+    
       puts "[*] Attempting to assume the role defined by your profile for #{@account.colorize(:green)}."
       role_opts = { profile: account, role_session_name: account, use_mfa: true }
+      
+        if @sudo
+          account_id = @settings.parse['aws'][@ecosystem.to_s]['account_id'].to_s
+          role_opts[:role_arn] = "arn:aws:iam::#{account_id}:role/itv-root"
+        end
 
-      if @sudo
-        account_id = @settings.parse['aws'][@ecosystem.to_s]['account_id'].to_s
-        role_opts[:role_arn] = "arn:aws:iam::#{account_id}:role/itv-root"
-      end
-
-      begin
-        assumed_role = AwsAssumeRole::DefaultProvider.new(role_opts).resolve
-      rescue StandardError => e
-        raise "[!] Unable to assume role, possibly yubikey related: #{e}".colorize(:red) \
+        begin
+          assumed_role = AwsAssumeRole::DefaultProvider.new(role_opts).resolve
+        rescue StandardError => e
+          raise "[!] Unable to assume role, possibly yubikey related: #{e}".colorize(:red) \
+        end
       end
 
       export_aws_keys(assumed_role)
