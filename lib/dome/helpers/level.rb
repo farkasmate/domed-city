@@ -14,7 +14,7 @@ module Dome
       elsif directories[-3] == 'terraform'
         'environment'
       elsif directories[-4] == 'terraform'
-        'roles'
+        'services'
       elsif directories[-5] == 'terraform' && directories[-2] == 'secrets' && directories[-1] == 'init'
         'secrets-init'
       elsif directories[-5] == 'terraform' && directories[-2] == 'secrets' && directories[-1] == 'config'
