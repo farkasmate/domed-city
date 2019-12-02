@@ -45,7 +45,7 @@ module Dome
         @environment = Dome::Environment.new
         @secrets     = Dome::Secrets.new(@environment)
         @state       = Dome::State.new(@environment)
-        @plan_file   = "plans/#{@environment.level}-plan.tf"
+        @plan_file   = "plans/#{@environment.services}-plan.tf"
 
         puts '--- Role terraform state location ---'
         puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
