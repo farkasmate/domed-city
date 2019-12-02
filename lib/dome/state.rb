@@ -97,7 +97,7 @@ module Dome
       if resp.to_h[:table][:table_name] == bucket_name
         # TODO: Remove that because terraform handles the locking
         # puts "[*] DynamoDB state locking table exists: #{bucket_name}".colorize(:green)
-        return true
+        true
       end
     rescue Aws::DynamoDB::Errors::ResourceNotFoundException => e
       puts "[*] DynamoDB state locking table doesn't exist! #{e} .. creating it".colorize(:yellow)
