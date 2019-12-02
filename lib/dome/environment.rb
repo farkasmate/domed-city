@@ -4,7 +4,7 @@
 
 module Dome
   class Environment
-    attr_reader :environment, :account, :settings, :service
+    attr_reader :environment, :account, :settings, :services
 
     include Dome::Level
 
