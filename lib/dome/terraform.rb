@@ -299,7 +299,7 @@ module Dome
         raise 'Invalid platform, only linux and darwin are supported.'
       end
 
-      uri = "https://releases.hashicorp.com/terraform-provider-#{name}/#{version}/terraform-provider-#{name}_#{version}_#{arch}.zip" # rubocop:disable Metrics/LineLength
+      uri = "https://releases.hashicorp.com/terraform-provider-#{name}/#{version}/terraform-provider-#{name}_#{version}_#{arch}.zip"
       dir = File.join(Dir.home, '.terraform.d', 'providers', name, version)
 
       return dir unless Dir[File.join(dir, '*')].empty? # Ruby >= 2.4: Dir.empty? dir
