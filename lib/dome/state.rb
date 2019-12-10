@@ -91,14 +91,10 @@ module Dome
     end
 
     def dynamodb_configured?(bucket_name)
-      resp = ddb_client.describe_table(
+      # if the describe works, we know it exists
+      ddb_client.describe_table(
         table_name: bucket_name
       )
-      if resp.to_h[:table][:table_name] == bucket_name
-        # TODO: Remove that because terraform handles the locking
-        # puts "[*] DynamoDB state locking table exists: #{bucket_name}".colorize(:green)
-        return true
-      end
     rescue Aws::DynamoDB::Errors::ResourceNotFoundException => e
       puts "[*] DynamoDB state locking table doesn't exist! #{e} .. creating it".colorize(:yellow)
       false
