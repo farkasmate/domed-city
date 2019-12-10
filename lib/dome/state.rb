@@ -91,7 +91,8 @@ module Dome
     end
 
     def dynamodb_configured?(bucket_name)
-      resp = ddb_client.describe_table(
+      # if the describe works, we know it exists
+      ddb_client.describe_table(
         table_name: bucket_name
       )
     rescue Aws::DynamoDB::Errors::ResourceNotFoundException => e
