@@ -1,3 +1,13 @@
+# 6.18.3
+
+FEATURES:
+- Added level support. Where level is ecosystem,environment,product,service  
+
+# 6.18.2
+
+FEATURES:
+- Provide clearer error if required profile is missing from aws config
+
 # 6.18.1
 
 BUGFIX:
