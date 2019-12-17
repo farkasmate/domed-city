@@ -199,6 +199,11 @@ module Dome
         raise "[!] Unable to assume role, possibly yubikey related: #{e}".colorize(:red) \
       end
 
+      if assumed_role.nil?
+        raise "[!] Failed to find assume role details for #{role_opts[:profile]}" \
+              ' - check your ~/.aws/config file'.colorize(:red)
+      end
+
       export_aws_keys(assumed_role)
     end
 

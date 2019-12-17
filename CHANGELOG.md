@@ -1,3 +1,8 @@
+# 6.18.2
+
+FEATURES:
+- Provide clearer error if required profile is missing from aws config
+
 # 6.18.1
 
 BUGFIX:
