@@ -4,7 +4,7 @@
 
 module Dome
   class Environment
-    attr_reader :environment, :account, :settings
+    attr_reader :environment, :account, :settings, :services
 
     include Dome::Level
 
@@ -34,22 +34,27 @@ module Dome
       when 'environment'
         @environment            = directories[-1]
         @account                = directories[-2]
+        @services               = nil
 
       when 'ecosystem'
         @environment            = nil
         @account                = directories[-1]
+        @services               = nil
 
       when 'product'
         @environment            = nil
         @account                = "#{@product}-prd"
+        @services               = nil
 
-      when 'roles'
+      when 'services'
         @environment            = directories[-2]
         @account                = directories[-3]
+        @services               = directories[-1]
 
       when /^secrets-/
         @environment            = directories[-3]
         @account                = directories[-4]
+        @services               = nil
 
       else
         puts "Invalid level: #{level}".colorize(:red)
@@ -131,7 +136,7 @@ module Dome
       when 'product'
         # FIXME: This is 'prd' if accessed as @ecosystem
         'product'
-      when 'roles'
+      when 'services'
         directories[-3].split('-')[-1]
       when /^secrets-/
         directories[-4].split('-')[-1]

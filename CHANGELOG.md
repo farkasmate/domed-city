@@ -1,3 +1,7 @@
+# 7.0.0
+FEATURES:
+- Add `service` level where a business service can be defined within `<product>-infra/terraform/<product>-<ecosystem>/<environment>/<service>`. This ensures a service-specific AWS S3 bucket and terraform state file.
+
 # 6.18.2
 
 FEATURES:

@@ -41,11 +41,11 @@ module Dome
         puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
         puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
         puts
-      when 'roles'
+      when 'services'
         @environment = Dome::Environment.new
         @secrets     = Dome::Secrets.new(@environment)
         @state       = Dome::State.new(@environment)
-        @plan_file   = "plans/#{@environment.level}-plan.tf"
+        @plan_file   = "plans/#{@environment.services}-plan.tf"
 
         puts '--- Role terraform state location ---'
         puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
@@ -90,8 +90,8 @@ module Dome
         puts '--- AWS credentials for accessing product state ---'
         @environment.unset_aws_keys
         @environment.aws_credentials
-      when 'roles'
-        puts '--- AWS credentials for accessing roles state ---'
+      when 'services'
+        puts '--- AWS credentials for accessing services state ---'
         environment = @environment.environment
         account     = @environment.account
         @environment.invalid_account_message unless @environment.valid_account? account
@@ -212,7 +212,7 @@ module Dome
         command         = "terraform plan -refresh=true -out=#{@plan_file}"
         failure_message = '[!] something went wrong when creating the product TF plan'
         execute_command(command, failure_message)
-      when 'roles'
+      when 'services'
         @secrets.extract_certs
         FileUtils.mkdir_p 'plans'
         command         = "terraform plan -refresh=true -out=#{@plan_file}"
@@ -299,7 +299,7 @@ module Dome
         raise 'Invalid platform, only linux and darwin are supported.'
       end
 
-      uri = "https://releases.hashicorp.com/terraform-provider-#{name}/#{version}/terraform-provider-#{name}_#{version}_#{arch}.zip" # rubocop:disable Metrics/LineLength
+      uri = "https://releases.hashicorp.com/terraform-provider-#{name}/#{version}/terraform-provider-#{name}_#{version}_#{arch}.zip"
       dir = File.join(Dir.home, '.terraform.d', 'providers', name, version)
 
       return dir unless Dir[File.join(dir, '*')].empty? # Ruby >= 2.4: Dir.empty? dir
