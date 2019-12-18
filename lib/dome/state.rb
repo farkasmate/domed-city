@@ -35,7 +35,7 @@ module Dome
       when 'product'
         "#{@environment.level}.tfstate"
       when 'services'
-        "#{@environment.level}.tfstate"
+        "#{@environment.project}-#{@environment.ecosystem}-#{@environment.environment}-#{@environment.services}.tfstate"
       when /^secrets-/
         "#{@environment.level}.tfstate"
       else
