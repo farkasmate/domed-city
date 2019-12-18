@@ -1,3 +1,7 @@
+# 7.0.1
+FEATURES:
+- Provide better naming convention for service-level state file i.e. `<project>-<ecosystem>-<environment>-<services>.tfstate`.
+
 # 7.0.0
 FEATURES:
 - Add `service` level where a business service can be defined within `<product>-infra/terraform/<product>-<ecosystem>/<environment>/<service>`. This ensures a service-specific AWS S3 bucket and terraform state file.
