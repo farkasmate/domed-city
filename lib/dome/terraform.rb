@@ -41,13 +41,23 @@ module Dome
         puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
         puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
         puts
+      when 'roles'
+        @environment = Dome::Environment.new
+        @secrets     = Dome::Secrets.new(@environment)
+        @state       = Dome::State.new(@environment)
+        @plan_file   = "plans/#{@environment.level}-plan.tf"
+
+        puts '--- Role terraform state location ---'
+        puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
+        puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
+        puts
       when 'services'
         @environment = Dome::Environment.new
         @secrets     = Dome::Secrets.new(@environment)
         @state       = Dome::State.new(@environment)
         @plan_file   = "plans/#{@environment.services}-plan.tf"
 
-        puts '--- Role terraform state location ---'
+        puts '--- Services terraform state location ---'
         puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
         puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
         puts
@@ -62,7 +72,7 @@ module Dome
         puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
         puts
       else
-        puts '[*] Dome is meant to run from either a product,ecosystem,environment,role or secrets level'
+        puts '[*] Dome is meant to run from either a product,ecosystem,environment,role,services or secrets level'
         raise Dome::InvalidLevelError.new, level
       end
 
@@ -88,6 +98,14 @@ module Dome
         @environment.aws_credentials
       when 'product'
         puts '--- AWS credentials for accessing product state ---'
+        @environment.unset_aws_keys
+        @environment.aws_credentials
+      when 'roles'
+        puts '--- AWS credentials for accessing roles state ---'
+        environment = @environment.environment
+        account     = @environment.account
+        @environment.invalid_account_message unless @environment.valid_account? account
+        @environment.invalid_environment_message unless @environment.valid_environment? environment
         @environment.unset_aws_keys
         @environment.aws_credentials
       when 'services'
@@ -212,17 +230,23 @@ module Dome
         command         = "terraform plan -refresh=true -out=#{@plan_file}"
         failure_message = '[!] something went wrong when creating the product TF plan'
         execute_command(command, failure_message)
-      when 'services'
+      when 'roles'
         @secrets.extract_certs
         FileUtils.mkdir_p 'plans'
         command         = "terraform plan -refresh=true -out=#{@plan_file}"
         failure_message = '[!] something went wrong when creating the role TF plan'
         execute_command(command, failure_message)
+      when 'services'
+        @secrets.extract_certs
+        FileUtils.mkdir_p 'plans'
+        command         = "terraform plan -refresh=true -out=#{@plan_file}"
+        failure_message = '[!] something went wrong when creating the service TF plan'
+        execute_command(command, failure_message)
       when /^secrets-/
         @secrets.extract_certs
         FileUtils.mkdir_p 'plans'
         command         = "terraform plan -refresh=true -out=#{@plan_file}"
-        failure_message = '[!] something went wrong when creating the role TF plan'
+        failure_message = '[!] something went wrong when creating the secret TF plan'
         execute_command(command, failure_message)
       else
         raise Dome::InvalidLevelError.new, level

@@ -46,9 +46,14 @@ module Dome
         @account                = "#{@product}-prd"
         @services               = nil
 
-      when 'services'
+      when 'roles'
         @environment            = directories[-2]
         @account                = directories[-3]
+        @services               = nil
+
+      when 'services'
+        @environment            = directories[-3]
+        @account                = directories[-4]
         @services               = directories[-1]
 
       when /^secrets-/
@@ -136,9 +141,9 @@ module Dome
       when 'product'
         # FIXME: This is 'prd' if accessed as @ecosystem
         'product'
-      when 'services'
+      when 'roles'
         directories[-3].split('-')[-1]
-      when /^secrets-/
+      when /^secrets-|services/
         directories[-4].split('-')[-1]
       else
         puts "Invalid level: #{level}".colorize(:red)
