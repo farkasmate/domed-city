@@ -18,7 +18,7 @@ module Dome
       when 'product'
         "itv-terraform-state-#{@environment.project}"
       when 'services'
-        "itv-terraform-state-#{@environment.project}-#{@environment.ecosystem}-#{@environment.environment}-#{@environment.services}"
+        "itv-terraform-state-#{@environment.project}-#{@environment.ecosystem}-#{@environment.environment}-services"
       when /^secrets-/
         "itv-terraform-state-#{@environment.project}-#{@environment.ecosystem}-#{@environment.environment}-secrets"
       else
