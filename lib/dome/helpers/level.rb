@@ -13,7 +13,7 @@ module Dome
         'ecosystem'
       elsif directories[-3] == 'terraform'
         'environment'
-      elsif directories[-4] == 'terraform'
+      elsif directories[-5] == 'terraform' && directories[-2] == 'services'
         'services'
       elsif directories[-5] == 'terraform' && directories[-2] == 'secrets' && directories[-1] == 'init'
         'secrets-init'

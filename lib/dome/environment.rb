@@ -47,8 +47,8 @@ module Dome
         @services               = nil
 
       when 'services'
-        @environment            = directories[-2]
-        @account                = directories[-3]
+        @environment            = directories[-3]
+        @account                = directories[-4]
         @services               = directories[-1]
 
       when /^secrets-/

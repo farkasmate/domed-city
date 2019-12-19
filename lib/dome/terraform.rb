@@ -62,7 +62,7 @@ module Dome
         puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
         puts
       else
-        puts '[*] Dome is meant to run from either a product,ecosystem,environment,role or secrets level'
+        puts '[*] Dome is meant to run from either a product,ecosystem,environment,role, services or secrets level'
         raise Dome::InvalidLevelError.new, level
       end
 
