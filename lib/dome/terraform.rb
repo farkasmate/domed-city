@@ -239,7 +239,7 @@ module Dome
       when 'services'
         @secrets.extract_certs
         FileUtils.mkdir_p 'plans'
-        command         = "terraform plan -refresh=true -out=#{@plan_file}"
+        command         = "terraform plan -refresh=true -out=#{@plan_file} -var-file=../../params/env.tfvars"
         failure_message = '[!] something went wrong when creating the service TF plan'
         execute_command(command, failure_message)
       when /^secrets-/

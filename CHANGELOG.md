@@ -1,3 +1,7 @@
+# 7.0.3
+FEATURES:
+- Allow dome to use `params/env.tf` from the environment level when running on new run-level `services`
+
 # 7.0.2
 FEATURES:
 - Add `service` level where a business service can be defined within `<product>-infra/terraform/<product>-<ecosystem>/<environment>/<services>/<serviceX>`. This ensures a one services AWS S3 bucket with multiple uniquely named terraform state files.
