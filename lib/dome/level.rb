@@ -8,6 +8,22 @@ module Dome
 
     include Dome::Helper::Level
 
+    def self.match(_relative_path)
+      raise "Override self.match(relative_path) in class: #{self}"
+    end
+
+    def self.find_plugin(relative_path)
+      # TODO: Load non-loaded plugins only
+      Dir.glob(File.expand_path('level/*.rb', __dir__)).sort.each { |file| require file }
+      plugins = ObjectSpace.each_object(Class).select { |klass| klass < self && klass.name }
+
+      plugin = plugins.find { |p| p.match(relative_path) }
+
+      raise PluginNotFoundError, 'You might miss a plugin.' unless plugin
+
+      plugin
+    end
+
     def initialize(directories = Dir.pwd.split('/'))
       ENV['AWS_DEFAULT_REGION'] = 'eu-west-1'
 

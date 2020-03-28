@@ -6,4 +6,6 @@ module Dome
       super "Invalid level: #{level}"
     end
   end
+
+  class PluginNotFoundError < StandardError; end
 end
