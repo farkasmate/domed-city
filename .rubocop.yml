@@ -1,15 +1,24 @@
 AllCops:
   Exclude:
-    - tmp
-    - vendor/**/*
+    - 'tmp'
+    - 'vendor/**/*'
   TargetRubyVersion: 2.3
-Documentation:
-  Enabled: false
 
-LineLength:
+Layout/LineLength:
   Description: 'Limit lines to a more generous 180 characters.'
   Enabled: true
   Max: 180
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - '*.gemspec'
+    - 'spec/*.rb'
+
+Metrics/ClassLength:
+  Max: 300
 
 Metrics/CyclomaticComplexity:
   Enabled: false
@@ -17,12 +26,15 @@ Metrics/CyclomaticComplexity:
 Metrics/MethodLength:
   Max: 155
 
-Metrics/ClassLength:
-  Max: 300
-
-Metrics/BlockLength:
-  Exclude:
-    - 'spec/*.rb'
-
-Metrics/AbcSize:
+Style/Documentation:
   Enabled: false
+
+# Future Cops - 1.0
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
