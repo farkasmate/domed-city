@@ -6,7 +6,7 @@ module Dome
   class Environment
     attr_reader :environment, :account, :settings, :services
 
-    include Dome::Level
+    include Dome::Helper::Level
 
     def initialize(directories = Dir.pwd.split('/'))
       ENV['AWS_DEFAULT_REGION'] = 'eu-west-1'

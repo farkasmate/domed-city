@@ -6,7 +6,7 @@ module Dome
   class Settings
     attr_reader :project_root
 
-    include Dome::Level
+    include Dome::Helper::Level
 
     def initialize(path = nil)
       if path

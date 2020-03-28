@@ -4,8 +4,8 @@ require 'zip'
 
 module Dome
   class Terraform
-    include Dome::Shell
-    include Dome::Level
+    include Dome::Helper::Shell
+    include Dome::Helper::Level
 
     attr_reader :state
 
