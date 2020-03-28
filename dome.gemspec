@@ -27,9 +27,12 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'aws-sdk', '~> 2.1'
   spec.add_dependency 'aws_assume_role', '~> 1'
   spec.add_dependency 'colorize', '~> 0.7'
+  spec.add_dependency 'dry-configurable', '< 0.9'
+  spec.add_dependency 'dry-inflector', '< 0.2'
   spec.add_dependency 'dry-validation', '< 0.13.1'
   spec.add_dependency 'hiera', '~> 3'
   spec.add_dependency 'hiera-eyaml', '~> 2.1'
+  spec.add_dependency 'launchy', '< 2.5'
   spec.add_dependency 'optimist', '~> 3'
   spec.add_dependency 'rubyzip', '~> 1.2'
 end
