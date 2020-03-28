@@ -5,14 +5,13 @@ require 'spec_helper'
 describe Dome do
   let(:account_dir) { 'deirdre-dev' }
   let(:environment_dir) { 'qa' }
-  let(:environment) { Dome::Environment.new([account_dir, environment_dir]) }
-  let(:secrets) { Dome::Secrets.new(environment) }
+  let(:level) { Dome::Level.new([account_dir, environment_dir]) }
+  let(:secrets) { Dome::Secrets.new(level) }
 
   # to prevent a validation error
   let(:project_root) { File.realpath('spec/fixtures') }
-  let(:level) { 'environment' }
   before(:each) { allow_any_instance_of(Dome::Settings).to receive(:find_project_root).and_return(project_root) }
-  before(:each) { allow_any_instance_of(Dome::Environment).to receive(:level).and_return(level) }
+  before(:each) { allow_any_instance_of(Dome::Level).to receive(:level).and_return('environment') }
 
   context 'if config is missing from itv.yaml' do
     context 'outputs a debug message to STDOUT' do

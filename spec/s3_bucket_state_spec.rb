@@ -3,8 +3,8 @@
 require 'spec_helper'
 
 describe Dome::State do
-  let(:environment) { 'qa' }
-  let(:dome_state) { Dome::State.new(environment) }
+  let(:level) { 'qa' }
+  let(:dome_state) { Dome::State.new(level) }
 
   it 'identifies if an S3 bucket exists' do
     bucket_name = 'foo'

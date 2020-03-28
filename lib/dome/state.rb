@@ -5,24 +5,24 @@ module Dome
     include Dome::Helper::Shell
     include Dome::Helper::Level
 
-    def initialize(environment)
-      @environment = environment
+    def initialize(level)
+      @level = level
     end
 
     def state_bucket_name
       case level
       when 'environment'
-        "itv-terraform-state-#{@environment.project}-#{@environment.ecosystem}-#{@environment.environment}"
+        "itv-terraform-state-#{@level.project}-#{@level.ecosystem}-#{@level.environment}"
       when 'ecosystem'
-        "itv-terraform-state-#{@environment.project}-#{@environment.ecosystem}"
+        "itv-terraform-state-#{@level.project}-#{@level.ecosystem}"
       when 'product'
-        "itv-terraform-state-#{@environment.project}"
+        "itv-terraform-state-#{@level.project}"
       when 'roles'
-        "itv-terraform-state-#{@environment.project}-#{@environment.ecosystem}-#{@environment.environment}-roles"
+        "itv-terraform-state-#{@level.project}-#{@level.ecosystem}-#{@level.environment}-roles"
       when 'services'
-        "itv-terraform-state-#{@environment.project}-#{@environment.ecosystem}-#{@environment.environment}-services"
+        "itv-terraform-state-#{@level.project}-#{@level.ecosystem}-#{@level.environment}-services"
       when /^secrets-/
-        "itv-terraform-state-#{@environment.project}-#{@environment.ecosystem}-#{@environment.environment}-secrets"
+        "itv-terraform-state-#{@level.project}-#{@level.ecosystem}-#{@level.environment}-secrets"
       else
         puts "Invalid level: #{level}".colorize(:red)
       end
@@ -31,17 +31,17 @@ module Dome
     def state_file_name
       case level
       when 'environment'
-        "#{@environment.level}.tfstate"
+        "#{@level.level}.tfstate"
       when 'ecosystem'
-        "#{@environment.level}.tfstate"
+        "#{@level.level}.tfstate"
       when 'product'
-        "#{@environment.level}.tfstate"
+        "#{@level.level}.tfstate"
       when 'roles'
-        "#{@environment.level}.tfstate"
+        "#{@level.level}.tfstate"
       when 'services'
-        "#{@environment.project}-#{@environment.ecosystem}-#{@environment.environment}-#{@environment.services}.tfstate"
+        "#{@level.project}-#{@level.ecosystem}-#{@level.environment}-#{@level.services}.tfstate"
       when /^secrets-/
-        "#{@environment.level}.tfstate"
+        "#{@level.level}.tfstate"
       else
         puts "Invalid level: #{level}".colorize(:red)
       end

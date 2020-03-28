@@ -2,10 +2,10 @@
 
 module Dome
   class HieraLookup
-    def initialize(environment)
-      @environment = environment.environment
-      @account     = environment.account
-      @ecosystem   = environment.ecosystem
+    def initialize(level)
+      @environment = level.environment
+      @account     = level.account
+      @ecosystem   = level.ecosystem
       @settings    = Dome::Settings.new
     end
 

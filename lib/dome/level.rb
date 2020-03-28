@@ -3,7 +3,7 @@
 # This class represents the current directory
 
 module Dome
-  class Environment
+  class Level
     attr_reader :environment, :account, :settings, :services
 
     include Dome::Helper::Level

@@ -12,60 +12,60 @@ module Dome
     def initialize(sudo: false)
       case level
       when 'environment'
-        @environment = Dome::Environment.new
-        @secrets     = Dome::Secrets.new(@environment)
-        @state       = Dome::State.new(@environment)
-        @plan_file   = "plans/#{@environment.account}-#{@environment.environment}-plan.tf"
+        @level     = Dome::Level.new
+        @secrets   = Dome::Secrets.new(@level)
+        @state     = Dome::State.new(@level)
+        @plan_file = "plans/#{@level.account}-#{@level.environment}-plan.tf"
 
         puts '--- Environment terraform state location ---'
         puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
         puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
         puts
       when 'ecosystem'
-        @environment = Dome::Environment.new
-        @secrets     = Dome::Secrets.new(@environment)
-        @state       = Dome::State.new(@environment)
-        @plan_file   = "plans/#{@environment.level}-plan.tf"
+        @level     = Dome::Level.new
+        @secrets   = Dome::Secrets.new(@level)
+        @state     = Dome::State.new(@level)
+        @plan_file = "plans/#{@level.level}-plan.tf"
 
         puts '--- Ecosystem terraform state location ---'
         puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
         puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
         puts
       when 'product'
-        @environment = Dome::Environment.new
-        @secrets     = Dome::Secrets.new(@environment)
-        @state       = Dome::State.new(@environment)
-        @plan_file   = "plans/#{@environment.level}-plan.tf"
+        @level     = Dome::Level.new
+        @secrets   = Dome::Secrets.new(@level)
+        @state     = Dome::State.new(@level)
+        @plan_file = "plans/#{@level.level}-plan.tf"
 
         puts '--- Product terraform state location ---'
         puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
         puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
         puts
       when 'roles'
-        @environment = Dome::Environment.new
-        @secrets     = Dome::Secrets.new(@environment)
-        @state       = Dome::State.new(@environment)
-        @plan_file   = "plans/#{@environment.level}-plan.tf"
+        @level     = Dome::Level.new
+        @secrets   = Dome::Secrets.new(@level)
+        @state     = Dome::State.new(@level)
+        @plan_file = "plans/#{@level.level}-plan.tf"
 
         puts '--- Role terraform state location ---'
         puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
         puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
         puts
       when 'services'
-        @environment = Dome::Environment.new
-        @secrets     = Dome::Secrets.new(@environment)
-        @state       = Dome::State.new(@environment)
-        @plan_file   = "plans/#{@environment.services}-plan.tf"
+        @level     = Dome::Level.new
+        @secrets   = Dome::Secrets.new(@level)
+        @state     = Dome::State.new(@level)
+        @plan_file = "plans/#{@level.services}-plan.tf"
 
         puts '--- Services terraform state location ---'
         puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
         puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
         puts
       when /^secrets-/
-        @environment = Dome::Environment.new
-        @secrets     = Dome::Secrets.new(@environment)
-        @state       = Dome::State.new(@environment)
-        @plan_file   = "plans/#{@environment.level}-plan.tf"
+        @level     = Dome::Level.new
+        @secrets   = Dome::Secrets.new(@level)
+        @state     = Dome::State.new(@level)
+        @plan_file = "plans/#{@level.level}-plan.tf"
 
         puts '--- Secrets terraform state location ---'
         puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
@@ -76,7 +76,7 @@ module Dome
         raise Dome::InvalidLevelError.new, level
       end
 
-      @environment.sudo if sudo
+      @level.sudo if sudo
     end
 
     # TODO: this method is a bit of a mess and needs looking at
@@ -86,44 +86,44 @@ module Dome
       case level
       when 'environment'
         puts '--- AWS credentials for accessing environment state ---'
-        environment = @environment.environment
-        account     = @environment.account
-        @environment.invalid_account_message unless @environment.valid_account? account
-        @environment.invalid_environment_message unless @environment.valid_environment? environment
-        @environment.unset_aws_keys
-        @environment.aws_credentials
+        environment = @level.environment
+        account     = @level.account
+        @level.invalid_account_message unless @level.valid_account? account
+        @level.invalid_environment_message unless @level.valid_environment? environment
+        @level.unset_aws_keys
+        @level.aws_credentials
       when 'ecosystem'
         puts '--- AWS credentials for accessing ecosystem state ---'
-        @environment.unset_aws_keys
-        @environment.aws_credentials
+        @level.unset_aws_keys
+        @level.aws_credentials
       when 'product'
         puts '--- AWS credentials for accessing product state ---'
-        @environment.unset_aws_keys
-        @environment.aws_credentials
+        @level.unset_aws_keys
+        @level.aws_credentials
       when 'roles'
         puts '--- AWS credentials for accessing roles state ---'
-        environment = @environment.environment
-        account     = @environment.account
-        @environment.invalid_account_message unless @environment.valid_account? account
-        @environment.invalid_environment_message unless @environment.valid_environment? environment
-        @environment.unset_aws_keys
-        @environment.aws_credentials
+        environment = @level.environment
+        account     = @level.account
+        @level.invalid_account_message unless @level.valid_account? account
+        @level.invalid_environment_message unless @level.valid_environment? environment
+        @level.unset_aws_keys
+        @level.aws_credentials
       when 'services'
         puts '--- AWS credentials for accessing services state ---'
-        environment = @environment.environment
-        account     = @environment.account
-        @environment.invalid_account_message unless @environment.valid_account? account
-        @environment.invalid_environment_message unless @environment.valid_environment? environment
-        @environment.unset_aws_keys
-        @environment.aws_credentials
+        environment = @level.environment
+        account     = @level.account
+        @level.invalid_account_message unless @level.valid_account? account
+        @level.invalid_environment_message unless @level.valid_environment? environment
+        @level.unset_aws_keys
+        @level.aws_credentials
       when /^secrets-/
         puts '--- AWS credentials for accessing secrets state ---'
-        environment = @environment.environment
-        account     = @environment.account
-        @environment.invalid_account_message unless @environment.valid_account? account
-        @environment.invalid_environment_message unless @environment.valid_environment? environment
-        @environment.unset_aws_keys
-        @environment.aws_credentials
+        environment = @level.environment
+        account     = @level.account
+        @level.invalid_account_message unless @level.valid_account? account
+        @level.invalid_environment_message unless @level.valid_environment? environment
+        @level.unset_aws_keys
+        @level.aws_credentials
 
         puts '--- Vault login ---'
         begin
@@ -134,7 +134,7 @@ module Dome
         end
 
         product = ENV['TF_VAR_product']
-        environment_name = @environment.environment
+        environment_name = @level.environment
         Vault.address = "https://secrets.#{environment_name}.#{product}.itv.com:8200"
 
         case level
@@ -285,8 +285,8 @@ module Dome
     end
 
     def spawn_environment_shell
-      @environment.unset_aws_keys
-      @environment.aws_credentials
+      @level.unset_aws_keys
+      @level.aws_credentials
       @secrets.secret_env_vars
 
       shell = ENV['SHELL'] || '/bin/sh'
@@ -296,7 +296,7 @@ module Dome
     private
 
     def configure_providers
-      providers_config = File.join(@environment.settings.project_root, '.terraform-providers.yaml')
+      providers_config = File.join(@level.settings.project_root, '.terraform-providers.yaml')
       return unless File.exist? providers_config
 
       puts 'Installing providers...'.colorize(:yellow)

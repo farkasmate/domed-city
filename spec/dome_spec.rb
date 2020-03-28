@@ -10,9 +10,9 @@ describe Dome do
   let(:project_root) { File.realpath('spec/fixtures') }
 
   before(:each) { allow_any_instance_of(Dome::Settings).to receive(:find_project_root).and_return(project_root) }
-  before(:each) { allow_any_instance_of(Dome::Environment).to receive(:level).and_return(level) }
+  before(:each) { allow_any_instance_of(Dome::Level).to receive(:level).and_return(level) }
 
-  let(:dome) { Dome::Environment.new([account_dir, environment_dir]) }
+  let(:dome) { Dome::Level.new([account_dir, environment_dir]) }
 
   context 'environment validation against itv.yaml' do
     it 'identifies a valid environment' do
