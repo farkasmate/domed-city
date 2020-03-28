@@ -8,6 +8,17 @@ module Dome
 
     include Dome::Helper::Level
 
+    BANNER = <<-'MSG'
+
+             _
+          __| | ___  _ __ ___   ___
+        /  _` |/ _ \| '_ ` _ \ / _ \
+        | (_| | (_) | | | | | |  __/
+         \__,_|\___/|_| |_| |_|\___|
+
+        Wrapping terraform since 2015
+    MSG
+
     def self.match(_relative_path)
       raise "Override self.match(relative_path) in class: #{self}"
     end
@@ -27,19 +38,8 @@ module Dome
     def initialize(directories = Dir.pwd.split('/'))
       ENV['AWS_DEFAULT_REGION'] = 'eu-west-1'
 
-      puts <<-'MSG'
-             _
-          __| | ___  _ __ ___   ___
-        /  _` |/ _ \| '_ ` _ \ / _ \
-        | (_| | (_) | | | | | |  __/
-         \__,_|\___/|_| |_| |_|\___|
-
-        Wrapping terraform since 2015
-      MSG
-
-      puts ''
-      puts "[*] Operating at #{level.colorize(:red)} level"
-      puts ''
+      Logger.debug BANNER
+      Logger.info "[*] Operating at #{level.colorize(:red)} level"
 
       @sudo = false
 
@@ -78,7 +78,7 @@ module Dome
         @services               = nil
 
       else
-        puts "Invalid level: #{level}".colorize(:red)
+        Logger.error "Invalid level: #{level}".colorize(:red)
       end
 
       @ecosystem              = @account.split('-')[-1]
@@ -121,26 +121,24 @@ module Dome
       ENV['TF_VAR_dev_ecosystem_environments'] = dev_ecosystem_environments.join(',').to_s
       ENV['TF_VAR_prd_ecosystem_environments'] = prd_ecosystem_environments.join(',').to_s
 
-      puts '--- Initial TF_VAR variables to drive terraform ---'
-      puts "[*] Setting aws_account_id to #{ENV['TF_VAR_aws_account_id'].colorize(:green)}"
-      puts "[*] Setting product to #{ENV['TF_VAR_product'].colorize(:green)}"
-      puts "[*] Setting ecosystem to #{ENV['TF_VAR_ecosystem'].colorize(:green)}"
-      puts "[*] Setting env to #{ENV['TF_VAR_env'].colorize(:green)}" unless ENV['TF_VAR_env'].nil?
-      puts "[*] Setting cidr_ecosystem to #{ENV['TF_VAR_cidr_ecosystem'].colorize(:green)}"
-      puts ''
+      Logger.info '--- Initial TF_VAR variables to drive terraform ---'
+      Logger.info "[*] Setting aws_account_id to #{ENV['TF_VAR_aws_account_id'].colorize(:green)}"
+      Logger.info "[*] Setting product to #{ENV['TF_VAR_product'].colorize(:green)}"
+      Logger.info "[*] Setting ecosystem to #{ENV['TF_VAR_ecosystem'].colorize(:green)}"
+      Logger.info "[*] Setting env to #{ENV['TF_VAR_env'].colorize(:green)}" unless ENV['TF_VAR_env'].nil?
+      Logger.info "[*] Setting cidr_ecosystem to #{ENV['TF_VAR_cidr_ecosystem'].colorize(:green)}"
+      Logger.info ''
 
-      puts '--- The following TF_VAR are helpers that modules can use ---'
-      puts "[*] Setting dev_ecosystem_environments to #{ENV['TF_VAR_dev_ecosystem_environments'].colorize(:green)}"
-      puts "[*] Setting prd_ecosystem_environments to #{ENV['TF_VAR_prd_ecosystem_environments'].colorize(:green)}"
+      Logger.info '--- The following TF_VAR are helpers that modules can use ---'
+      Logger.info "[*] Setting dev_ecosystem_environments to #{ENV['TF_VAR_dev_ecosystem_environments'].colorize(:green)}"
+      Logger.info "[*] Setting prd_ecosystem_environments to #{ENV['TF_VAR_prd_ecosystem_environments'].colorize(:green)}"
 
       #
       # TODO: Will uncomment when all the products migrate to 1.1
       #
 
-      # puts "[*] Setting cidr_ecosystem_dev to #{ENV['TF_VAR_cidr_ecosystem_dev'].colorize(:green)}"
-      # puts "[*] Setting cidr_ecosystem_prd to #{ENV['TF_VAR_cidr_ecosystem_prd'].colorize(:green)}"
-
-      puts ''
+      # Logger.info "[*] Setting cidr_ecosystem_dev to #{ENV['TF_VAR_cidr_ecosystem_dev'].colorize(:green)}"
+      # Logger.info "[*] Setting cidr_ecosystem_prd to #{ENV['TF_VAR_cidr_ecosystem_prd'].colorize(:green)}"
     end
 
     def project
@@ -162,7 +160,7 @@ module Dome
       when /^secrets-|services/
         directories[-4].split('-')[-1]
       else
-        puts "Invalid level: #{level}".colorize(:red)
+        Logger.error "Invalid level: #{level}".colorize(:red)
       end
     end
 
@@ -179,9 +177,9 @@ module Dome
 
     def unset_aws_keys
       if ENV['FREEZE_AWS_ENVVAR']
-        puts '$FREEZE_AWS_ENVVAR is set. Leaving AWS environment variables unchanged.'
+        Logger.debug '$FREEZE_AWS_ENVVAR is set. Leaving AWS environment variables unchanged.'
       else
-        puts '[*] Unsetting AWS environment variables from the shell to make sure we are using the correct'\
+        Logger.debug '[*] Unsetting AWS environment variables from the shell to make sure we are using the correct'\
         'assumed roles credentials'
         ENV['AWS_ACCESS_KEY'] = nil
         ENV['AWS_SECRET_KEY'] = nil
@@ -193,20 +191,19 @@ module Dome
 
     def export_aws_keys(assumed_role)
       if ENV['FREEZE_AWS_ENVVAR']
-        puts '$FREEZE_AWS_ENVVAR is set. Leaving AWS environment variables unchanged.'
+        Logger.debug '$FREEZE_AWS_ENVVAR is set. Leaving AWS environment variables unchanged.'
       else
-        puts '[*] Exporting temporary credentials to environment variables '\
+        Logger.debug '[*] Exporting temporary credentials to environment variables '\
         "#{'AWS_ACCESS_KEY_ID'.colorize(:green)}, #{'AWS_SECRET_ACCESS_KEY'.colorize(:green)}"\
         " and #{'AWS_SESSION_TOKEN'.colorize(:green)}."
         ENV['AWS_ACCESS_KEY_ID'] = assumed_role.credentials.access_key_id
         ENV['AWS_SECRET_ACCESS_KEY'] = assumed_role.credentials.secret_access_key
         ENV['AWS_SESSION_TOKEN'] = assumed_role.credentials.session_token
-        puts ''
       end
     end
 
     def aws_credentials
-      puts "[*] Attempting to assume the role defined by your profile for #{@account.colorize(:green)}."
+      Logger.info "[*] Attempting to assume the role defined by your profile for #{@account.colorize(:green)}."
       role_opts = { profile: account, role_session_name: account, use_mfa: true }
 
       if @sudo
@@ -253,18 +250,15 @@ module Dome
     private
 
     def generic_error_message
-      puts ''
-      puts '--- Debug --- '
-      puts "The environments you have defined are: #{environments}."
-      puts "The accounts we calculated from your project itv.yaml key are: #{accounts}."
-      puts ''
-      puts '--- Troubleshoot ---'
-      puts 'To fix your issue, try the following:'
-      puts '1. Set your .aws/config to one of the valid accounts above.'
-      puts '2. Ensure you are running this from the correct directory.'
-      puts '3. Update your itv.yaml with the required environments or project.'
-      puts '4. Check the README in case something is missing from your setup or ask in Slack'
-      puts ''
+      Logger.error '--- Debug --- '
+      Logger.error "The environments you have defined are: #{environments}."
+      Logger.error "The accounts we calculated from your project itv.yaml key are: #{accounts}."
+      Logger.error '--- Troubleshoot ---'
+      Logger.error 'To fix your issue, try the following:'
+      Logger.error '1. Set your .aws/config to one of the valid accounts above.'
+      Logger.error '2. Ensure you are running this from the correct directory.'
+      Logger.error '3. Update your itv.yaml with the required environments or project.'
+      Logger.error '4. Check the README in case something is missing from your setup or ask in Slack'
     end
   end
 end

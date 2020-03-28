@@ -24,7 +24,7 @@ module Dome
       when /^secrets-/
         "itv-terraform-state-#{@level.project}-#{@level.ecosystem}-#{@level.environment}-secrets"
       else
-        puts "Invalid level: #{level}".colorize(:red)
+        Logger.error "Invalid level: #{level}".colorize(:red)
       end
     end
 
@@ -43,7 +43,7 @@ module Dome
       when /^secrets-/
         "#{@level.level}.tfstate"
       else
-        puts "Invalid level: #{level}".colorize(:red)
+        Logger.error "Invalid level: #{level}".colorize(:red)
       end
     end
 
@@ -62,7 +62,7 @@ module Dome
     def bucket_names
       bucket_names = list_buckets.buckets.map(&:name)
       # TODO: Add a debug flag to enable certain output
-      # puts "Found the following buckets: #{bucket_names}".colorize(:yellow)
+      # Logger.debug "Found the following buckets: #{bucket_names}".colorize(:yellow)
       bucket_names
     end
 
@@ -77,7 +77,7 @@ module Dome
     end
 
     def enable_bucket_versioning(bucket_name)
-      puts 'Enabling versioning on the S3 bucket - http://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html'.colorize(:green)
+      Logger.debug 'Enabling versioning on the S3 bucket - http://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html'.colorize(:green)
       s3_client.put_bucket_versioning(bucket: bucket_name,
                                       versioning_configuration: {
                                         mfa_delete: 'Disabled',
@@ -86,7 +86,7 @@ module Dome
     end
 
     def put_empty_object_in_bucket(bucket_name, key_name)
-      puts "Putting an empty object with key: #{key_name} into bucket: #{bucket_name}".colorize(:green)
+      Logger.debug "Putting an empty object with key: #{key_name} into bucket: #{bucket_name}".colorize(:green)
       s3_client.put_object(
         bucket: bucket_name,
         key: key_name,
@@ -100,7 +100,7 @@ module Dome
         table_name: bucket_name
       )
     rescue Aws::DynamoDB::Errors::ResourceNotFoundException => e
-      puts "[*] DynamoDB state locking table doesn't exist! #{e} .. creating it".colorize(:yellow)
+      Logger.debug "[*] DynamoDB state locking table doesn't exist! #{e} .. creating it".colorize(:yellow)
       false
     rescue StandardError => e
       raise "Could not read DynamoDB table! error occurred: #{e}"

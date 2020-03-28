@@ -23,7 +23,7 @@ module Dome
         elsif directories[-5] == 'terraform' && directories[-2] == 'secrets' && directories[-1] == 'config'
           'secrets-config'
         else
-          puts 'Invalid level: root'.colorize(:red)
+          Logger.error 'Invalid level: root'.colorize(:red)
           'root'
         end
       end

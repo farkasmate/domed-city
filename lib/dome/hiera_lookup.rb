@@ -39,7 +39,7 @@ module Dome
     def puppet_dir
       directory = File.join(@settings.project_root, 'puppet')
       # TODO: Add a debug flag to enable certain output
-      # puts "The configured Puppet directory is: #{directory.colorize(:green)}" unless @directory
+      # Logger.debug "The configured Puppet directory is: #{directory.colorize(:green)}" unless @directory
       @puppet_dir ||= directory
     end
 
@@ -52,7 +52,7 @@ module Dome
         abort("Puppet private key not in found in either '/etc/puppet/keys' or #{puppet_dir}keys.")
       end
       # TODO: Add a debug flag to enable certain output
-      # puts "The configured EYAML directory is: #{eyaml_directory.colorize(:green)}" unless @eyaml_directory
+      # Logger.debug "The configured EYAML directory is: #{eyaml_directory.colorize(:green)}" unless @eyaml_directory
       @eyaml_dir ||= eyaml_directory
     end
 
@@ -61,7 +61,7 @@ module Dome
       raise "Cannot find eyaml private key! Make sure it exists at #{private_key}" unless File.exist?(private_key)
 
       # TODO: Add a debug flag to enable certain output
-      # puts "Found eyaml private key: #{private_key.colorize(:green)}"
+      # Logger.debug "Found eyaml private key: #{private_key.colorize(:green)}"
       private_key
     end
 
@@ -70,7 +70,7 @@ module Dome
       raise "Cannot find eyaml public key! Make sure it exists at #{public_key}" unless File.exist?(public_key)
 
       # TODO: Add a debug flag to enable certain output
-      # puts "Found eyaml public key: #{public_key.colorize(:green)}"
+      # Logger.debug "Found eyaml public key: #{public_key.colorize(:green)}"
       public_key
     end
 
@@ -91,13 +91,11 @@ module Dome
         terraform_env_var = "TF_VAR_#{key}"
         ENV[terraform_env_var] = hiera_lookup
         if hiera_lookup
-          puts "[*] Setting #{terraform_env_var.colorize(:green)}."
+          Logger.info "[*] Setting #{terraform_env_var.colorize(:green)}."
         else
-          puts "[!] Hiera lookup failed for '#{val}', so #{terraform_env_var} was not set.".colorize(:red)
+          Logger.warn "[!] Hiera lookup failed for '#{val}', so #{terraform_env_var} was not set.".colorize(:red)
         end
       end
-
-      puts
     end
 
     def extract_certs(certs)
@@ -105,13 +103,13 @@ module Dome
 
       certs.each_pair do |key, val|
         directory = "#{certificate_directory}/#{key}"
-        puts "Extracting certificate #{key.colorize(:green)} into #{directory.colorize(:green)}"
+        Logger.info "Extracting certificate #{key.colorize(:green)} into #{directory.colorize(:green)}"
         File.open(directory, 'w') { |f| f.write(lookup(val)) }
       end
     end
 
     def create_certificate_directory
-      puts "Creating certificate directory at #{certificate_directory.colorize(:green)}"
+      Logger.debug "Creating certificate directory at #{certificate_directory.colorize(:green)}"
       FileUtils.mkdir_p certificate_directory
     end
 

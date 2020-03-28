@@ -23,13 +23,13 @@ module Dome
     end
 
     def dome_config
-      puts "No #{'dome'.colorize(:green)} key found in your itv.yaml." unless @settings.parse['dome']
+      Logger.warn "No #{'dome'.colorize(:green)} key found in your itv.yaml." unless @settings.parse['dome']
       @settings.parse['dome']
     end
 
     def hiera_keys_config
       unless @settings.parse['dome']['hiera_keys']
-        puts "No #{'hiera_keys'.colorize(:green)} sub-key under #{'dome'.colorize(:green)} key found "\
+        Logger.warn "No #{'hiera_keys'.colorize(:green)} sub-key under #{'dome'.colorize(:green)} key found "\
           'in your itv.yaml.'
       end
       @settings.parse['dome']['hiera_keys']
@@ -37,7 +37,7 @@ module Dome
 
     def certs_config
       unless @settings.parse['dome']['certs']
-        puts "No #{'certs'.colorize(:green)} sub-key under #{'dome'.colorize(:green)} key found "\
+        Logger.warn "No #{'certs'.colorize(:green)} sub-key under #{'dome'.colorize(:green)} key found "\
           'in your itv.yaml.'
       end
       @settings.parse['dome']['certs']

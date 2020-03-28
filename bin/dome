@@ -31,9 +31,9 @@ Optimist.educate unless opts.value?(true)
 @dome = Dome::Terraform.new(sudo: opts[:sudo])
 
 if opts[:environment]
-  puts '--- Spawning shell ---'
+  Logger.info '--- Spawning shell ---'
   @dome.spawn_environment_shell
-  puts '--- Exiting shell ---'
+  Logger.info '--- Exiting shell ---'
   exit 0
 end
 
@@ -58,5 +58,5 @@ begin
     @dome.output
   end
 rescue Interrupt
-  puts "\ndome execution interrupted!".colorize(:red)
+  Logger.error "\ndome execution interrupted!".colorize(:red)
 end

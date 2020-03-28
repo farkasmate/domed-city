@@ -17,62 +17,56 @@ module Dome
         @state     = Dome::State.new(@level)
         @plan_file = "plans/#{@level.account}-#{@level.environment}-plan.tf"
 
-        puts '--- Environment terraform state location ---'
-        puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
-        puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
-        puts
+        Logger.info '--- Environment terraform state location ---'
+        Logger.info "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
+        Logger.info "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
       when 'ecosystem'
         @level     = Dome::Level.new
         @secrets   = Dome::Secrets.new(@level)
         @state     = Dome::State.new(@level)
         @plan_file = "plans/#{@level.level}-plan.tf"
 
-        puts '--- Ecosystem terraform state location ---'
-        puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
-        puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
-        puts
+        Logger.info '--- Ecosystem terraform state location ---'
+        Logger.info "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
+        Logger.info "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
       when 'product'
         @level     = Dome::Level.new
         @secrets   = Dome::Secrets.new(@level)
         @state     = Dome::State.new(@level)
         @plan_file = "plans/#{@level.level}-plan.tf"
 
-        puts '--- Product terraform state location ---'
-        puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
-        puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
-        puts
+        Logger.info '--- Product terraform state location ---'
+        Logger.info "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
+        Logger.info "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
       when 'roles'
         @level     = Dome::Level.new
         @secrets   = Dome::Secrets.new(@level)
         @state     = Dome::State.new(@level)
         @plan_file = "plans/#{@level.level}-plan.tf"
 
-        puts '--- Role terraform state location ---'
-        puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
-        puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
-        puts
+        Logger.info '--- Role terraform state location ---'
+        Logger.info "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
+        Logger.info "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
       when 'services'
         @level     = Dome::Level.new
         @secrets   = Dome::Secrets.new(@level)
         @state     = Dome::State.new(@level)
         @plan_file = "plans/#{@level.services}-plan.tf"
 
-        puts '--- Services terraform state location ---'
-        puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
-        puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
-        puts
+        Logger.info '--- Services terraform state location ---'
+        Logger.info "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
+        Logger.info "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
       when /^secrets-/
         @level     = Dome::Level.new
         @secrets   = Dome::Secrets.new(@level)
         @state     = Dome::State.new(@level)
         @plan_file = "plans/#{@level.level}-plan.tf"
 
-        puts '--- Secrets terraform state location ---'
-        puts "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
-        puts "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
-        puts
+        Logger.info '--- Secrets terraform state location ---'
+        Logger.info "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
+        Logger.info "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
       else
-        puts '[*] Dome is meant to run from either a product,ecosystem,environment,role,services or secrets level'
+        Logger.info '[*] Dome is meant to run from either a product,ecosystem,environment,role,services or secrets level'
         raise Dome::InvalidLevelError.new, level
       end
 
@@ -85,7 +79,7 @@ module Dome
     def validate_environment
       case level
       when 'environment'
-        puts '--- AWS credentials for accessing environment state ---'
+        Logger.info '--- AWS credentials for accessing environment state ---'
         environment = @level.environment
         account     = @level.account
         @level.invalid_account_message unless @level.valid_account? account
@@ -93,15 +87,15 @@ module Dome
         @level.unset_aws_keys
         @level.aws_credentials
       when 'ecosystem'
-        puts '--- AWS credentials for accessing ecosystem state ---'
+        Logger.info '--- AWS credentials for accessing ecosystem state ---'
         @level.unset_aws_keys
         @level.aws_credentials
       when 'product'
-        puts '--- AWS credentials for accessing product state ---'
+        Logger.info '--- AWS credentials for accessing product state ---'
         @level.unset_aws_keys
         @level.aws_credentials
       when 'roles'
-        puts '--- AWS credentials for accessing roles state ---'
+        Logger.info '--- AWS credentials for accessing roles state ---'
         environment = @level.environment
         account     = @level.account
         @level.invalid_account_message unless @level.valid_account? account
@@ -109,7 +103,7 @@ module Dome
         @level.unset_aws_keys
         @level.aws_credentials
       when 'services'
-        puts '--- AWS credentials for accessing services state ---'
+        Logger.info '--- AWS credentials for accessing services state ---'
         environment = @level.environment
         account     = @level.account
         @level.invalid_account_message unless @level.valid_account? account
@@ -117,7 +111,7 @@ module Dome
         @level.unset_aws_keys
         @level.aws_credentials
       when /^secrets-/
-        puts '--- AWS credentials for accessing secrets state ---'
+        Logger.info '--- AWS credentials for accessing secrets state ---'
         environment = @level.environment
         account     = @level.account
         @level.invalid_account_message unless @level.valid_account? account
@@ -125,7 +119,7 @@ module Dome
         @level.unset_aws_keys
         @level.aws_credentials
 
-        puts '--- Vault login ---'
+        Logger.info '--- Vault login ---'
         begin
           require 'vault/helper'
         rescue LoadError
@@ -144,8 +138,8 @@ module Dome
           unless Vault::Helper.initialized?
             init_user = ENV['VAULT_INIT_USER'] || 'tomclar'
             keys = Vault::Helper.init(init_user: init_user)
-            puts "[*] Root token for #{init_user}: #{keys[:root_token]}".colorize(:yellow)
-            puts "[*] Recovery key for #{init_user}: #{keys[:recovery_key]}".colorize(:yellow)
+            Logger.info "[*] Root token for #{init_user}: #{keys[:root_token]}".colorize(:yellow)
+            Logger.info "[*] Recovery key for #{init_user}: #{keys[:recovery_key]}".colorize(:yellow)
             raise "Vault not initialized, send the keys printed above to #{init_user} to finish initialization."
           end
         when 'secrets-config'
@@ -155,14 +149,12 @@ module Dome
         end
 
         if ENV['VAULT_TOKEN']
-          puts '[*] Using VAULT_TOKEN environment variable'.colorize(:yellow)
+          Logger.info '[*] Using VAULT_TOKEN environment variable'.colorize(:yellow)
           Vault.token = ENV['VAULT_TOKEN']
         else
-          puts "[*] Logging in as: #{role}"
+          Logger.info "[*] Logging in as: #{role}"
           ENV['VAULT_TOKEN'] = Vault::Helper.login(role)
         end
-
-        puts ''
       else
         raise Dome::InvalidLevelError.new, level
       end
@@ -170,19 +162,16 @@ module Dome
     # rubocop:enable Metrics/PerceivedComplexity
 
     def plan
-      puts '--- Decrypting hiera secrets and pass them as TF_VARs ---'
+      Logger.info '--- Decrypting hiera secrets and pass them as TF_VARs ---'
       @secrets.secret_env_vars
-      puts '--- Deleting old plans'
+      Logger.info '--- Deleting old plans'
       # delete_terraform_directory # Don't delete it
       delete_plan_file
       @state.s3_state
-      puts
-      puts '--- Terraform init & plan ---'
-      puts
+      Logger.info '--- Terraform init & plan ---'
+
       terraform_init
-      puts
       create_plan
-      puts
     end
 
     def apply
@@ -254,13 +243,13 @@ module Dome
     end
 
     def delete_terraform_directory
-      puts '[*] Deleting terraform module cache dir ...'.colorize(:green)
+      Logger.info '[*] Deleting terraform module cache dir ...'.colorize(:green)
       terraform_directory = '.terraform'
       FileUtils.rm_rf terraform_directory
     end
 
     def delete_plan_file
-      puts '[*] Deleting previous terraform plan ...'.colorize(:green)
+      Logger.info '[*] Deleting previous terraform plan ...'.colorize(:green)
       FileUtils.rm_f @plan_file
     end
 
@@ -299,7 +288,7 @@ module Dome
       providers_config = File.join(@level.settings.project_root, '.terraform-providers.yaml')
       return unless File.exist? providers_config
 
-      puts 'Installing providers...'.colorize(:yellow)
+      Logger.info 'Installing providers...'.colorize(:yellow)
       plugin_dirs = []
       providers = YAML.load_file(providers_config)
 
@@ -313,7 +302,7 @@ module Dome
     end
 
     def install_provider(name, version)
-      puts "Installing provider #{name}:#{version} ...".colorize(:green)
+      Logger.info "Installing provider #{name}:#{version} ...".colorize(:green)
 
       if RUBY_PLATFORM =~ /linux/
         arch = 'linux_amd64'

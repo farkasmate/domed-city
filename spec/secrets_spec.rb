@@ -17,19 +17,25 @@ describe Dome do
     context 'outputs a debug message to STDOUT' do
       it 'when missing the parent key dome' do
         allow(secrets.settings).to receive(:parse).and_return({})
-        expect { secrets.dome_config }.to output.to_stdout
+
+        expect(Dome::Logger).to receive(:warn)
+        secrets.dome_config
       end
 
       it 'when missing the sub-key hiera_keys' do
         yaml = { 'dome' => { 'foo' => 'bar' } }
         allow(secrets.settings).to receive(:parse).and_return(yaml)
-        expect { secrets.hiera_keys_config }.to output.to_stdout
+
+        expect(Dome::Logger).to receive(:warn)
+        secrets.hiera_keys_config
       end
 
       it 'when missing the sub-key certs' do
         yaml = { 'dome' => { 'foo' => 'bar' } }
         allow(secrets.settings).to receive(:parse).and_return(yaml)
-        expect { secrets.certs_config }.to output.to_stdout
+
+        expect(Dome::Logger).to receive(:warn)
+        secrets.certs_config
       end
     end
 
