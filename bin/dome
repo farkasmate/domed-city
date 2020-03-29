@@ -38,8 +38,6 @@ if opts[:environment]
   exit 0
 end
 
-@dome.validate_environment
-
 begin
   if opts[:plan]
     @dome.plan

@@ -12,95 +12,10 @@ module Dome
       @secrets = Dome::Secrets.new(@level.ecosystem, @level.environment)
 
       @level.sudo if sudo
+
+      # FIXME: Move validation into Level, separate setting up ENV
+      @level.validate_environment
     end
-
-    # TODO: this method is a bit of a mess and needs looking at
-    # FIXME: Simplify *validate_environment*
-    # rubocop:disable Metrics/PerceivedComplexity
-    def validate_environment
-      case level
-      when 'environment'
-        Logger.info '--- AWS credentials for accessing environment state ---'
-        environment = @level.environment
-        account     = @level.account
-        @level.invalid_account_message unless @level.valid_account? account
-        @level.invalid_environment_message unless @level.valid_environment? environment
-        @level.unset_aws_keys
-        @level.aws_credentials
-      when 'ecosystem'
-        Logger.info '--- AWS credentials for accessing ecosystem state ---'
-        @level.unset_aws_keys
-        @level.aws_credentials
-      when 'product'
-        Logger.info '--- AWS credentials for accessing product state ---'
-        @level.unset_aws_keys
-        @level.aws_credentials
-      when 'roles'
-        Logger.info '--- AWS credentials for accessing roles state ---'
-        environment = @level.environment
-        account     = @level.account
-        @level.invalid_account_message unless @level.valid_account? account
-        @level.invalid_environment_message unless @level.valid_environment? environment
-        @level.unset_aws_keys
-        @level.aws_credentials
-      when 'services'
-        Logger.info '--- AWS credentials for accessing services state ---'
-        environment = @level.environment
-        account     = @level.account
-        @level.invalid_account_message unless @level.valid_account? account
-        @level.invalid_environment_message unless @level.valid_environment? environment
-        @level.unset_aws_keys
-        @level.aws_credentials
-      when /^secrets-/
-        Logger.info '--- AWS credentials for accessing secrets state ---'
-        environment = @level.environment
-        account     = @level.account
-        @level.invalid_account_message unless @level.valid_account? account
-        @level.invalid_environment_message unless @level.valid_environment? environment
-        @level.unset_aws_keys
-        @level.aws_credentials
-
-        Logger.info '--- Vault login ---'
-        begin
-          require 'vault/helper'
-        rescue LoadError
-          raise '[!] Failed to load vault/helper. Please add \
-"gem \'hiera-vault\', git: \'git@github.com:ITV/hiera-vault\', ref: \'v1.0.0\'" or later to your Gemfile'.colorize(:red)
-        end
-
-        product = ENV['TF_VAR_product']
-        environment_name = @level.environment
-        Vault.address = "https://secrets.#{environment_name}.#{product}.itv.com:8200"
-
-        case level
-        when 'secrets-init'
-          Vault.address = "https://secrets-init.#{environment_name}.#{product}.itv.com:8200"
-          role = 'service_administrator'
-          unless Vault::Helper.initialized?
-            init_user = ENV['VAULT_INIT_USER'] || 'tomclar'
-            keys = Vault::Helper.init(init_user: init_user)
-            Logger.info "[*] Root token for #{init_user}: #{keys[:root_token]}".colorize(:yellow)
-            Logger.info "[*] Recovery key for #{init_user}: #{keys[:recovery_key]}".colorize(:yellow)
-            raise "Vault not initialized, send the keys printed above to #{init_user} to finish initialization."
-          end
-        when 'secrets-config'
-          role = 'content_administrator'
-        else
-          raise Dome::InvalidLevelError.new, level
-        end
-
-        if ENV['VAULT_TOKEN']
-          Logger.info '[*] Using VAULT_TOKEN environment variable'.colorize(:yellow)
-          Vault.token = ENV['VAULT_TOKEN']
-        else
-          Logger.info "[*] Logging in as: #{role}"
-          ENV['VAULT_TOKEN'] = Vault::Helper.login(role)
-        end
-      else
-        raise Dome::InvalidLevelError.new, level
-      end
-    end
-    # rubocop:enable Metrics/PerceivedComplexity
 
     def s3_state
       @level.init_s3_state
@@ -219,8 +134,6 @@ module Dome
     end
 
     def spawn_environment_shell
-      @level.unset_aws_keys
-      @level.aws_credentials
       @secrets.secret_env_vars
 
       shell = ENV['SHELL'] || '/bin/sh'

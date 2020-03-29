@@ -166,6 +166,16 @@ module Dome
       @state.s3_state(state_bucket_name, state_file_name)
     end
 
+    # FIXME: Rename and simplify ENV setup
+    def validate_environment
+      Logger.info "--- AWS credentials for accessing #{self.class.level_name} state ---"
+      invalid_account_message unless valid_account? @account
+      # FIXME: !!! Environment only exist on environment level and down
+      #invalid_environment_message unless valid_environment? @environment
+      unset_aws_keys
+      aws_credentials
+    end
+
     def accounts
       %W[#{@project}-dev #{@project}-prd]
     end
