@@ -2,11 +2,10 @@
 
 module Dome
   class HieraLookup
-    def initialize(level)
-      @environment = level.environment
-      @account     = level.account
-      @ecosystem   = level.ecosystem
-      @settings    = Dome::Settings.new
+    def initialize(project_root, ecosystem, environment)
+      @project_root = project_root
+      @ecosystem    = ecosystem
+      @environment  = environment
     end
 
     def config
@@ -37,7 +36,7 @@ module Dome
     end
 
     def puppet_dir
-      directory = File.join(@settings.project_root, 'puppet')
+      directory = File.join(@project_root, 'puppet')
       # TODO: Add a debug flag to enable certain output
       # Logger.debug "The configured Puppet directory is: #{directory.colorize(:green)}" unless @directory
       @puppet_dir ||= directory
@@ -114,7 +113,7 @@ module Dome
     end
 
     def certificate_directory
-      "#{@settings.project_root}/terraform/certs"
+      "#{@project_root}/terraform/certs"
     end
   end
 end

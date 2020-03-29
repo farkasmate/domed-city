@@ -7,7 +7,7 @@ module Dome
     def initialize(level)
       @level    = level
       @settings = Dome::Settings.new
-      @hiera    = Dome::HieraLookup.new(@level)
+      @hiera    = Dome::HieraLookup.new(@settings.project_root, @level.ecosystem, @level.environment)
     end
 
     def secret_env_vars

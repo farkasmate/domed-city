@@ -9,10 +9,11 @@ module Dome
 
     attr_reader :state
 
-    def initialize(sudo: false)
+    def initialize(relative_path, sudo = false)
+      @level = Level.create_level(relative_path)
+
       case level
       when 'environment'
-        @level     = Dome::Level.new
         @secrets   = Dome::Secrets.new(@level)
         @state     = Dome::State.new(@level)
         @plan_file = "plans/#{@level.account}-#{@level.environment}-plan.tf"
@@ -21,7 +22,6 @@ module Dome
         Logger.info "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
         Logger.info "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
       when 'ecosystem'
-        @level     = Dome::Level.new
         @secrets   = Dome::Secrets.new(@level)
         @state     = Dome::State.new(@level)
         @plan_file = "plans/#{@level.level}-plan.tf"
@@ -30,7 +30,6 @@ module Dome
         Logger.info "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
         Logger.info "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
       when 'product'
-        @level     = Dome::Level.new
         @secrets   = Dome::Secrets.new(@level)
         @state     = Dome::State.new(@level)
         @plan_file = "plans/#{@level.level}-plan.tf"
@@ -39,7 +38,6 @@ module Dome
         Logger.info "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
         Logger.info "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
       when 'roles'
-        @level     = Dome::Level.new
         @secrets   = Dome::Secrets.new(@level)
         @state     = Dome::State.new(@level)
         @plan_file = "plans/#{@level.level}-plan.tf"
@@ -48,7 +46,6 @@ module Dome
         Logger.info "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
         Logger.info "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
       when 'services'
-        @level     = Dome::Level.new
         @secrets   = Dome::Secrets.new(@level)
         @state     = Dome::State.new(@level)
         @plan_file = "plans/#{@level.services}-plan.tf"
@@ -57,7 +54,6 @@ module Dome
         Logger.info "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
         Logger.info "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
       when /^secrets-/
-        @level     = Dome::Level.new
         @secrets   = Dome::Secrets.new(@level)
         @state     = Dome::State.new(@level)
         @plan_file = "plans/#{@level.level}-plan.tf"

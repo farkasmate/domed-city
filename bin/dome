@@ -28,7 +28,8 @@ end
 
 Optimist.educate unless opts.value?(true)
 
-@dome = Dome::Terraform.new(sudo: opts[:sudo])
+# FIXME: Relative path
+@dome = Dome::Terraform.new(Dir.pwd, opts[:sudo])
 
 if opts[:environment]
   Logger.info '--- Spawning shell ---'

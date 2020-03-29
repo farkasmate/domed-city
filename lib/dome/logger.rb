@@ -15,6 +15,10 @@ module Dome
       @real_logger.debug(message)
     end
 
+    def self.error(message)
+      @real_logger.error(message)
+    end
+
     def self.warn(message)
       @real_logger.warn(message)
     end

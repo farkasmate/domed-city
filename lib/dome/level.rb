@@ -19,11 +19,16 @@ module Dome
         Wrapping terraform since 2015
     MSG
 
-    def self.match(_relative_path)
-      raise "Override self.match(relative_path) in class: #{self}"
+    LEVEL_REGEX = %r{terraform/relative/path/to/level}.freeze
+
+    def self.match(relative_path)
+      # TODO: Error class
+      raise "Define LEVEL_REGEX in class: #{self}" if self::LEVEL_REGEX == Dome::Level::LEVEL_REGEX
+
+      self::LEVEL_REGEX.match(relative_path)
     end
 
-    def self.find_plugin(relative_path)
+    def self.create_level(relative_path)
       # TODO: Load non-loaded plugins only
       Dir.glob(File.expand_path('level/*.rb', __dir__)).sort.each { |file| require file }
       plugins = ObjectSpace.each_object(Class).select { |klass| klass < self && klass.name }
@@ -32,57 +37,31 @@ module Dome
 
       raise PluginNotFoundError, 'You might miss a plugin.' unless plugin
 
-      plugin
+      plugin.new(relative_path)
     end
 
-    def initialize(directories = Dir.pwd.split('/'))
+    def initialize(relative_path)
+      # TODO: Error class
+      raise 'Inherit from Dome::Level' if self.class == Dome::Level
+
       ENV['AWS_DEFAULT_REGION'] = 'eu-west-1'
 
       Logger.debug BANNER
       Logger.info "[*] Operating at #{level.colorize(:red)} level"
 
-      @sudo = false
+      match = self.class.match(relative_path)
+      matched_symbols = Hash[match.names.map(&:to_sym).zip(match.captures)]
 
-      @settings               = Dome::Settings.new
-      @product                = @settings.parse['product']
+      @account     ||= matched_symbols[:account]
+      @ecosystem   ||= @account ? @account.split('-')[-1] : nil # FIXME: .last?
+      @environment ||= matched_symbols[:environment]
 
-      case level
-      when 'environment'
-        @environment            = directories[-1]
-        @account                = directories[-2]
-        @services               = nil
+      @sudo ||= false
 
-      when 'ecosystem'
-        @environment            = nil
-        @account                = directories[-1]
-        @services               = nil
+      @settings ||= Dome::Settings.new
+      @product  ||= @settings.parse['product']
 
-      when 'product'
-        @environment            = nil
-        @account                = "#{@product}-prd"
-        @services               = nil
-
-      when 'roles'
-        @environment            = directories[-2]
-        @account                = directories[-3]
-        @services               = nil
-
-      when 'services'
-        @environment            = directories[-3]
-        @account                = directories[-4]
-        @services               = directories[-1]
-
-      when /^secrets-/
-        @environment            = directories[-3]
-        @account                = directories[-4]
-        @services               = nil
-
-      else
-        Logger.error "Invalid level: #{level}".colorize(:red)
-      end
-
-      @ecosystem              = @account.split('-')[-1]
-      @account_id             = @settings.parse['aws'][@ecosystem.to_s]['account_id'].to_s
+      @account_id = @settings.parse['aws'][@ecosystem.to_s]['account_id'].to_s
 
       ENV['TF_VAR_product']   = @product
       ENV['TF_VAR_envname']   = @environment

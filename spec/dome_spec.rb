@@ -3,8 +3,6 @@
 require 'spec_helper'
 
 describe Dome do
-  let(:account_dir) { 'deirdre-dev' }
-  let(:environment_dir) { 'qa' }
   let(:level) { 'environment' }
   let(:ecosystem) { 'dev' }
   let(:project_root) { File.realpath('spec/fixtures') }
@@ -12,7 +10,7 @@ describe Dome do
   before(:each) { allow_any_instance_of(Dome::Settings).to receive(:find_project_root).and_return(project_root) }
   before(:each) { allow_any_instance_of(Dome::Level).to receive(:level).and_return(level) }
 
-  let(:dome) { Dome::Level.new([account_dir, environment_dir]) }
+  let(:dome) { Dome::Level.create_level('terraform/deirdre-dev/qa') }
 
   context 'environment validation against itv.yaml' do
     it 'identifies a valid environment' do

@@ -3,9 +3,7 @@
 require 'spec_helper'
 
 describe Dome do
-  let(:account_dir) { 'deirdre-dev' }
-  let(:environment_dir) { 'qa' }
-  let(:level) { Dome::Level.new([account_dir, environment_dir]) }
+  let(:level) { Dome::Level.create_level('terraform/deirdre-dev/qa') }
   let(:secrets) { Dome::Secrets.new(level) }
 
   # to prevent a validation error

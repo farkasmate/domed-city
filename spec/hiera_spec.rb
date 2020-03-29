@@ -3,14 +3,10 @@
 require 'spec_helper'
 
 describe Dome do
-  let(:account_dir) { 'deirdre-dev' }
-  let(:environment_dir) { 'qa' }
-  let(:level) { Dome::Level.new([account_dir, environment_dir]) }
-  let(:hiera) { Dome::HieraLookup.new(level) }
   let(:project_root) { File.realpath('spec/fixtures') }
-
-  before(:each) { allow_any_instance_of(Dome::Settings).to receive(:find_project_root).and_return(project_root) }
-  before(:each) { allow_any_instance_of(Dome::Level).to receive(:level).and_return('environment') }
+  let(:ecosystem) { 'dev' }
+  let(:environment) { 'qa' }
+  let(:hiera) { Dome::HieraLookup.new(project_root, ecosystem, environment) }
 
   it 'outputs the correct message for a hiera lookup' do
     vars = { 'foo' => 'bar' }

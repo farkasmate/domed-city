@@ -4,8 +4,6 @@ require 'dome/level'
 
 module Dome
   class EcosystemLevel < Level
-    def self.match(relative_path)
-      %r{^terraform/\w*-\w*$}.match relative_path
-    end
+    LEVEL_REGEX = %r{^terraform/(?<account>\w*-\w*)$}.freeze
   end
 end
