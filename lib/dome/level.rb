@@ -4,9 +4,7 @@
 
 module Dome
   class Level
-    attr_reader :environment, :account, :services
-
-    include Dome::Helper::Level
+    attr_reader :account, :ecosystem, :environment, :services
 
     BANNER = <<-'MSG'
 
@@ -40,6 +38,10 @@ module Dome
       plugin.new(relative_path)
     end
 
+    def self.level_name
+      /^Dome::(?<short_name>\w*)Level$/.match(name)[:short_name].downcase
+    end
+
     def initialize(relative_path)
       # TODO: Error class
       raise 'Inherit from Dome::Level' if self.class == Dome::Level
@@ -47,13 +49,14 @@ module Dome
       ENV['AWS_DEFAULT_REGION'] = 'eu-west-1'
 
       Logger.debug BANNER
-      Logger.info "[*] Operating at #{level.colorize(:red)} level"
+      Logger.info "[*] Operating at #{self.class.level_name.colorize(:red)} level"
 
       match = self.class.match(relative_path)
       matched_symbols = Hash[match.names.map(&:to_sym).zip(match.captures)]
 
-      @account     ||= matched_symbols[:account]
-      @ecosystem   ||= @account ? @account.split('-')[-1] : nil # FIXME: .last?
+      @product     ||= matched_symbols[:product]
+      @ecosystem   ||= matched_symbols[:ecosystem]
+      @account     ||= "#{@product}-#{@ecosystem}"
       @environment ||= matched_symbols[:environment]
 
       @sudo ||= false
@@ -61,7 +64,7 @@ module Dome
       @product ||= Settings['product']
 
       @account_id = begin
-                      Settings['aws'][@ecosystem.to_s]['account_id'].to_s
+                      Settings['aws'][@ecosystem]['account_id'].to_s
                     rescue NoMethodError
                       nil
                     end
@@ -72,7 +75,7 @@ module Dome
       cidr_ecosystem_prd = []
 
       ecosystem_environments     = begin
-                                     Settings['aws'][@ecosystem.to_s]['environments'].keys
+                                     Settings['aws'][@ecosystem]['environments'].keys
                                    rescue NoMethodError
                                      []
                                    end
@@ -90,7 +93,7 @@ module Dome
                                    end
 
       ecosystem_environments.each do |k|
-        cidr_ecosystem << Settings['aws'][@ecosystem.to_s]['environments'][k.to_s]['aws_vpc_cidr']
+        cidr_ecosystem << Settings['aws'][@ecosystem]['environments'][k.to_s]['aws_vpc_cidr']
       end
 
       dev_ecosystem_environments.each do |k|
@@ -141,25 +144,6 @@ module Dome
 
     def project
       Settings['project']
-    end
-
-    def ecosystem
-      directories = Dir.pwd.split('/')
-      case level
-      when 'ecosystem'
-        directories[-1].split('-')[-1]
-      when 'environment'
-        directories[-2].split('-')[-1]
-      when 'product'
-        # FIXME: This is 'prd' if accessed as @ecosystem
-        'product'
-      when 'roles'
-        directories[-3].split('-')[-1]
-      when /^secrets-|services/
-        directories[-4].split('-')[-1]
-      else
-        Logger.error "Invalid level: #{level}".colorize(:red)
-      end
     end
 
     def accounts
