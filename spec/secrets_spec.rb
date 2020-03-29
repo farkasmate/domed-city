@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe Dome do
   let(:level) { Dome::Level.create_level('terraform/deirdre-dev/qa') }
-  let(:secrets) { Dome::Secrets.new(level) }
+  let(:secrets) { Dome::Secrets.new('dev', 'qa') }
 
   # to prevent a validation error
   let(:project_root) { File.realpath('spec/fixtures') }

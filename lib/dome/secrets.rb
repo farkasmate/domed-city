@@ -4,9 +4,8 @@ module Dome
   class Secrets
     attr_reader :hiera
 
-    def initialize(level)
-      @level = level
-      @hiera = Dome::HieraLookup.new(Settings['project_root'], @level.ecosystem, @level.environment)
+    def initialize(ecosystem, environment)
+      @hiera = Dome::HieraLookup.new(Settings['project_root'], ecosystem, environment)
     end
 
     def secret_env_vars
