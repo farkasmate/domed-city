@@ -5,7 +5,7 @@ require 'spec_helper'
 describe Dome::Level do
   let(:project_root) { File.realpath('spec/fixtures') }
 
-  before(:each) { allow_any_instance_of(Dome::Settings).to receive(:find_project_root).and_return(project_root) }
+  before(:each) { allow(Dome::Settings).to receive(:find_project_root) { File.join(__dir__, 'fixtures') } }
 
   context '#create_level' do
     it 'creates product level in terraform directory' do

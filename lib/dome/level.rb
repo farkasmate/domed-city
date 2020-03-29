@@ -4,7 +4,7 @@
 
 module Dome
   class Level
-    attr_reader :environment, :account, :settings, :services
+    attr_reader :environment, :account, :services
 
     include Dome::Helper::Level
 
@@ -58,35 +58,54 @@ module Dome
 
       @sudo ||= false
 
-      @settings ||= Dome::Settings.new
-      @product  ||= @settings.parse['product']
+      @product ||= Settings['product']
 
-      @account_id = @settings.parse['aws'][@ecosystem.to_s]['account_id'].to_s
+      @account_id = begin
+                      Settings['aws'][@ecosystem.to_s]['account_id'].to_s
+                    rescue NoMethodError
+                      nil
+                    end
 
-      ENV['TF_VAR_product']   = @product
-      ENV['TF_VAR_envname']   = @environment
-      ENV['TF_VAR_env']       = @environment
-      ENV['TF_VAR_ecosystem'] = @ecosystem
-      ENV['TF_VAR_aws_account_id'] = @account_id
-
+      # FIXME: Do better validation/parsing
       cidr_ecosystem = []
       cidr_ecosystem_dev = []
       cidr_ecosystem_prd = []
 
-      ecosystem_environments = @settings.parse['aws'][@ecosystem.to_s]['environments'].keys
+      ecosystem_environments     = begin
+                                     Settings['aws'][@ecosystem.to_s]['environments'].keys
+                                   rescue NoMethodError
+                                     []
+                                   end
+
+      dev_ecosystem_environments = begin
+                                     Settings['aws']['dev']['environments'].keys
+                                   rescue NoMethodError
+                                     []
+                                   end
+
+      prd_ecosystem_environments = begin
+                                     Settings['aws']['prd']['environments'].keys
+                                   rescue NoMethodError
+                                     []
+                                   end
+
       ecosystem_environments.each do |k|
-        cidr_ecosystem << @settings.parse['aws'][@ecosystem.to_s]['environments'][k.to_s]['aws_vpc_cidr']
+        cidr_ecosystem << Settings['aws'][@ecosystem.to_s]['environments'][k.to_s]['aws_vpc_cidr']
       end
 
-      dev_ecosystem_environments = @settings.parse['aws']['dev']['environments'].keys
       dev_ecosystem_environments.each do |k|
-        cidr_ecosystem_dev << @settings.parse['aws']['dev']['environments'][k.to_s]['aws_vpc_cidr']
+        cidr_ecosystem_dev << Settings['aws']['dev']['environments'][k.to_s]['aws_vpc_cidr']
       end
 
-      prd_ecosystem_environments = @settings.parse['aws']['prd']['environments'].keys
       prd_ecosystem_environments.each do |k|
-        cidr_ecosystem_prd << @settings.parse['aws']['prd']['environments'][k.to_s]['aws_vpc_cidr']
+        cidr_ecosystem_prd << Settings['aws']['prd']['environments'][k.to_s]['aws_vpc_cidr']
       end
+
+      ENV['TF_VAR_product']        = @product.to_s
+      ENV['TF_VAR_envname']        = @environment.to_s
+      ENV['TF_VAR_env']            = @environment.to_s
+      ENV['TF_VAR_ecosystem']      = @ecosystem.to_s
+      ENV['TF_VAR_aws_account_id'] = @account_id.to_s
 
       ENV['TF_VAR_cidr_ecosystem'] = cidr_ecosystem.join(',').to_s
 
@@ -121,7 +140,7 @@ module Dome
     end
 
     def project
-      @settings.parse['project']
+      Settings['project']
     end
 
     def ecosystem
@@ -148,7 +167,7 @@ module Dome
     end
 
     def environments
-      ecosystems = @settings.parse['ecosystems']
+      ecosystems = Settings['ecosystems']
       raise '[!] ecosystems must be a hashmap of ecosystems to environments' unless ecosystems.is_a?(Hash)
 
       ecosystems.values.flatten
@@ -175,9 +194,9 @@ module Dome
         Logger.debug '[*] Exporting temporary credentials to environment variables '\
         "#{'AWS_ACCESS_KEY_ID'.colorize(:green)}, #{'AWS_SECRET_ACCESS_KEY'.colorize(:green)}"\
         " and #{'AWS_SESSION_TOKEN'.colorize(:green)}."
-        ENV['AWS_ACCESS_KEY_ID'] = assumed_role.credentials.access_key_id
-        ENV['AWS_SECRET_ACCESS_KEY'] = assumed_role.credentials.secret_access_key
-        ENV['AWS_SESSION_TOKEN'] = assumed_role.credentials.session_token
+        ENV['AWS_ACCESS_KEY_ID'] = assumed_role.credentials.access_key_id.to_s
+        ENV['AWS_SECRET_ACCESS_KEY'] = assumed_role.credentials.secret_access_key.to_s
+        ENV['AWS_SESSION_TOKEN'] = assumed_role.credentials.session_token.to_s
       end
     end
 
@@ -186,7 +205,7 @@ module Dome
       role_opts = { profile: account, role_session_name: account, use_mfa: true }
 
       if @sudo
-        account_id = @settings.parse['aws'][@ecosystem.to_s]['account_id'].to_s
+        account_id = Settings['aws'][@ecosystem.to_s]['account_id'].to_s
         role_opts[:role_arn] = "arn:aws:iam::#{account_id}:role/itv-root"
       end
 

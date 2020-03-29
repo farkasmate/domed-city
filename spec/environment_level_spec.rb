@@ -8,7 +8,7 @@ describe Dome::EnvironmentLevel do
   let(:level) { Dome::EnvironmentLevel.new('terraform/test-prd/prd') }
   let(:project_root) { File.realpath('spec/fixtures') }
 
-  before(:each) { allow_any_instance_of(Dome::Settings).to receive(:find_project_root).and_return(project_root) }
+  before(:each) { allow(Dome::Settings).to receive(:find_project_root) { File.join(__dir__, 'fixtures') } }
 
   context '#initialize' do
     it 'parses valid account' do

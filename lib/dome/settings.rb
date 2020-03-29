@@ -4,30 +4,13 @@
 
 module Dome
   class Settings
-    attr_reader :project_root
+    def self.[](key)
+      init unless @itv_yaml
 
-    include Dome::Helper::Level
-
-    def initialize(path = nil)
-      if path
-        raise "#{path} does not exist" unless File.exist? path
-
-        @project_root = File.realpath(File.dirname(path))
-      else
-        @project_root = find_project_root
-        path = File.join(@project_root, 'itv.yaml')
-      end
-
-      @itv_yaml ||= YAML.load_file(path)
+      @itv_yaml[key]
     end
 
-    def parse
-      @itv_yaml
-    end
-
-    private
-
-    def find_project_root
+    def self.find_project_root
       path = Dir.pwd.split('/')
       until path.empty?
         unless File.exist? File.join(path, 'itv.yaml')
@@ -36,7 +19,16 @@ module Dome
         end
         return File.realpath(File.join(path))
       end
+      # TODO: Error class
       raise 'Cannot locate itv.yaml'
     end
+
+    def self.init
+      project_root = find_project_root
+      @itv_yaml = YAML.load_file(File.join(project_root, 'itv.yaml'))
+      @itv_yaml['project_root'] = project_root
+    end
+
+    private_class_method :find_project_root, :init
   end
 end

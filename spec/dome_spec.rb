@@ -7,7 +7,7 @@ describe Dome do
   let(:ecosystem) { 'dev' }
   let(:project_root) { File.realpath('spec/fixtures') }
 
-  before(:each) { allow_any_instance_of(Dome::Settings).to receive(:find_project_root).and_return(project_root) }
+  before(:each) { allow(Dome::Settings).to receive(:find_project_root) { File.join(__dir__, 'fixtures') } }
   before(:each) { allow_any_instance_of(Dome::Level).to receive(:level).and_return(level) }
 
   let(:dome) { Dome::Level.create_level('terraform/deirdre-dev/qa') }

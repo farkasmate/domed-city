@@ -2,12 +2,11 @@
 
 module Dome
   class Secrets
-    attr_reader :settings, :hiera
+    attr_reader :hiera
 
     def initialize(level)
-      @level    = level
-      @settings = Dome::Settings.new
-      @hiera    = Dome::HieraLookup.new(@settings.project_root, @level.ecosystem, @level.environment)
+      @level = level
+      @hiera = Dome::HieraLookup.new(Settings['project_root'], @level.ecosystem, @level.environment)
     end
 
     def secret_env_vars
@@ -23,24 +22,24 @@ module Dome
     end
 
     def dome_config
-      Logger.warn "No #{'dome'.colorize(:green)} key found in your itv.yaml." unless @settings.parse['dome']
-      @settings.parse['dome']
+      Logger.warn "No #{'dome'.colorize(:green)} key found in your itv.yaml." unless Settings['dome']
+      Settings['dome']
     end
 
     def hiera_keys_config
-      unless @settings.parse['dome']['hiera_keys']
+      unless Settings['dome']['hiera_keys']
         Logger.warn "No #{'hiera_keys'.colorize(:green)} sub-key under #{'dome'.colorize(:green)} key found "\
           'in your itv.yaml.'
       end
-      @settings.parse['dome']['hiera_keys']
+      Settings['dome']['hiera_keys']
     end
 
     def certs_config
-      unless @settings.parse['dome']['certs']
+      unless Settings['dome']['certs']
         Logger.warn "No #{'certs'.colorize(:green)} sub-key under #{'dome'.colorize(:green)} key found "\
           'in your itv.yaml.'
       end
-      @settings.parse['dome']['certs']
+      Settings['dome']['certs']
     end
   end
 end

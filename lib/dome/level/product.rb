@@ -7,10 +7,7 @@ module Dome
     LEVEL_REGEX = /^terraform$/.freeze
 
     def initialize(relative_path)
-      # FIXME: Move out of Level
-      product = Dome::Settings.new.parse['product']
-
-      @account = "#{product}-prd"
+      @account = "#{Dome::Settings['product']}-prd"
 
       super
     end
