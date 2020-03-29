@@ -54,7 +54,7 @@ begin
   elsif opts[:statecmd]
     @dome.statecmd(opts[:statecmd].join(' '))
   elsif opts[:state]
-    @dome.state.s3_state
+    @dome.s3_state
   elsif opts[:output]
     @dome.output
   end

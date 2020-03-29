@@ -13,5 +13,9 @@ module Dome
 
       super
     end
+
+    def state_bucket_name
+      "itv-terraform-state-#{@project}"
+    end
   end
 end

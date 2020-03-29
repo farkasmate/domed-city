@@ -7,59 +7,9 @@ module Dome
     include Dome::Helper::Shell
     include Dome::Helper::Level
 
-    attr_reader :state
-
     def initialize(relative_path, sudo = false)
       @level   = Level.create_level(relative_path)
       @secrets = Dome::Secrets.new(@level.ecosystem, @level.environment)
-
-      case level
-      when 'environment'
-        @state     = Dome::State.new(@level)
-        @plan_file = "plans/#{@level.account}-#{@level.environment}-plan.tf"
-
-        Logger.info '--- Environment terraform state location ---'
-        Logger.info "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
-        Logger.info "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
-      when 'ecosystem'
-        @state     = Dome::State.new(@level)
-        @plan_file = "plans/#{@level.level}-plan.tf"
-
-        Logger.info '--- Ecosystem terraform state location ---'
-        Logger.info "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
-        Logger.info "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
-      when 'product'
-        @state     = Dome::State.new(@level)
-        @plan_file = "plans/#{@level.level}-plan.tf"
-
-        Logger.info '--- Product terraform state location ---'
-        Logger.info "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
-        Logger.info "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
-      when 'roles'
-        @state     = Dome::State.new(@level)
-        @plan_file = "plans/#{@level.level}-plan.tf"
-
-        Logger.info '--- Role terraform state location ---'
-        Logger.info "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
-        Logger.info "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
-      when 'services'
-        @state     = Dome::State.new(@level)
-        @plan_file = "plans/#{@level.services}-plan.tf"
-
-        Logger.info '--- Services terraform state location ---'
-        Logger.info "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
-        Logger.info "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
-      when /^secrets-/
-        @state     = Dome::State.new(@level)
-        @plan_file = "plans/#{@level.level}-plan.tf"
-
-        Logger.info '--- Secrets terraform state location ---'
-        Logger.info "[*] S3 bucket name: #{@state.state_bucket_name.colorize(:green)}"
-        Logger.info "[*] S3 object name: #{@state.state_file_name.colorize(:green)}"
-      else
-        Logger.info '[*] Dome is meant to run from either a product,ecosystem,environment,role,services or secrets level'
-        raise Dome::InvalidLevelError.new, level
-      end
 
       @level.sudo if sudo
     end
@@ -152,13 +102,17 @@ module Dome
     end
     # rubocop:enable Metrics/PerceivedComplexity
 
+    def s3_state
+      @level.init_s3_state
+    end
+
     def plan
       Logger.info '--- Decrypting hiera secrets and pass them as TF_VARs ---'
       @secrets.secret_env_vars
       Logger.info '--- Deleting old plans'
       # delete_terraform_directory # Don't delete it
       delete_plan_file
-      @state.s3_state
+      s3_state
       Logger.info '--- Terraform init & plan ---'
 
       terraform_init
@@ -167,9 +121,9 @@ module Dome
 
     def apply
       @secrets.secret_env_vars
-      command         = "terraform apply #{@plan_file}"
+      command         = "terraform apply #{@level.plan_file}"
       failure_message = '[!] something went wrong when applying the TF plan'
-      @state.s3_state
+      s3_state
       execute_command(command, failure_message)
     end
 
@@ -197,35 +151,35 @@ module Dome
       when 'environment'
         @secrets.extract_certs
         FileUtils.mkdir_p 'plans'
-        command         = "terraform plan -refresh=true -out=#{@plan_file} -var-file=params/env.tfvars"
+        command         = "terraform plan -refresh=true -out=#{@level.plan_file} -var-file=params/env.tfvars"
         failure_message = '[!] something went wrong when creating the environment TF plan'
         execute_command(command, failure_message)
       when 'ecosystem'
         FileUtils.mkdir_p 'plans'
-        command         = "terraform plan -refresh=true -out=#{@plan_file}"
+        command         = "terraform plan -refresh=true -out=#{@level.plan_file}"
         failure_message = '[!] something went wrong when creating the ecosystem TF plan'
         execute_command(command, failure_message)
       when 'product'
         FileUtils.mkdir_p 'plans'
-        command         = "terraform plan -refresh=true -out=#{@plan_file}"
+        command         = "terraform plan -refresh=true -out=#{@level.plan_file}"
         failure_message = '[!] something went wrong when creating the product TF plan'
         execute_command(command, failure_message)
       when 'roles'
         @secrets.extract_certs
         FileUtils.mkdir_p 'plans'
-        command         = "terraform plan -refresh=true -out=#{@plan_file}"
+        command         = "terraform plan -refresh=true -out=#{@level.plan_file}"
         failure_message = '[!] something went wrong when creating the role TF plan'
         execute_command(command, failure_message)
       when 'services'
         @secrets.extract_certs
         FileUtils.mkdir_p 'plans'
-        command         = "terraform plan -refresh=true -out=#{@plan_file} -var-file=../../params/env.tfvars"
+        command         = "terraform plan -refresh=true -out=#{@level.plan_file} -var-file=../../params/env.tfvars"
         failure_message = '[!] something went wrong when creating the service TF plan'
         execute_command(command, failure_message)
       when /^secrets-/
         @secrets.extract_certs
         FileUtils.mkdir_p 'plans'
-        command         = "terraform plan -refresh=true -out=#{@plan_file}"
+        command         = "terraform plan -refresh=true -out=#{@level.plan_file}"
         failure_message = '[!] something went wrong when creating the secret TF plan'
         execute_command(command, failure_message)
       else
@@ -241,11 +195,11 @@ module Dome
 
     def delete_plan_file
       Logger.info '[*] Deleting previous terraform plan ...'.colorize(:green)
-      FileUtils.rm_f @plan_file
+      FileUtils.rm_f @level.plan_file
     end
 
     def init
-      @state.s3_state
+      s3_state
       sleep 5
       terraform_init
     end

@@ -61,7 +61,8 @@ module Dome
 
       @sudo ||= false
 
-      @product ||= Settings['product']
+      @product = Settings['product']
+      @project = Settings['project'] # FIXME: Do we need both?
 
       @account_id = begin
                       Settings['aws'][@ecosystem]['account_id'].to_s
@@ -140,14 +141,33 @@ module Dome
 
       # Logger.info "[*] Setting cidr_ecosystem_dev to #{ENV['TF_VAR_cidr_ecosystem_dev'].colorize(:green)}"
       # Logger.info "[*] Setting cidr_ecosystem_prd to #{ENV['TF_VAR_cidr_ecosystem_prd'].colorize(:green)}"
+
+      # NOTE: From terraform.rb
+      Logger.info "--- #{self.class.level_name.capitalize} terraform state location ---"
+      Logger.info "[*] S3 bucket name: #{state_bucket_name.colorize(:green)}"
+      Logger.info "[*] S3 object name: #{state_file_name.colorize(:green)}"
     end
 
-    def project
-      Settings['project']
+    def state_bucket_name
+      # TODO: Error class
+      raise "Override state_bucket_name in class: #{self.class}"
+    end
+
+    def state_file_name
+      "#{self.class.level_name}.tfstate"
+    end
+
+    def plan_file
+      "plans/#{self.class.level_name}-plan.tf"
+    end
+
+    # TODO: Move to initialize?
+    def init_s3_state
+      @state.s3_state(state_bucket_name, state_file_name)
     end
 
     def accounts
-      %W[#{project}-dev #{project}-prd]
+      %W[#{@project}-dev #{@project}-prd]
     end
 
     def environments
