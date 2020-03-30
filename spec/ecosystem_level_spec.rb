@@ -5,14 +5,14 @@ require 'spec_helper'
 require 'dome/level/ecosystem'
 
 describe Dome::EcosystemLevel do
-  let(:level) { Dome::EcosystemLevel.new('terraform/test-dev') }
+  let(:level) { Dome::EcosystemLevel.new('terraform/hubsvc-dev') }
   let(:project_root) { File.realpath('spec/fixtures') }
 
   before(:each) { allow(Dome::Settings).to receive(:find_project_root) { File.join(__dir__, 'fixtures') } }
 
   context '#initialize' do
     it 'parses valid account' do
-      expect(level.account).to be == 'test-dev'
+      expect(level.account).to be == 'hubsvc-dev'
     end
 
     it 'parses nil environment' do

@@ -33,7 +33,7 @@ module Dome
 
       plugin = plugins.find { |p| p.match(relative_path) }
 
-      raise PluginNotFoundError, 'You might miss a plugin.' unless plugin
+      raise InvalidLevelError, 'No valid level detected. You might miss a plugin.' unless plugin
 
       plugin.new(relative_path)
     end
@@ -146,6 +146,8 @@ module Dome
       Logger.info "--- #{self.class.level_name.capitalize} terraform state location ---"
       Logger.info "[*] S3 bucket name: #{state_bucket_name.colorize(:green)}"
       Logger.info "[*] S3 object name: #{state_file_name.colorize(:green)}"
+
+      validate
     end
 
     def state_bucket_name
@@ -166,26 +168,22 @@ module Dome
       @state.s3_state(state_bucket_name, state_file_name)
     end
 
-    # FIXME: Call from initialize
     def validate
       validate_account
-      validate_environment
     end
 
     def validate_account
       return if accounts.include? @account
 
       generic_error_message
-      # TODO: Error class
-      raise "\n[!] '#{@account}' is not a valid account.\n".colorize(:red)
+      raise InvalidAccountError, "'#{@account}' is not a valid account."
     end
 
     def validate_environment
       return if environments.include? @environment
 
       generic_error_message
-      # TODO: Error class
-      raise "\n[!] '#{@environment}' is not a valid environment.\n".colorize(:red)
+      raise InvalidEnvironmentError, "'#{@environment}' is not a valid environment."
     end
 
     def setup_aws_credentials

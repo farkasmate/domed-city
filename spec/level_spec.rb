@@ -12,16 +12,16 @@ describe Dome::Level do
       expect(Dome::Level.create_level('terraform')).to be_instance_of(Dome::ProductLevel)
     end
 
-    it 'creates ecosystem level in terraform/test-dev directory' do
-      expect(Dome::Level.create_level('terraform/test-dev')).to be_instance_of(Dome::EcosystemLevel)
+    it 'creates ecosystem level in terraform/hubsvc-dev directory' do
+      expect(Dome::Level.create_level('terraform/hubsvc-dev')).to be_instance_of(Dome::EcosystemLevel)
     end
 
-    it 'creates environment level in terraform/test-prd/infraprd directory' do
-      expect(Dome::Level.create_level('terraform/test-prd/infraprd')).to be_instance_of(Dome::EnvironmentLevel)
+    it 'creates environment level in terraform/hubsvc-prd/infraprd directory' do
+      expect(Dome::Level.create_level('terraform/hubsvc-prd/infraprd')).to be_instance_of(Dome::EnvironmentLevel)
     end
 
-    it 'creates roles level in terraform/test-dev/dev/roles directory' do
-      expect(Dome::Level.create_level('terraform/test-dev/dev/roles')).to be_instance_of(Dome::RolesLevel)
+    it 'creates roles level in terraform/hubsvc-dev/dev/roles directory' do
+      expect(Dome::Level.create_level('terraform/hubsvc-dev/stg/roles')).to be_instance_of(Dome::RolesLevel)
     end
   end
 end

@@ -9,5 +9,10 @@ module Dome
     def state_bucket_name
       "itv-terraform-state-#{@project}-#{@ecosystem}-#{@environment}-roles"
     end
+
+    def validate
+      validate_environment
+      super
+    end
   end
 end

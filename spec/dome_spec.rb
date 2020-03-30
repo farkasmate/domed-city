@@ -12,25 +12,21 @@ describe Dome do
 
   context 'environment validation against itv.yaml' do
     it 'identifies a valid environment' do
-      dome = Dome::Level.create_level('terraform/deirdre-dev/qa')
-      expect { dome.validate_environment }.not_to raise_error
+      expect { Dome::Level.create_level('terraform/hubsvc-dev/qa') }.not_to raise_error
     end
 
     it 'identifies an invalid environment' do
-      dome = Dome::Level.create_level('terraform/deirdre-dev/foo')
-      expect { dome.validate_environment }.to raise_error
+      expect { Dome::Level.create_level('terraform/hubsvc-dev/foo') }.to raise_error(Dome::InvalidEnvironmentError)
     end
   end
 
   context 'account validation against itv.yaml' do
     it 'identifies a valid account' do
-      dome = Dome::Level.create_level('terraform/hubsvc-prd/qa')
-      expect { dome.validate_account }.not_to raise_error
+      expect { Dome::Level.create_level('terraform/hubsvc-prd/qa') }.not_to raise_error
     end
 
     it 'identifies an invalid account' do
-      dome = Dome::Level.create_level('terraform/deirdre-blah/qa')
-      expect { dome.validate_account }.to raise_error
+      expect { Dome::Level.create_level('terraform/hubsvc-blah/qa') }.to raise_error(Dome::InvalidAccountError)
     end
   end
 end

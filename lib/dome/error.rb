@@ -1,11 +1,7 @@
 # frozen_string_literal: true
 
 module Dome
-  class InvalidLevelError < StandardError
-    def initialize(level)
-      super "Invalid level: #{level}"
-    end
-  end
-
-  class PluginNotFoundError < StandardError; end
+  class InvalidAccountError < StandardError; end
+  class InvalidEnvironmentError < StandardError; end
+  class InvalidLevelError < StandardError; end
 end

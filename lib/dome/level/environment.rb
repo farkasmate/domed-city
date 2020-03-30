@@ -14,5 +14,10 @@ module Dome
     def plan_file
       "plans/#{@account}-#{@environment}-plan.tf"
     end
+
+    def validate
+      validate_environment
+      super
+    end
   end
 end
