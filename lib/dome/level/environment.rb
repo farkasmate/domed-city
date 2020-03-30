@@ -10,9 +10,13 @@ module Dome
       "itv-terraform-state-#{@project}-#{@ecosystem}-#{@environment}"
     end
 
-    # FIXME: Do we need this?
+    # FIXME: Do we need to override this?
     def plan_file
       "plans/#{@account}-#{@environment}-plan.tf"
+    end
+
+    def plan_command
+      "terraform plan -refresh=true -out=#{@level.plan_file} -var-file=params/env.tfvars"
     end
 
     def validate

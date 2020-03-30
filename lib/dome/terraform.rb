@@ -5,7 +5,6 @@ require 'zip'
 module Dome
   class Terraform
     include Dome::Helper::Shell
-    include Dome::Helper::Level
 
     def initialize(relative_path, sudo = false)
       @level   = Level.create_level(relative_path)
@@ -61,44 +60,10 @@ module Dome
     end
 
     def create_plan
-      case level
-      when 'environment'
-        @secrets.extract_certs
-        FileUtils.mkdir_p 'plans'
-        command         = "terraform plan -refresh=true -out=#{@level.plan_file} -var-file=params/env.tfvars"
-        failure_message = '[!] something went wrong when creating the environment TF plan'
-        execute_command(command, failure_message)
-      when 'ecosystem'
-        FileUtils.mkdir_p 'plans'
-        command         = "terraform plan -refresh=true -out=#{@level.plan_file}"
-        failure_message = '[!] something went wrong when creating the ecosystem TF plan'
-        execute_command(command, failure_message)
-      when 'product'
-        FileUtils.mkdir_p 'plans'
-        command         = "terraform plan -refresh=true -out=#{@level.plan_file}"
-        failure_message = '[!] something went wrong when creating the product TF plan'
-        execute_command(command, failure_message)
-      when 'roles'
-        @secrets.extract_certs
-        FileUtils.mkdir_p 'plans'
-        command         = "terraform plan -refresh=true -out=#{@level.plan_file}"
-        failure_message = '[!] something went wrong when creating the role TF plan'
-        execute_command(command, failure_message)
-      when 'services'
-        @secrets.extract_certs
-        FileUtils.mkdir_p 'plans'
-        command         = "terraform plan -refresh=true -out=#{@level.plan_file} -var-file=../../params/env.tfvars"
-        failure_message = '[!] something went wrong when creating the service TF plan'
-        execute_command(command, failure_message)
-      when /^secrets-/
-        @secrets.extract_certs
-        FileUtils.mkdir_p 'plans'
-        command         = "terraform plan -refresh=true -out=#{@level.plan_file}"
-        failure_message = '[!] something went wrong when creating the secret TF plan'
-        execute_command(command, failure_message)
-      else
-        raise Dome::InvalidLevelError.new, level
-      end
+      @secrets.extract_certs
+      FileUtils.mkdir_p File.dirname(@level.plan_file)
+      failure_message = "[!] something went wrong when creating the #{self.class.level_name} TF plan"
+      execute_command(@level.plan_command, failure_message)
     end
 
     def delete_terraform_directory

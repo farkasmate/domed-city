@@ -8,7 +8,6 @@ require 'hiera'
 require 'optimist'
 require 'yaml'
 
-require 'dome/helpers/level'
 require 'dome/helpers/shell'
 
 require 'dome/error'

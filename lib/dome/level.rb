@@ -163,6 +163,10 @@ module Dome
       "plans/#{self.class.level_name}-plan.tf"
     end
 
+    def plan_command
+      "terraform plan -refresh=true -out=#{plan_file}"
+    end
+
     # TODO: Move to initialize?
     def init_s3_state
       @state.s3_state(state_bucket_name, state_file_name)
