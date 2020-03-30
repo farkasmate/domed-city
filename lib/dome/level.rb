@@ -166,12 +166,30 @@ module Dome
       @state.s3_state(state_bucket_name, state_file_name)
     end
 
-    # FIXME: Rename and simplify ENV setup
+    # FIXME: Call from initialize
+    def validate
+      validate_account
+      validate_environment
+    end
+
+    def validate_account
+      return if accounts.include? @account
+
+      generic_error_message
+      # TODO: Error class
+      raise "\n[!] '#{@account}' is not a valid account.\n".colorize(:red)
+    end
+
     def validate_environment
+      return if environments.include? @environment
+
+      generic_error_message
+      # TODO: Error class
+      raise "\n[!] '#{@environment}' is not a valid environment.\n".colorize(:red)
+    end
+
+    def setup_aws_credentials
       Logger.info "--- AWS credentials for accessing #{self.class.level_name} state ---"
-      invalid_account_message unless valid_account? @account
-      # FIXME: !!! Environment only exist on environment level and down
-      #invalid_environment_message unless valid_environment? @environment
       unset_aws_keys
       aws_credentials
     end
@@ -235,24 +253,6 @@ module Dome
       end
 
       export_aws_keys(assumed_role)
-    end
-
-    def valid_account?(account_name)
-      accounts.include? account_name
-    end
-
-    def valid_environment?(environment_name)
-      environments.include? environment_name
-    end
-
-    def invalid_account_message
-      generic_error_message
-      raise "\n[!] '#{@account}' is not a valid account.\n".colorize(:red)
-    end
-
-    def invalid_environment_message
-      generic_error_message
-      raise "\n[!] '#{@environment}' is not a valid environment.\n".colorize(:red)
     end
 
     def sudo

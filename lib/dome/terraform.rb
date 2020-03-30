@@ -13,8 +13,7 @@ module Dome
 
       @level.sudo if sudo
 
-      # FIXME: Move validation into Level, separate setting up ENV
-      @level.validate_environment
+      @level.setup_aws_credentials
     end
 
     def s3_state

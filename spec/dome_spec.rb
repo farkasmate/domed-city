@@ -10,29 +10,27 @@ describe Dome do
   before(:each) { allow(Dome::Settings).to receive(:find_project_root) { File.join(__dir__, 'fixtures') } }
   before(:each) { allow_any_instance_of(Dome::Level).to receive(:level).and_return(level) }
 
-  let(:dome) { Dome::Level.create_level('terraform/deirdre-dev/qa') }
-
   context 'environment validation against itv.yaml' do
     it 'identifies a valid environment' do
-      environment = 'qa'
-      expect(dome.valid_environment?(environment)).to be_truthy
+      dome = Dome::Level.create_level('terraform/deirdre-dev/qa')
+      expect { dome.validate_environment }.not_to raise_error
     end
 
     it 'identifies an invalid environment' do
-      environment = 'foo'
-      expect(dome.valid_environment?(environment)).to be_falsey
+      dome = Dome::Level.create_level('terraform/deirdre-dev/foo')
+      expect { dome.validate_environment }.to raise_error
     end
   end
 
   context 'account validation against itv.yaml' do
     it 'identifies a valid account' do
-      account = 'hubsvc-prd'
-      expect(dome.valid_account?(account)).to be_truthy
+      dome = Dome::Level.create_level('terraform/hubsvc-prd/qa')
+      expect { dome.validate_account }.not_to raise_error
     end
 
     it 'identifies an invalid account' do
-      account = 'deirdre-blah'
-      expect(dome.valid_account?(account)).to be_falsey
+      dome = Dome::Level.create_level('terraform/deirdre-blah/qa')
+      expect { dome.validate_account }.to raise_error
     end
   end
 end
